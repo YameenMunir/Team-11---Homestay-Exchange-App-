@@ -1,5 +1,8 @@
-<!-- PROJECT BANNER -->
+<!-- ========================================================= -->
+<!-- 🚀 PROJECT BANNER & TITLE -->
+<!-- ========================================================= -->
 <p align="center">
+  <!-- Replace with your actual banner image URL -->
   <img src="https://user-images.githubusercontent.com/placeholder/hostfamilystay-banner.png" alt="HostFamilyStay Banner" width="80%">
 </p>
 
@@ -9,6 +12,9 @@
   <em>Connecting Students & Older Hosts Through Shared Living and Mutual Support</em>
 </p>
 
+<!-- ========================================================= -->
+<!-- 🔗 NAVIGATION LINKS -->
+<!-- ========================================================= -->
 <p align="center">
   <a href="#-overview">Overview</a> •
   <a href="#-key-features">Features</a> •
@@ -19,6 +25,9 @@
   <a href="#-license">License</a>
 </p>
 
+<!-- ========================================================= -->
+<!-- 🏷️ PROJECT BADGES -->
+<!-- ========================================================= -->
 <p align="center">
   <img src="https://img.shields.io/badge/Framework-Scrum-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Frontend-React%2FNext.js-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
@@ -29,49 +38,60 @@
 
 ---
 
+<!-- ========================================================= -->
+<!-- 📖 OVERVIEW SECTION -->
+<!-- ========================================================= -->
 ## 📖 Overview
 
-**HostFamilyStay** is a **social impact platform** that addresses two key societal challenges:
-- Increasing **student accommodation costs**
-- Rising **loneliness among older adults**
+**HostFamilyStay** is a **social impact platform** addressing:
+- Rising **student accommodation costs**
+- Growing **loneliness among older adults**
 
-The platform enables **intergenerational homestays** where students can receive **free or low-cost accommodation** by offering **companionship and light household support**.  
-It provides **legal guidance**, **safeguarding**, and **accessibility** to create a safe and supportive environment for both hosts and students.
+It connects **students** and **older hosts** for **mutually beneficial homestays** — students receive free or low-cost housing in exchange for companionship or light assistance.
 
-Developed collaboratively as part of **ICT Project Management in Practice (CSI_6_ICT)** and **Law & Technology (LAW_6_LAT)** modules at **London South Bank University**, using **Scrum Agile methodology** with real client input from **Host Family Stay (Zach Mammadov)**.
+Developed collaboratively for **London South Bank University (LSBU)** as part of:
+- *ICT Project Management in Practice (CSI_6_ICT)*  
+- *Law & Technology (LAW_6_LAT)*  
+
+Following **Scrum Agile** methodology, the app integrates **safeguarding, legal design, and usability** principles.
 
 ---
 
+<!-- ========================================================= -->
+<!-- 🚀 KEY FEATURES SECTION -->
+<!-- ========================================================= -->
 ## 🚀 Key Features
 
 ### 👩‍💼 Help Request & Offer System
 - Hosts post tasks (companionship, chores, shopping)
-- Students browse, apply, and connect securely
+- Students browse and apply securely
 
 ### 🔒 Safeguarding & Legal Guidance
-- Mandatory ID and utility bill verification  
-- Built-in safeguarding and equality resources  
-- Dispute resolution and rights information  
+- ID and utility bill verification
+- Legal & safeguarding resources (FAQs, equality, disputes)
 
 ### 🧭 Accessibility & Usability
-- Large buttons, intuitive navigation for older users  
-- Responsive design for mobile, tablet, and desktop  
+- Elder-friendly UI: large icons, simple navigation
+- Works on mobile, tablet, and desktop
 
 ### 💬 Matching & Communication
-- Matchmaking by location and preferences  
-- Secure chat and optional video introductions  
+- Location-based matching with secure in-app chat
+- Optional video introductions
 
 ### 🌟 Well-being & Recognition
-- Two-way rating system for trust and accountability  
-- Bronze/Silver/Gold recognition for students’ consistent community contributions  
-- Easy reporting of safeguarding concerns  
+- Dual rating system
+- Bronze/Silver/Gold community recognition for students
+- Optional host check-in reminders
 
 ### 🏘️ Community Hub
-- Legal and housing knowledge centre  
-- Links to UK volunteering and homeshare networks  
+- Legal and housing rights resources
+- Volunteering and homeshare links
 
 ---
 
+<!-- ========================================================= -->
+<!-- 🧰 TECH STACK TABLE -->
+<!-- ========================================================= -->
 ## 🧰 Tech Stack
 
 | **Category** | **Technologies Used** |
@@ -87,46 +107,55 @@ Developed collaboratively as part of **ICT Project Management in Practice (CSI_6
 
 ---
 
+<!-- ========================================================= -->
+<!-- 🔄 SCRUM / AGILE SECTION -->
+<!-- ========================================================= -->
 ## 🔄 Agile Process (Scrum)
 
-Our team followed **Scrum** methodology to deliver iterative, client-informed releases.
+Our team followed the **Scrum** framework to manage iterative, client-driven development:
 
-- **Method:** Scrum (4 sprints, 2 weeks each)
-- **Artifacts:** Product backlog, sprint backlog, retrospectives
-- **Client:** Host Family Stay (Zach Mammadov)
-- **Focus:** Continuous improvement, teamwork, and transparency
+- **Methodology:** Scrum  
+- **Duration:** 8 Weeks (4 Sprints, 2 Weeks Each)  
+- **Deliverables:** Product Backlog, Sprint Logs, Retrospectives  
 
-Each sprint included:
-1. **Planning** – setting sprint goals and priorities  
-2. **Implementation & Testing** – developing and validating user stories  
-3. **Review** – presenting outcomes to the client for feedback  
-4. **Retrospective** – identifying improvements for the next cycle  
+**Sprint Cycle Phases:**
+1. **Planning** – Define sprint goals and backlog items  
+2. **Development & Testing** – Build, integrate, and validate  
+3. **Review** – Present increments to the client for feedback  
+4. **Retrospective** – Reflect and improve processes  
 
 ---
 
+<!-- ========================================================= -->
+<!-- 👥 TEAM STRUCTURE SECTION -->
+<!-- ========================================================= -->
 ## 👥 Team Structure
 
-Our multidisciplinary **Team 11 (LSBU)** brought together **Law** and **Computer Science** students, ensuring a blend of technical and legal expertise.
+Our **Team 11 (LSBU)** combines strengths from both **Computer Science** and **Law** students.  
+Each member’s **Belbin role** ensures balance across technical, creative, and managerial domains.
 
-| **Name** | **Role(s)** | **Key Skills** | **Belbin Role(s)** | **Notes** |
-|-----------|--------------|----------------|--------------------|------------|
-| **Yameen Munir** | Scrum Master / Project Manager | Time Management, Conflict Resolution | Implementor, Complete Finisher, Specialist | Ensured Scrum principles were applied effectively, managed sprint cycles, and maintained team cohesion. |
-| **Zachary Mammadov & Atqa Manzoor** | Client / Product Owner | Requirement Definition, Feedback, Strategic Direction | — | Represented HostFamilyStay, providing requirements and ongoing product feedback. |
-| **Suhayb Munir** | Back-End Developer | API Integration, Server-Side Logic | Implementor, Complete Finisher | Developed backend infrastructure, APIs, and implemented data validation and security. |
-| **Bisma Moon** | Front-End Developer | UI Implementation, Responsiveness | Team Worker, Resource Investigator | Created responsive UIs, optimized usability, and implemented design integration. |
-| **Tobi** | Business Analyst | Requirement Analysis, Stakeholder Communication | Plant, Monitor Evaluator | Defined system requirements, aligned scope with client expectations, and maintained documentation. |
-| **Tawhidur Rahman Nabin** | UI/UX Designer | User-Centred Design, Prototyping | Specialist, Plant | Designed and tested accessible interfaces tailored for older users. |
-| **Samiul Hoque / Nabilul Haque** | Tester / QA Engineer | Validation, Bug Checking | Complete Finisher, Implementor | Conducted software testing, backlog organisation, and quality assurance across sprints. |
+| **Name** | **Roles** | **Skills** | **Belbin Role(s)** | **Notes** |
+|-----------|------------|-------------|--------------------|------------|
+| **Yameen Munir** | Scrum Master / Project Manager | Time Management, Conflict Resolution | Implementor, Complete Finisher, Specialist | The Implementor ensures practical application of Scrum; the Complete Finisher guarantees meeting deadlines and conflict resolution. |
+| **Zachary Mammadov & Atqa Manzoor** | Client / Product Owner | Providing requirements, feedback, and strategic direction | — | Providing requirements, feedback, and strategic direction throughout the development. |
+| **Suhayb Munir** | Back-End Developer | API Integration, Server-Side Logic | Implementor, Complete Finisher | The Implementor ensures that the data flow is converted into a structured and reliable backend. Complete Finisher ensures security checks and stability validation for API integration. |
+| **Bisma Moon** | Front-End Developer | UI Implementation, Responsiveness | Team Worker, Resource Investigator | Resource Investigator identifies external design feedback and comes up with innovative solutions, speeding up Frontend development. Team Worker fosters smooth integration. |
+| **Tobi** | Business Analyst | Requirement Analysis, Stakeholder Communication | Plant, Monitor Evaluator | Aligning stakeholder needs with technical scope. The Plant role supports problem-solving, while the Monitor Evaluator ensures critical analysis. |
+| **Tawhidur Rahman Nabin** | UI/UX Designer | User-Centred Design, Prototyping | Specialist, Plant | Specialist designs user interfaces prioritising accessibility and iterates based on user feedback. Plant drives imaginative iteration based on client/user feedback. |
+| **Samiul Hoque / Nabilul Haque** | Tester / Quality Assurance | Validation, Bug Checking | Complete Finisher, Implementor | Complete Finisher validates product quality, spotting errors, and supporting backlog organisation. Implementor ensures backlog organisation. |
 
 ---
 
+<!-- ========================================================= -->
+<!-- 🧪 INSTALLATION / SETUP -->
+<!-- ========================================================= -->
 ## 🧪 Setup & Installation
 
 ```bash
 # Clone repository
 git clone https://github.com/yourusername/hostfamilystay.git
 
-# Navigate into project folder
+# Navigate into the project folder
 cd hostfamilystay
 
 # Install dependencies
