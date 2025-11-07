@@ -5,7 +5,7 @@
 
 <!-- PROJECT BANNER -->
 <p align="center">
-  <img src="A_digital_graphic_design_image_serves_as_a_banner_.png" alt="HostFamilyStay Banner" width="85%">
+  <img src="Brand Logo.png" alt="HostFamilyStay Banner" width="85%">
 </p>
 
 <h1 align="center">🏡 HostFamilyStay – Homestay Exchange App</h1>
