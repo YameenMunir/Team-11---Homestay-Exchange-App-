@@ -47,7 +47,7 @@ Developed collaboratively at **London South Bank University (LSBU)** as part of 
 - *ICT Project Management in Practice (CSI_6_ICT)*  
 - *Law & Technology (LAW_6_LAT)*  
 
-This project follows **Scrum Agile methodology**, incorporating **legal guidance**, **safeguarding**, and **accessible design** to ensure inclusivity and trust.
+This project follows the **Scrum Agile methodology**, incorporating **legal guidance**, **safeguarding**, and **accessible design** to ensure inclusivity and trust.
 
 ---
 
