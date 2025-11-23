@@ -1,14 +1,13 @@
+# homestay-app/.gitignore — cleaned and deduplicated
 
-# Node
+# Node modules and Vite cache
 node_modules/
+node_modules/.vite/
 
 # Build outputs
 dist/
 build/
 /.vite/
-
-# Vite cache
-node_modules/.vite/
 
 # Local env files (do NOT commit secrets)
 .env
