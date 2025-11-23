@@ -12,6 +12,11 @@ import StudentDashboard from './pages/StudentDashboard';
 import BrowseHosts from './pages/BrowseHosts';
 import MatchDetails from './pages/MatchDetails';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
+import AdminUserManagement from './pages/AdminUserManagement';
+import AdminCreateProfile from './pages/AdminCreateProfile';
+import AdminReportsManagement from './pages/AdminReportsManagement';
+import AdminFeedbackReview from './pages/AdminFeedbackReview';
 import Help from './pages/Help';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
@@ -31,7 +36,9 @@ import MonthlyReport from './pages/MonthlyReport';
 import KnowledgeHub from './pages/KnowledgeHub';
 import LandingPage from './pages/LandingPage';
 import ScrollToTop from './components/ScrollToTop';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import { UserProvider, useUser } from './context/UserContext';
+import { AdminProvider } from './context/AdminContext';
 
 function AppContent() {
   const { accessibilitySettings } = useUser();
@@ -124,7 +131,47 @@ function AppContent() {
             <Route path="/student/apply/:taskId" element={<TaskApplication />} />
 
             {/* Admin Routes */}
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedAdminRoute>
+                  <AdminDashboard />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedAdminRoute requiredPermission="manage_users">
+                  <AdminUserManagement />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/create-profile"
+              element={
+                <ProtectedAdminRoute requiredPermission="create_profiles">
+                  <AdminCreateProfile />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/reports"
+              element={
+                <ProtectedAdminRoute requiredPermission="view_reports">
+                  <AdminReportsManagement />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/feedback"
+              element={
+                <ProtectedAdminRoute requiredPermission="view_reports">
+                  <AdminFeedbackReview />
+                </ProtectedAdminRoute>
+              }
+            />
 
             {/* Help/Support */}
             <Route path="/help" element={<Help />} />
@@ -158,7 +205,9 @@ function AppContent() {
 function App() {
   return (
     <UserProvider>
-      <AppContent />
+      <AdminProvider>
+        <AppContent />
+      </AdminProvider>
     </UserProvider>
   );
 }
