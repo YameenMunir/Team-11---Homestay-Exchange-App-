@@ -30,6 +30,7 @@ import RateExperience from './pages/RateExperience';
 import MonthlyReport from './pages/MonthlyReport';
 import KnowledgeHub from './pages/KnowledgeHub';
 import LandingPage from './pages/LandingPage';
+import ScrollToTop from './components/ScrollToTop';
 import { UserProvider, useUser } from './context/UserContext';
 
 function AppContent() {
@@ -63,6 +64,7 @@ function AppContent() {
 
   return (
     <Router>
+      <ScrollToTop />
       {/* SVG Filters for Color Blind Modes */}
       <svg style={{ display: 'none' }}>
         <defs>

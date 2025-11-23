@@ -13,11 +13,28 @@ import {
   Clock,
   Edit,
   HelpCircle,
+  Briefcase,
 } from 'lucide-react';
 
 const HostDashboard = () => {
   const { user, getFirstName } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'new_request',
+      message: 'New facilitation request from Ahmed M.',
+      time: '2 hours ago',
+      unread: true,
+    },
+    {
+      id: 2,
+      type: 'reminder',
+      message: 'Time to rate your current student for this month',
+      time: '1 day ago',
+      unread: true,
+    },
+  ]);
 
   // Mock data
   const hostData = {
@@ -36,22 +53,23 @@ const HostDashboard = () => {
       imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
     },
     pendingRequests: 2,
-    notifications: [
-      {
-        id: 1,
-        type: 'new_request',
-        message: 'New facilitation request from Ahmed M.',
-        time: '2 hours ago',
-        unread: true,
-      },
-      {
-        id: 2,
-        type: 'reminder',
-        message: 'Time to rate your current student for this month',
-        time: '1 day ago',
-        unread: true,
-      },
-    ],
+  };
+
+  // Mark notification as read
+  const markAsRead = (notificationId) => {
+    setNotifications(notifications.map(notif =>
+      notif.id === notificationId ? { ...notif, unread: false } : notif
+    ));
+  };
+
+  // Mark all notifications as read
+  const markAllAsRead = () => {
+    setNotifications(notifications.map(notif => ({ ...notif, unread: false })));
+  };
+
+  // Delete notification
+  const deleteNotification = (notificationId) => {
+    setNotifications(notifications.filter(notif => notif.id !== notificationId));
   };
 
   return (
@@ -102,7 +120,10 @@ const HostDashboard = () => {
               </div>
             </div>
 
-            <div className="card p-6">
+            <button
+              onClick={() => setActiveTab('overview')}
+              className="card p-6 hover:shadow-lg transition-shadow cursor-pointer text-left w-full"
+            >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Pending Requests</p>
@@ -115,7 +136,7 @@ const HostDashboard = () => {
                   <MessageCircle className="w-7 h-7 text-purple-600" />
                 </div>
               </div>
-            </div>
+            </button>
 
             <div className="card p-6">
               <div className="flex items-center justify-between">
@@ -165,9 +186,9 @@ const HostDashboard = () => {
                 }`}
               >
                 Notifications
-                {hostData.notifications.filter((n) => n.unread).length > 0 && (
+                {notifications.filter((n) => n.unread).length > 0 && (
                   <span className="absolute -top-1 -right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {hostData.notifications.filter((n) => n.unread).length}
+                    {notifications.filter((n) => n.unread).length}
                   </span>
                 )}
               </button>
@@ -324,11 +345,18 @@ const HostDashboard = () => {
                 <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
                 <div className="space-y-3">
                   <Link
-                    to="/host/settings"
+                    to="/host/create-task"
+                    className="w-full btn-primary flex items-center justify-center space-x-2"
+                  >
+                    <Briefcase className="w-5 h-5" />
+                    <span>Post New Task</span>
+                  </Link>
+                  <Link
+                    to="/host/manage-tasks"
                     className="w-full btn-outline flex items-center justify-center space-x-2"
                   >
-                    <Edit className="w-5 h-5" />
-                    <span>Edit Profile</span>
+                    <MessageCircle className="w-5 h-5" />
+                    <span>Manage Tasks</span>
                   </Link>
                   <Link
                     to="/host/settings"
@@ -457,31 +485,94 @@ const HostDashboard = () => {
 
         {activeTab === 'notifications' && (
           <div className="card p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Notifications</h2>
-            <div className="space-y-4">
-              {hostData.notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`border-l-4 rounded-r-lg p-4 ${
-                    notification.unread
-                      ? 'border-purple-600 bg-purple-50'
-                      : 'border-gray-300 bg-white'
-                  }`}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
+              {notifications.filter(n => n.unread).length > 0 && (
+                <button
+                  onClick={markAllAsRead}
+                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-gray-900 font-medium mb-1">
-                        {notification.message}
-                      </p>
-                      <p className="text-sm text-gray-500">{notification.time}</p>
+                  Mark all as read
+                </button>
+              )}
+            </div>
+
+            {notifications.length === 0 ? (
+              <div className="text-center py-12">
+                <Bell className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No notifications
+                </h3>
+                <p className="text-gray-600">
+                  You're all caught up! Check back later for updates.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`border-l-4 rounded-r-lg p-4 transition-all ${
+                      notification.unread
+                        ? 'border-purple-600 bg-purple-50'
+                        : 'border-gray-300 bg-white'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-gray-900 font-medium mb-1">
+                          {notification.message}
+                        </p>
+                        <p className="text-sm text-gray-500">{notification.time}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {notification.unread && (
+                          <>
+                            <button
+                              onClick={() => markAsRead(notification.id)}
+                              className="text-sm text-purple-600 hover:text-purple-700 font-medium whitespace-nowrap"
+                              title="Mark as read"
+                            >
+                              Mark read
+                            </button>
+                            <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+                          </>
+                        )}
+                        <button
+                          onClick={() => deleteNotification(notification.id)}
+                          className="text-sm text-red-600 hover:text-red-700 font-medium"
+                          title="Delete notification"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
-                    {notification.unread && (
-                      <span className="ml-4 w-2 h-2 bg-purple-600 rounded-full"></span>
+
+                    {/* Action buttons based on notification type */}
+                    {notification.type === 'new_request' && (
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <button
+                          onClick={() => setActiveTab('overview')}
+                          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                        >
+                          View Request →
+                        </button>
+                      </div>
+                    )}
+                    {notification.type === 'reminder' && (
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <Link
+                          to="/rate-experience"
+                          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                        >
+                          Rate Now →
+                        </Link>
+                      </div>
                     )}
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
