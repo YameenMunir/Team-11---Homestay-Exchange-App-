@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(find . -type f ( -name \"*.jsx\" -o -name \"*.js\" ) -exec sed -i \"s/blue-/purple-/g\" {} +)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

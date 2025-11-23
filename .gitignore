@@ -1,0 +1,23 @@
+# Node
+node_modules/
+
+# Build outputs
+dist/
+build/
+/.vite
+
+# Local env files (do NOT commit secrets)
+.env
+.env.*
+.env.local
+
+# Logs
+*.log
+
+# OS and editor
+.DS_Store
+.vscode/
+.idea/
+
+# Misc
+*.local
