@@ -22,6 +22,14 @@ import DisputeResolution from './pages/DisputeResolution';
 import ConnectionRequests from './pages/ConnectionRequests';
 import BrowseTasks from './pages/BrowseTasks';
 import UserSettings from './pages/UserSettings';
+import CreateTask from './pages/CreateTask';
+import TaskApplication from './pages/TaskApplication';
+import MyApplications from './pages/MyApplications';
+import ManageTasks from './pages/ManageTasks';
+import RateExperience from './pages/RateExperience';
+import MonthlyReport from './pages/MonthlyReport';
+import KnowledgeHub from './pages/KnowledgeHub';
+import LandingPage from './pages/LandingPage';
 import { UserProvider, useUser } from './context/UserContext';
 
 function AppContent() {
@@ -98,6 +106,9 @@ function AppContent() {
             <Route path="/host/signup" element={<HostSignup />} />
             <Route path="/host/dashboard" element={<HostDashboard />} />
             <Route path="/host/settings" element={<UserSettings />} />
+            <Route path="/host/create-task" element={<CreateTask />} />
+            <Route path="/host/manage-tasks" element={<ManageTasks />} />
+            <Route path="/host/edit-task/:taskId" element={<CreateTask />} />
 
             {/* Student Routes */}
             <Route path="/student/login" element={<StudentLogin />} />
@@ -107,6 +118,8 @@ function AppContent() {
             <Route path="/student/browse-tasks" element={<BrowseTasks />} />
             <Route path="/student/match/:id" element={<MatchDetails />} />
             <Route path="/student/settings" element={<UserSettings />} />
+            <Route path="/student/applications" element={<MyApplications />} />
+            <Route path="/student/apply/:taskId" element={<TaskApplication />} />
 
             {/* Admin Routes */}
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -116,6 +129,14 @@ function AppContent() {
 
             {/* Connection Requests */}
             <Route path="/connection-requests" element={<ConnectionRequests />} />
+
+            {/* Ratings & Reports */}
+            <Route path="/rate-experience" element={<RateExperience />} />
+            <Route path="/monthly-report" element={<MonthlyReport />} />
+
+            {/* Knowledge Hub & Landing */}
+            <Route path="/knowledge-hub" element={<KnowledgeHub />} />
+            <Route path="/landing" element={<LandingPage />} />
 
             {/* Information Pages */}
             <Route path="/about" element={<AboutUs />} />
