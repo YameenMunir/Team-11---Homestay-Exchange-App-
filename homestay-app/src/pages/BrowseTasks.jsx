@@ -318,10 +318,10 @@ const BrowseTasks = () => {
                             {task.applicants} applicants • Posted {new Date(task.postedDate).toLocaleDateString('en-GB')}
                           </p>
                           <Link
-                            to={`/student/match/${task.hostId}`}
+                            to={`/student/apply/${task.id}`}
                             className="btn-primary"
                           >
-                            View Details & Apply
+                            Apply to Task
                           </Link>
                         </div>
                       </div>

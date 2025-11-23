@@ -251,8 +251,12 @@ const StudentDashboard = () => {
                 </div>
 
                 <div className="flex gap-3 mt-4">
-                  <button className="btn-primary flex-1">Log Hours</button>
-                  <button className="btn-outline flex-1">View Details</button>
+                  <Link to="/monthly-report" className="btn-primary flex-1 text-center">
+                    Log Hours
+                  </Link>
+                  <Link to="/rate-experience" className="btn-outline flex-1 text-center">
+                    Rate Host
+                  </Link>
                 </div>
               </div>
 
@@ -352,10 +356,13 @@ const StudentDashboard = () => {
                     <Search className="w-5 h-5" />
                     <span>Browse Hosts</span>
                   </Link>
-                  <button className="w-full btn-outline flex items-center justify-center space-x-2">
+                  <Link
+                    to="/student/settings"
+                    className="w-full btn-outline flex items-center justify-center space-x-2"
+                  >
                     <Settings className="w-5 h-5" />
                     <span>Settings</span>
-                  </button>
+                  </Link>
                   <Link
                     to="/help"
                     className="w-full btn-outline flex items-center justify-center space-x-2"

@@ -248,8 +248,12 @@ const HostDashboard = () => {
                 </div>
 
                 <div className="flex gap-3 mt-4">
-                  <button className="btn-primary flex-1">Rate This Month</button>
-                  <button className="btn-outline flex-1">View History</button>
+                  <Link to="/rate-experience" className="btn-primary flex-1 text-center">
+                    Rate This Month
+                  </Link>
+                  <Link to="/monthly-report" className="btn-outline flex-1 text-center">
+                    Submit Report
+                  </Link>
                 </div>
               </div>
 
@@ -277,7 +281,10 @@ const HostDashboard = () => {
                       24-48 hours.
                     </p>
                     <div className="flex gap-2">
-                      <button className="btn-primary text-sm py-2">
+                      <button
+                        onClick={() => alert('Student profile details will be available after admin approval')}
+                        className="btn-primary text-sm py-2"
+                      >
                         View Profile
                       </button>
                     </div>
@@ -298,7 +305,10 @@ const HostDashboard = () => {
                       contact you soon.
                     </p>
                     <div className="flex gap-2">
-                      <button className="btn-primary text-sm py-2">
+                      <button
+                        onClick={() => alert('Student profile details will be available after admin approval')}
+                        className="btn-primary text-sm py-2"
+                      >
                         View Profile
                       </button>
                     </div>
