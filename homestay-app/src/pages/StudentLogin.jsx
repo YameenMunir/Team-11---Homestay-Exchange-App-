@@ -24,6 +24,11 @@ const StudentLogin = () => {
     });
   };
 
+  const handleForgotPassword = () => {
+    // TODO: Implement forgot password functionality
+    alert('Password reset instructions will be sent to your email. Please contact support at support@hostfamilystay.co.uk for assistance.');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4">
       <div className="container-custom">
@@ -123,9 +128,13 @@ const StudentLogin = () => {
                   />
                   <span className="text-sm text-gray-700">Remember me</span>
                 </label>
-                <a href="#" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                >
                   Forgot password?
-                </a>
+                </button>
               </div>
 
               {/* Submit Button */}

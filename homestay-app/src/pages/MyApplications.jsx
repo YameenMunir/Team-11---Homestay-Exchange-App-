@@ -309,9 +309,9 @@ export default function MyApplications() {
                           ? 'bg-green-50 border border-green-200'
                           : 'bg-red-50 border border-red-200'
                       }`}>
-                        <p className="text-xs font-medium mb-1 flex items-center gap-1 ${
+                        <p className={`text-xs font-medium mb-1 flex items-center gap-1 ${
                           application.status === 'accepted' ? 'text-green-700' : 'text-red-700'
-                        }">
+                        }`}>
                           <MessageSquare className="w-3 h-3" />
                           Host Response:
                         </p>

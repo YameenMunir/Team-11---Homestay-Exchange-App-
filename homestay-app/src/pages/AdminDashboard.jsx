@@ -265,7 +265,7 @@ const AdminDashboard = () => {
                         {user.name}
                       </h3>
                       <p className="text-sm text-gray-600 mb-2">
-                        <span className="badge badge-{user.type === 'host' ? 'purple' : 'blue'}">
+                        <span className={`badge ${user.type === 'host' ? 'badge-purple' : 'badge-blue'}`}>
                           {user.type === 'host' ? 'Host' : 'Student'}
                         </span>
                       </p>
