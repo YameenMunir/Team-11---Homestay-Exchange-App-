@@ -36,7 +36,6 @@ const HostSignup = () => {
     aboutYou: '',
     idDocument: null,
     utilityBill: null,
-    dbsCheck: null,
   });
 
   const servicesOptions = [
@@ -119,14 +118,6 @@ const HostSignup = () => {
           .upload(`${userId}/utility-bill-${Date.now()}.pdf`, formData.utilityBill);
 
         if (billError) console.error('Utility bill upload error:', billError);
-      }
-
-      if (formData.dbsCheck) {
-        const { error: dbsError } = await supabase.storage
-          .from('user-documents')
-          .upload(`${userId}/dbs-check-${Date.now()}.pdf`, formData.dbsCheck);
-
-        if (dbsError) console.error('DBS check upload error:', dbsError);
       }
 
       // 3. Update user_profiles with phone number
@@ -655,43 +646,6 @@ const HostSignup = () => {
                         </p>
                       )}
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-lg font-semibold text-gray-900 mb-2">
-                      DBS Check (Background Check)
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <label
-                        htmlFor="dbsCheck"
-                        className="cursor-pointer text-base text-gray-600"
-                      >
-                        <span className="text-purple-600 font-semibold hover:text-purple-700">
-                          Click to upload
-                        </span>{' '}
-                        or drag and drop
-                        <input
-                          type="file"
-                          id="dbsCheck"
-                          name="dbsCheck"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          accept="image/*,.pdf"
-                        />
-                      </label>
-                      {formData.dbsCheck && (
-                        <p className="text-sm text-green-600 mt-2 font-medium">
-                          ✓ {formData.dbsCheck.name}
-                        </p>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-600 mt-2">
-                      Don't have a DBS check?{' '}
-                      <a href="#" className="text-purple-600 hover:text-purple-700 font-medium">
-                        Learn how to get one
-                      </a>
-                    </p>
                   </div>
                 </>
               )}
