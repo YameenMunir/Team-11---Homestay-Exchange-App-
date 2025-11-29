@@ -6,6 +6,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    # Set NODE_ENV=test so test-runner detection in src/utils/supabase.js can use a test stub.
+    env:
+      NODE_ENV: test
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -15,8 +21,13 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Check Supabase secrets
+        run: |
+          if [ -z "${VITE_SUPABASE_URL}" ] || [ -z "${VITE_SUPABASE_ANON_KEY}" ]; then
+            echo "Supabase secrets are not set. Tests will run in test-stub mode (no network)."
+          else
+            echo "Supabase secrets are present."
+          fi
+
       - name: Run Tests
         run: npm run test
-        env:
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
