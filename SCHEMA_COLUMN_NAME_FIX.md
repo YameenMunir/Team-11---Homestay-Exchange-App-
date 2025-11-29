@@ -46,7 +46,7 @@ CREATE TABLE guest_profiles (
 ### host_profiles Table
 
 ```sql
-CREATE TABLE host_profiles (
+CREATE OR edit ABLE host_profiles (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID UNIQUE NOT NULL REFERENCES user_profiles(id),
     date_of_birth DATE,
@@ -74,7 +74,7 @@ CREATE TABLE host_profiles (
 ### user_profiles Table (for phone storage)
 
 ```sql
-CREATE TABLE user_profiles (
+CREATE or edit TABLE user_profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id),
     email TEXT UNIQUE NOT NULL,
     role user_role NOT NULL DEFAULT 'guest',
