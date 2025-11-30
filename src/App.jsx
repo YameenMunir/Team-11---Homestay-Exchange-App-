@@ -14,6 +14,8 @@ import MatchDetails from './pages/MatchDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import AdminUserManagement from './pages/AdminUserManagement';
+import AdminFacilitationRequests from './pages/AdminFacilitationRequests';
+import AdminDisputes from './pages/AdminDisputes';
 import AdminCreateProfile from './pages/AdminCreateProfile';
 import AdminReportsManagement from './pages/AdminReportsManagement';
 import AdminFeedbackReview from './pages/AdminFeedbackReview';
@@ -250,6 +252,14 @@ function AppContent() {
               }
             />
             <Route
+              path="/admin/facilitation-requests"
+              element={
+                <ProtectedAdminRoute requiredPermission="manage_users">
+                  <AdminFacilitationRequests />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
               path="/admin/create-profile"
               element={
                 <ProtectedAdminRoute requiredPermission="create_profiles">
@@ -262,6 +272,14 @@ function AppContent() {
               element={
                 <ProtectedAdminRoute requiredPermission="view_reports">
                   <AdminReportsManagement />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/disputes"
+              element={
+                <ProtectedAdminRoute requiredPermission="manage_users">
+                  <AdminDisputes />
                 </ProtectedAdminRoute>
               }
             />

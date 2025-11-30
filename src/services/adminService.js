@@ -277,4 +277,229 @@ export const adminService = {
       throw error;
     }
   },
+
+  /**
+   * Get dashboard statistics
+   */
+  async getDashboardStats() {
+    try {
+      // Get pending verifications count
+      const { count: pendingVerifications } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_verified', false);
+
+      // Get pending facilitation requests count
+      const { count: pendingFacilitations } = await supabase
+        .from('facilitation_requests')
+        .select('*', { count: 'exact', head: true })
+        .in('status', ['pending', 'under_review']);
+
+      // Get active arrangements count
+      const { count: activeArrangements } = await supabase
+        .from('facilitation_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'approved');
+
+      // Get total users count
+      const { count: totalUsers } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true });
+
+      // Get total hosts and students
+      const { count: totalHosts } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'host');
+
+      const { count: totalStudents } = await supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'guest');
+
+      return {
+        pendingVerifications: pendingVerifications || 0,
+        pendingFacilitations: pendingFacilitations || 0,
+        activeArrangements: activeArrangements || 0,
+        totalUsers: totalUsers || 0,
+        totalHosts: totalHosts || 0,
+        totalStudents: totalStudents || 0,
+      };
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get all facilitation requests
+   */
+  async getFacilitationRequests(status = null) {
+    try {
+      let query = supabase
+        .from('facilitation_requests')
+        .select(`
+          *,
+          host:host_id (
+            id,
+            user_id,
+            address,
+            postcode,
+            user_profiles!inner (id, full_name, email, phone_number)
+          ),
+          guest:guest_id (
+            id,
+            user_id,
+            university,
+            course,
+            user_profiles!inner (id, full_name, email, phone_number)
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (status) {
+        query = query.eq('status', status);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Format the data
+      return data.map(req => ({
+        id: req.id,
+        hostId: req.host_id,
+        guestId: req.guest_id,
+        hostName: req.host?.user_profiles?.full_name || 'Unknown Host',
+        hostEmail: req.host?.user_profiles?.email || '',
+        hostAddress: req.host?.address || '',
+        guestName: req.guest?.user_profiles?.full_name || 'Unknown Student',
+        guestEmail: req.guest?.user_profiles?.email || '',
+        guestUniversity: req.guest?.university || '',
+        guestCourse: req.guest?.course || '',
+        status: req.status,
+        servicesOffered: req.services_offered || [],
+        requestDate: req.created_at,
+        approvedDate: req.approved_at,
+        rejectedDate: req.rejected_at,
+        adminNotes: req.admin_notes,
+        duration: req.duration_months,
+      }));
+    } catch (error) {
+      console.error('Error fetching facilitation requests:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Approve facilitation request
+   */
+  async approveFacilitationRequest(requestId, adminNotes = '') {
+    try {
+      const { error } = await supabase
+        .from('facilitation_requests')
+        .update({
+          status: 'approved',
+          approved_at: new Date().toISOString(),
+          admin_notes: adminNotes,
+        })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // TODO: Send notification emails to both host and guest
+      console.log(`Facilitation request ${requestId} approved`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error approving facilitation request:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reject facilitation request
+   */
+  async rejectFacilitationRequest(requestId, reason) {
+    try {
+      const { error } = await supabase
+        .from('facilitation_requests')
+        .update({
+          status: 'rejected',
+          rejected_at: new Date().toISOString(),
+          admin_notes: reason,
+        })
+        .eq('id', requestId);
+
+      if (error) throw error;
+
+      // TODO: Send notification emails to both host and guest
+      console.log(`Facilitation request ${requestId} rejected. Reason: ${reason}`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error rejecting facilitation request:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get recent activity for dashboard
+   */
+  async getRecentActivity(limit = 10) {
+    try {
+      const activities = [];
+
+      // Get recent user signups
+      const { data: recentUsers } = await supabase
+        .from('user_profiles')
+        .select('id, full_name, role, created_at')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (recentUsers) {
+        recentUsers.forEach(user => {
+          activities.push({
+            type: 'signup',
+            message: `New ${user.role} signup: ${user.full_name}`,
+            timestamp: user.created_at,
+          });
+        });
+      }
+
+      // Get recent facilitation requests
+      const { data: recentRequests } = await supabase
+        .from('facilitation_requests')
+        .select(`
+          id,
+          created_at,
+          status,
+          guest:guest_id (
+            user_profiles!inner (full_name)
+          ),
+          host:host_id (
+            user_profiles!inner (full_name)
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (recentRequests) {
+        recentRequests.forEach(req => {
+          activities.push({
+            type: 'facilitation_request',
+            message: `Facilitation request: ${req.guest?.user_profiles?.full_name} → ${req.host?.user_profiles?.full_name}`,
+            timestamp: req.created_at,
+            status: req.status,
+          });
+        });
+      }
+
+      // Sort all activities by timestamp
+      activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      return activities.slice(0, limit);
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
+      throw error;
+    }
+  },
 };
