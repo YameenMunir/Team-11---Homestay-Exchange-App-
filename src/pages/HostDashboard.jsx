@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { dashboardService } from '../services/dashboardService';
 import {
   Home,
   Users,
@@ -14,63 +15,110 @@ import {
   Edit,
   HelpCircle,
   Briefcase,
+  Loader2,
 } from 'lucide-react';
 
 const HostDashboard = () => {
-  const { user, getFirstName } = useUser();
+  const { user, getFirstName, loading: userLoading } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'new_request',
-      message: 'New facilitation request from Ahmed M.',
-      time: '2 hours ago',
-      unread: true,
-    },
-    {
-      id: 2,
-      type: 'reminder',
-      message: 'Time to rate your current student for this month',
-      time: '1 day ago',
-      unread: true,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const hostData = {
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await dashboardService.getHostDashboardData(user.id);
+        setDashboardData(data);
+
+        // Fetch notifications
+        const notifs = await dashboardService.getNotifications(user.id);
+        setNotifications(notifs);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchDashboardData();
+    }
+  }, [user, userLoading]);
+
+  // Prepare host data
+  const hostData = user ? {
     name: user.fullName,
     verified: user.isVerified,
     memberSince: user.memberSince,
-    rating: user.rating,
-    reviewCount: 12,
-    currentStudent: {
-      name: 'Sarah K.',
-      university: 'University College London',
-      startDate: 'September 2024',
-      servicesProvided: ['Grocery Shopping', 'Technology Help', 'Companionship'],
-      hoursThisMonth: 14,
-      rating: 5,
-      imageUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
-    },
-    pendingRequests: 2,
-  };
+    rating: user.rating || 0,
+    reviewCount: dashboardData?.reviewCount || 0,
+    currentStudent: dashboardData?.currentStudent,
+    pendingRequests: dashboardData?.pendingRequestsCount || 0,
+  } : null;
 
   // Mark notification as read
-  const markAsRead = (notificationId) => {
-    setNotifications(notifications.map(notif =>
-      notif.id === notificationId ? { ...notif, unread: false } : notif
-    ));
+  const markAsRead = async (notificationId) => {
+    try {
+      await dashboardService.markNotificationAsRead(notificationId);
+      setNotifications(notifications.map(notif =>
+        notif.id === notificationId ? { ...notif, is_read: true } : notif
+      ));
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
   };
 
   // Mark all notifications as read
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notif => ({ ...notif, unread: false })));
+  const markAllAsRead = async () => {
+    if (!user?.id) return;
+    try {
+      await dashboardService.markAllNotificationsAsRead(user.id);
+      setNotifications(notifications.map(notif => ({ ...notif, is_read: true })));
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
   };
 
   // Delete notification
-  const deleteNotification = (notificationId) => {
-    setNotifications(notifications.filter(notif => notif.id !== notificationId));
+  const deleteNotification = async (notificationId) => {
+    try {
+      await dashboardService.deleteNotification(notificationId);
+      setNotifications(notifications.filter(notif => notif.id !== notificationId));
+    } catch (error) {
+      console.error('Error deleting notification:', error);
+    }
   };
+
+  // Show loading state
+  if (userLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no user data
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to view your dashboard.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -142,7 +190,9 @@ const HostDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Current Student</p>
-                  <span className="text-3xl font-bold text-gray-900">1</span>
+                  <span className="text-3xl font-bold text-gray-900">
+                    {hostData.currentStudent ? 1 : 0}
+                  </span>
                   <p className="text-xs text-gray-500 mt-1">Active arrangement</p>
                 </div>
                 <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
@@ -186,9 +236,9 @@ const HostDashboard = () => {
                 }`}
               >
                 Notifications
-                {notifications.filter((n) => n.unread).length > 0 && (
+                {notifications.filter((n) => !n.is_read).length > 0 && (
                   <span className="absolute -top-1 -right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    {notifications.filter((n) => n.unread).length}
+                    {notifications.filter((n) => !n.is_read).length}
                   </span>
                 )}
               </button>
@@ -207,75 +257,91 @@ const HostDashboard = () => {
                   Current Student
                 </h2>
 
-                <div className="flex items-start space-x-4 mb-6">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200">
-                    <img
-                      src={hostData.currentStudent.imageUrl}
-                      alt={hostData.currentStudent.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                {hostData.currentStudent ? (
+                  <>
+                    <div className="flex items-start space-x-4 mb-6">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200">
+                        <img
+                          src={hostData.currentStudent.imageUrl}
+                          alt={hostData.currentStudent.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {hostData.currentStudent.name}
-                      </h3>
-                      <div className="flex items-center space-x-1">
-                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold text-gray-900">
-                          {hostData.currentStudent.rating}
-                        </span>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {hostData.currentStudent.name}
+                          </h3>
+                          {hostData.currentStudent.rating > 0 && (
+                            <div className="flex items-center space-x-1">
+                              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                              <span className="font-semibold text-gray-900">
+                                {hostData.currentStudent.rating.toFixed(1)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {hostData.currentStudent.university}
+                        </p>
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          <span>Since {hostData.currentStudent.startDate}</span>
+                        </div>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {hostData.currentStudent.university}
+
+                    {hostData.currentStudent.servicesProvided && hostData.currentStudent.servicesProvided.length > 0 && (
+                      <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                          Services Provided:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {hostData.currentStudent.servicesProvided.map((service) => (
+                            <span
+                              key={service}
+                              className="badge bg-purple-100 text-purple-800"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-green-900 font-medium">
+                            Hours this month
+                          </p>
+                          <p className="text-2xl font-bold text-green-900">
+                            {hostData.currentStudent.hoursThisMonth || 0}
+                          </p>
+                        </div>
+                        <Clock className="w-10 h-10 text-green-600" />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 mt-4">
+                      <Link to="/rate-experience" className="btn-primary flex-1 text-center">
+                        Rate This Month
+                      </Link>
+                      <Link to="/monthly-report" className="btn-outline flex-1 text-center">
+                        Submit Report
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-4">No active student arrangement</p>
+                    <p className="text-sm text-gray-500">
+                      Browse facilitation requests to find a student match
                     </p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <Calendar className="w-4 h-4" />
-                      <span>Since {hostData.currentStudent.startDate}</span>
-                    </div>
                   </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm font-semibold text-gray-900 mb-2">
-                    Services Provided:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {hostData.currentStudent.servicesProvided.map((service) => (
-                      <span
-                        key={service}
-                        className="badge bg-purple-100 text-purple-800"
-                      >
-                        {service}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-green-900 font-medium">
-                        Hours this month
-                      </p>
-                      <p className="text-2xl font-bold text-green-900">
-                        {hostData.currentStudent.hoursThisMonth}
-                      </p>
-                    </div>
-                    <Clock className="w-10 h-10 text-green-600" />
-                  </div>
-                </div>
-
-                <div className="flex gap-3 mt-4">
-                  <Link to="/rate-experience" className="btn-primary flex-1 text-center">
-                    Rate This Month
-                  </Link>
-                  <Link to="/monthly-report" className="btn-outline flex-1 text-center">
-                    Submit Report
-                  </Link>
-                </div>
+                )}
               </div>
 
               {/* Pending Requests */}
@@ -284,57 +350,53 @@ const HostDashboard = () => {
                   Pending Facilitation Requests
                 </h2>
 
-                <div className="space-y-4">
-                  <div className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Ahmed M.</h3>
-                        <p className="text-sm text-gray-600">
-                          King's College London • Year 2
-                        </p>
-                      </div>
-                      <span className="badge bg-yellow-100 text-yellow-800">
-                        Under Review
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-700 mb-3">
-                      Our team is reviewing this match. We'll contact you within
-                      24-48 hours.
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => alert('Student profile details will be available after admin approval')}
-                        className="btn-primary text-sm py-2"
+                {dashboardData?.pendingRequests && dashboardData.pendingRequests.length > 0 ? (
+                  <div className="space-y-4">
+                    {dashboardData.pendingRequests.map((request) => (
+                      <div
+                        key={request.id}
+                        className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors"
                       >
-                        View Profile
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900">Lisa W.</h3>
-                        <p className="text-sm text-gray-600">
-                          Imperial College • Postgraduate
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">
+                              {request.studentName}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {request.university}
+                              {request.course && ` • ${request.course}`}
+                            </p>
+                          </div>
+                          <span className={`badge ${
+                            request.status === 'under_review'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            {request.status === 'under_review' ? 'Under Review' : 'New'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-3">
+                          {request.status === 'under_review'
+                            ? "Our team is reviewing this match. We'll contact you within 24-48 hours."
+                            : 'New facilitation request received. Our team will review and contact you soon.'}
                         </p>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => alert('Student profile details will be available after admin approval')}
+                            className="btn-primary text-sm py-2"
+                          >
+                            View Profile
+                          </button>
+                        </div>
                       </div>
-                      <span className="badge bg-purple-100 text-purple-800">New</span>
-                    </div>
-                    <p className="text-sm text-gray-700 mb-3">
-                      New facilitation request received. Our team will review and
-                      contact you soon.
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => alert('Student profile details will be available after admin approval')}
-                        className="btn-primary text-sm py-2"
-                      >
-                        View Profile
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600">No pending requests at the moment</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -487,7 +549,7 @@ const HostDashboard = () => {
           <div className="card p-6">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Notifications</h2>
-              {notifications.filter(n => n.unread).length > 0 && (
+              {notifications.filter(n => !n.is_read).length > 0 && (
                 <button
                   onClick={markAllAsRead}
                   className="text-sm text-purple-600 hover:text-purple-700 font-medium"
@@ -513,7 +575,7 @@ const HostDashboard = () => {
                   <div
                     key={notification.id}
                     className={`border-l-4 rounded-r-lg p-4 transition-all ${
-                      notification.unread
+                      !notification.is_read
                         ? 'border-purple-600 bg-purple-50'
                         : 'border-gray-300 bg-white'
                     }`}
@@ -521,12 +583,14 @@ const HostDashboard = () => {
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
                         <p className="text-gray-900 font-medium mb-1">
-                          {notification.message}
+                          {notification.message || notification.content}
                         </p>
-                        <p className="text-sm text-gray-500">{notification.time}</p>
+                        <p className="text-sm text-gray-500">
+                          {new Date(notification.created_at).toLocaleString()}
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        {notification.unread && (
+                        {!notification.is_read && (
                           <>
                             <button
                               onClick={() => markAsRead(notification.id)}

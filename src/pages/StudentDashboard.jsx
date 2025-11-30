@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { dashboardService } from '../services/dashboardService';
 import {
   Search,
   Home,
@@ -13,36 +14,56 @@ import {
   Settings,
   HelpCircle,
   Link2,
+  Loader2,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
-  const { user, getFirstName } = useUser();
+  const { user, getFirstName, loading: userLoading } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const studentData = {
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await dashboardService.getStudentDashboardData(user.id);
+        setDashboardData(data);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchDashboardData();
+    }
+  }, [user, userLoading]);
+
+  // Prepare student data
+  const studentData = user && dashboardData ? {
     name: user.fullName,
     university: user.university,
-    recognitionLevel: 'silver',
-    consecutiveRatings: 4,
-    rating: 4.9,
-    reviewCount: 6,
-    currentHost: {
-      name: 'Margaret Thompson',
-      location: 'Kensington, London',
-      since: 'September 2024',
-      servicesProvided: ['Grocery Shopping', 'Technology Help', 'Companionship'],
-      hoursThisMonth: 14,
-      imageUrl: 'https://randomuser.me/api/portraits/women/67.jpg',
+    recognitionLevel: dashboardData.recognitionLevel || 'bronze',
+    consecutiveRatings: dashboardData.consecutiveRatings || 0,
+    rating: user.rating || 0,
+    reviewCount: dashboardData.reviewCount || 0,
+    currentHost: dashboardData.currentHost,
+    savedHosts: dashboardData.savedHosts || 0,
+    totalHours: dashboardData.totalHours || 0,
+    connectionRequests: dashboardData.connectionRequests || {
+      pending: 0,
+      approved: 0,
+      total: 0,
     },
-    savedHosts: 3,
-    totalHours: 86,
-    connectionRequests: {
-      pending: 1,
-      approved: 1,
-      total: 3,
-    },
-  };
+  } : null;
 
   const recognitionBadge = {
     bronze: { color: 'orange', label: 'Bronze', description: '2+ consecutive 4-5⭐ ratings' },
@@ -50,7 +71,30 @@ const StudentDashboard = () => {
     gold: { color: 'yellow', label: 'Gold', description: '6+ consecutive 4-5⭐ ratings' },
   };
 
-  const currentBadge = recognitionBadge[studentData.recognitionLevel];
+  const currentBadge = studentData ? recognitionBadge[studentData.recognitionLevel] : recognitionBadge.bronze;
+
+  // Show loading state
+  if (userLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no user data
+  if (!user || !studentData) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to view your dashboard.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -194,70 +238,87 @@ const StudentDashboard = () => {
                   Current Arrangement
                 </h2>
 
-                <div className="flex items-start space-x-4 mb-6">
-                  <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200">
-                    <img
-                      src={studentData.currentHost.imageUrl}
-                      alt={studentData.currentHost.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                {studentData.currentHost ? (
+                  <>
+                    <div className="flex items-start space-x-4 mb-6">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200">
+                        <img
+                          src={studentData.currentHost.imageUrl}
+                          alt={studentData.currentHost.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {studentData.currentHost.name}
-                      </h3>
-                      <CheckCircle className="w-6 h-6 text-purple-600" />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {studentData.currentHost.name}
+                          </h3>
+                          <CheckCircle className="w-6 h-6 text-purple-600" />
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {studentData.currentHost.location}
+                        </p>
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <Calendar className="w-4 h-4" />
+                          <span>Since {studentData.currentHost.since}</span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-2">
-                      {studentData.currentHost.location}
+
+                    {studentData.currentHost.servicesProvided && studentData.currentHost.servicesProvided.length > 0 && (
+                      <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                          Services You Provide:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {studentData.currentHost.servicesProvided.map((service) => (
+                            <span
+                              key={service}
+                              className="badge bg-purple-100 text-purple-800"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-purple-900 font-medium">
+                            Hours this month
+                          </p>
+                          <p className="text-2xl font-bold text-purple-900">
+                            {studentData.currentHost.hoursThisMonth || 0}
+                          </p>
+                        </div>
+                        <Clock className="w-10 h-10 text-purple-600" />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 mt-4">
+                      <Link to="/monthly-report" className="btn-primary flex-1 text-center">
+                        Log Hours
+                      </Link>
+                      <Link to="/rate-experience" className="btn-outline flex-1 text-center">
+                        Rate Host
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <Home className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <p className="text-gray-600 mb-4">No active host arrangement</p>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Browse available hosts to find a match
                     </p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <Calendar className="w-4 h-4" />
-                      <span>Since {studentData.currentHost.since}</span>
-                    </div>
+                    <Link to="/student/browse" className="btn-primary">
+                      Browse Hosts
+                    </Link>
                   </div>
-                </div>
-
-                <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                  <p className="text-sm font-semibold text-gray-900 mb-2">
-                    Services You Provide:
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {studentData.currentHost.servicesProvided.map((service) => (
-                      <span
-                        key={service}
-                        className="badge bg-purple-100 text-purple-800"
-                      >
-                        {service}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-purple-900 font-medium">
-                        Hours this month
-                      </p>
-                      <p className="text-2xl font-bold text-purple-900">
-                        {studentData.currentHost.hoursThisMonth}
-                      </p>
-                    </div>
-                    <Clock className="w-10 h-10 text-purple-600" />
-                  </div>
-                </div>
-
-                <div className="flex gap-3 mt-4">
-                  <Link to="/monthly-report" className="btn-primary flex-1 text-center">
-                    Log Hours
-                  </Link>
-                  <Link to="/rate-experience" className="btn-outline flex-1 text-center">
-                    Rate Host
-                  </Link>
-                </div>
+                )}
               </div>
 
               {/* Recognition Progress */}
