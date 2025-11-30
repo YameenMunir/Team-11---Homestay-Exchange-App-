@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap, Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react';
 import { authService } from '../services/authService';
+import supabase from '../utils/supabase';
 import toast from 'react-hot-toast';
 
 const StudentLogin = () => {
@@ -20,7 +21,46 @@ const StudentLogin = () => {
     setLoading(true);
 
     try {
-      await authService.signIn(formData.email, formData.password);
+      const { user } = await authService.signIn(formData.email, formData.password);
+
+      // Check user's role from database
+      const { data: userProfile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        // Continue with login even if profile fetch fails
+        toast.success('Successfully logged in!');
+        navigate('/student/dashboard');
+        return;
+      }
+
+      // Check if user is actually a host trying to log in as student
+      if (userProfile.role === 'host') {
+        await authService.signOut();
+        setError('This account is registered as a host. Redirecting to host login...');
+        toast.error('This account is registered as a host. Please use the host login page.');
+        setTimeout(() => {
+          navigate('/host/login');
+        }, 2000);
+        return;
+      }
+
+      // Check if user is an admin
+      if (userProfile.role === 'admin') {
+        await authService.signOut();
+        setError('This is an admin account. Redirecting to admin login...');
+        toast.error('Please use the admin login page.');
+        setTimeout(() => {
+          navigate('/admin/login');
+        }, 2000);
+        return;
+      }
+
+      // User is a student (guest), proceed normally
       toast.success('Successfully logged in!');
       navigate('/student/dashboard');
     } catch (err) {

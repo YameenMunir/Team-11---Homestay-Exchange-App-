@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Home, Mail, Lock, Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react';
 import { authService } from '../services/authService';
+import supabase from '../utils/supabase';
 import toast from 'react-hot-toast';
 
 const HostLogin = () => {
@@ -20,7 +21,46 @@ const HostLogin = () => {
     setLoading(true);
 
     try {
-      await authService.signIn(formData.email, formData.password);
+      const { user } = await authService.signIn(formData.email, formData.password);
+
+      // Check user's role from database
+      const { data: userProfile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        // Continue with login even if profile fetch fails
+        toast.success('Successfully logged in!');
+        navigate('/host/dashboard');
+        return;
+      }
+
+      // Check if user is actually a student trying to log in as host
+      if (userProfile.role === 'guest') {
+        await authService.signOut();
+        setError('This account is registered as a student. Redirecting to student login...');
+        toast.error('This account is registered as a student. Please use the student login page.');
+        setTimeout(() => {
+          navigate('/student/login');
+        }, 2000);
+        return;
+      }
+
+      // Check if user is an admin
+      if (userProfile.role === 'admin') {
+        await authService.signOut();
+        setError('This is an admin account. Redirecting to admin login...');
+        toast.error('Please use the admin login page.');
+        setTimeout(() => {
+          navigate('/admin/login');
+        }, 2000);
+        return;
+      }
+
+      // User is a host, proceed normally
       toast.success('Successfully logged in!');
       navigate('/host/dashboard');
     } catch (err) {

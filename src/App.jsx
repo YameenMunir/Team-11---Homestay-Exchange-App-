@@ -37,6 +37,7 @@ import KnowledgeHub from './pages/KnowledgeHub';
 import LandingPage from './pages/LandingPage';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import { UserProvider, useUser } from './context/UserContext';
 import { AdminProvider } from './context/AdminContext';
 import AuthProvider from './context/AuthContext';
@@ -114,22 +115,106 @@ function AppContent() {
             {/* Host Routes */}
             <Route path="/host/login" element={<HostLogin />} />
             <Route path="/host/signup" element={<HostSignup />} />
-            <Route path="/host/dashboard" element={<HostDashboard />} />
-            <Route path="/host/settings" element={<UserSettings />} />
-            <Route path="/host/create-task" element={<CreateTask />} />
-            <Route path="/host/manage-tasks" element={<ManageTasks />} />
-            <Route path="/host/edit-task/:taskId" element={<CreateTask />} />
+            <Route
+              path="/host/dashboard"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <HostDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/host/settings"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <UserSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/host/create-task"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <CreateTask />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/host/manage-tasks"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <ManageTasks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/host/edit-task/:taskId"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <CreateTask />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Student Routes */}
             <Route path="/student/login" element={<StudentLogin />} />
             <Route path="/student/signup" element={<StudentSignup />} />
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
-            <Route path="/student/browse" element={<BrowseHosts />} />
-            <Route path="/student/browse-tasks" element={<BrowseTasks />} />
-            <Route path="/student/match/:id" element={<MatchDetails />} />
-            <Route path="/student/settings" element={<UserSettings />} />
-            <Route path="/student/applications" element={<MyApplications />} />
-            <Route path="/student/apply/:taskId" element={<TaskApplication />} />
+            <Route
+              path="/student/dashboard"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <StudentDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/browse"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <BrowseHosts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/browse-tasks"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <BrowseTasks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/match/:id"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <MatchDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/settings"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <UserSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/applications"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <MyApplications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/apply/:taskId"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <TaskApplication />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
