@@ -2,6 +2,22 @@ import supabase from '../utils/supabase';
 
 /**
  * Admin service for user management and verification
+ *
+ * USER STATUS SYSTEM:
+ * The user status is determined by two database fields: is_verified and is_active
+ *
+ * - PENDING: is_verified = false, is_active = true
+ *   → User just signed up and awaiting admin review
+ *
+ * - VERIFIED: is_verified = true, is_active = true
+ *   → User approved by admin, has full access to all features
+ *
+ * - REJECTED: is_verified = false, is_active = false
+ *   → User rejected by admin, cannot access protected features
+ *   → Can be reactivated by admin to move back to pending status
+ *
+ * - SUSPENDED: Similar to rejected but for different reason
+ *   → Future enhancement will add is_suspended field
  */
 export const adminService = {
   /**
@@ -51,13 +67,23 @@ export const adminService = {
             )
             .eq('status', 'approved');
 
+          // Determine status based on is_verified and is_active
+          let status = 'pending';
+          if (profile.is_verified && profile.is_active) {
+            status = 'verified';
+          } else if (!profile.is_verified && !profile.is_active) {
+            status = 'rejected';
+          } else if (!profile.is_verified && profile.is_active) {
+            status = 'pending';
+          }
+
           return {
             id: profile.id,
             fullName: profile.full_name,
             email: profile.email,
             phone: profile.phone_number,
             userType: profile.role,
-            status: profile.is_verified ? 'verified' : 'pending',
+            status,
             memberSince: profile.created_at,
             rating: roleSpecificData.average_rating || null,
             totalArrangements: arrangementCount || 0,
@@ -113,8 +139,8 @@ export const adminService = {
   },
 
   /**
-   * Reject a user verification (currently just sets is_verified to false)
-   * TODO: Add rejection_reason field to database schema
+   * Reject a user verification
+   * Sets is_verified to false and is_active to false to mark as rejected
    */
   async rejectUser(userId, reason) {
     try {
@@ -122,7 +148,9 @@ export const adminService = {
         .from('user_profiles')
         .update({
           is_verified: false,
+          is_active: false,
           // TODO: Add rejection_reason field when schema is updated
+          // For now, reason is passed but not stored in DB
         })
         .eq('id', userId);
 
@@ -133,6 +161,30 @@ export const adminService = {
       return { success: true, reason };
     } catch (error) {
       console.error('Error rejecting user:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reactivate a rejected user (set them back to pending status)
+   * This allows users to reapply after addressing rejection reasons
+   */
+  async reactivateUser(userId) {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          is_active: true,
+          is_verified: false, // Back to pending for review
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      console.log(`User ${userId} reactivated and set to pending status`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error reactivating user:', error);
       throw error;
     }
   },

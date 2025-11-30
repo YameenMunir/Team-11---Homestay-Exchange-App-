@@ -67,6 +67,20 @@ export const UserProvider = ({ children }) => {
           if (!error) roleProfile = data;
         }
 
+        // Determine verification status
+        const isVerified = userProfile.is_verified || false;
+        const isActive = userProfile.is_active !== false; // Default to true if not set
+
+        // Determine status: pending, verified, or rejected
+        let verificationStatus = 'pending';
+        if (isVerified && isActive) {
+          verificationStatus = 'verified';
+        } else if (!isVerified && !isActive) {
+          verificationStatus = 'rejected';
+        } else if (!isVerified && isActive) {
+          verificationStatus = 'pending';
+        }
+
         // Combine all data into user object
         setUser({
           id: authUser.id,
@@ -80,7 +94,9 @@ export const UserProvider = ({ children }) => {
             month: 'long',
             day: 'numeric',
           }),
-          isVerified: userProfile.is_verified || false,
+          isVerified,
+          isActive,
+          verificationStatus,
           rating: roleProfile?.average_rating || 0,
           // Include additional profile data
           ...roleProfile,
@@ -102,6 +118,8 @@ export const UserProvider = ({ children }) => {
             day: 'numeric',
           }),
           isVerified: false,
+          isActive: true,
+          verificationStatus: 'pending',
           rating: 0,
         });
       } finally {
@@ -113,6 +131,87 @@ export const UserProvider = ({ children }) => {
       fetchUserProfile();
     }
   }, [authUser, authLoading]);
+
+  // Listen for verification status changes and refresh user data
+  useEffect(() => {
+    const handleVerificationChange = async () => {
+      // Refresh user data when verification status changes
+      if (!authUser) return;
+
+      try {
+        const { data: userProfile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        const userRole = userProfile.role;
+        let roleProfile = null;
+
+        if (userRole === 'host') {
+          const { data, error } = await supabase
+            .from('host_profiles')
+            .select('*')
+            .eq('user_id', authUser.id)
+            .single();
+
+          if (!error) roleProfile = data;
+        } else if (userRole === 'guest') {
+          const { data, error } = await supabase
+            .from('guest_profiles')
+            .select('*')
+            .eq('user_id', authUser.id)
+            .single();
+
+          if (!error) roleProfile = data;
+        }
+
+        // Determine verification status
+        const isVerified = userProfile.is_verified || false;
+        const isActive = userProfile.is_active !== false; // Default to true if not set
+
+        // Determine status: pending, verified, or rejected
+        let verificationStatus = 'pending';
+        if (isVerified && isActive) {
+          verificationStatus = 'verified';
+        } else if (!isVerified && !isActive) {
+          verificationStatus = 'rejected';
+        } else if (!isVerified && isActive) {
+          verificationStatus = 'pending';
+        }
+
+        setUser({
+          id: authUser.id,
+          fullName: userProfile.full_name || authUser.user_metadata?.full_name || 'User',
+          email: userProfile.email || authUser.email,
+          phone: userProfile.phone_number || '',
+          university: roleProfile?.university || '',
+          userType: userRole,
+          memberSince: new Date(userProfile.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+          isVerified,
+          isActive,
+          verificationStatus,
+          rating: roleProfile?.average_rating || 0,
+          ...roleProfile,
+        });
+      } catch (error) {
+        console.error('Error refreshing user data:', error);
+      }
+    };
+
+    // Listen for custom verification changed event
+    window.addEventListener('verificationChanged', handleVerificationChange);
+
+    return () => {
+      window.removeEventListener('verificationChanged', handleVerificationChange);
+    };
+  }, [authUser]);
 
   const updateUser = (updates) => {
     setUser((prevUser) => ({

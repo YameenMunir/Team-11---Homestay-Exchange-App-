@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
-import { AlertCircle, Clock, CheckCircle, FileText } from 'lucide-react';
+import { AlertCircle, Clock, CheckCircle, FileText, XCircle } from 'lucide-react';
 
 /**
  * Component that requires user to be verified before accessing feature
@@ -46,14 +46,84 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
   }
 
   // User is verified - show the protected content
-  if (user.isVerified) {
+  if (user.verificationStatus === 'verified') {
     return children;
   }
 
-  // User is NOT verified - show verification pending message
   const dashboardPath = user.userType === 'host' ? '/host/dashboard' : '/student/dashboard';
   const settingsPath = user.userType === 'host' ? '/host/settings' : '/student/settings';
 
+  // User is REJECTED - show rejection message
+  if (user.verificationStatus === 'rejected') {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="container-custom max-w-3xl">
+          <div className="card p-8">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <XCircle className="w-10 h-10 text-red-600" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-3">
+                Verification Not Approved
+              </h1>
+              <p className="text-lg text-gray-600">
+                Your account verification was not approved
+              </p>
+            </div>
+
+            {/* Status Info */}
+            <div className="bg-red-50 border-l-4 border-red-400 p-6 mb-8">
+              <div className="flex items-start">
+                <AlertCircle className="w-6 h-6 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-red-900 mb-2">
+                    Why can't I access {feature}?
+                  </h3>
+                  <p className="text-red-800 text-sm mb-4">
+                    Your verification request was reviewed but not approved at this time.
+                    This means you cannot access restricted platform features.
+                  </p>
+                  <p className="text-red-800 text-sm">
+                    If you believe this is an error or would like to appeal this decision,
+                    please contact our support team for assistance.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link
+                to="/help"
+                className="btn-primary flex-1 text-center"
+              >
+                Contact Support
+              </Link>
+              <Link
+                to={dashboardPath}
+                className="btn-outline flex-1 text-center"
+              >
+                Back to Dashboard
+              </Link>
+            </div>
+
+            {/* Contact Info */}
+            <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+              <p className="text-sm text-gray-600">
+                Need more information?{' '}
+                <Link to={settingsPath} className="text-purple-600 hover:text-purple-700 font-medium">
+                  View Your Account Details
+                </Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // User is PENDING - show verification pending message
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="container-custom max-w-3xl">

@@ -23,11 +23,13 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
+import { useVerificationEvents } from '../context/VerificationEventsContext';
 import { adminService } from '../services/adminService';
 import toast from 'react-hot-toast';
 
 const AdminUserManagement = () => {
   const { hasPermission } = useAdmin();
+  const { notifyVerificationChange } = useVerificationEvents();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, host, guest
   const [filterStatus, setFilterStatus] = useState('all'); // all, verified, pending
@@ -76,6 +78,8 @@ const AdminUserManagement = () => {
     try {
       await adminService.verifyUser(userId);
       toast.success('User verified successfully!');
+      // Notify other components that verification status changed
+      notifyVerificationChange();
       // Refresh users list
       await fetchUsers();
       setShowUserModal(false);
@@ -99,6 +103,8 @@ const AdminUserManagement = () => {
     try {
       await adminService.rejectUser(selectedUser.id, rejectReason);
       toast.success('User verification rejected');
+      // Notify other components that verification status changed
+      notifyVerificationChange();
       setRejectReason('');
       setShowRejectModal(false);
       setShowUserModal(false);
@@ -107,6 +113,22 @@ const AdminUserManagement = () => {
     } catch (error) {
       console.error('Error rejecting user:', error);
       toast.error('Failed to reject user');
+    }
+  };
+
+  const handleReactivateUser = async (userId) => {
+    if (window.confirm('Reactivate this user? They will be moved back to pending verification status.')) {
+      try {
+        await adminService.reactivateUser(userId);
+        toast.success('User reactivated and set to pending status');
+        // Notify other components that verification status changed
+        notifyVerificationChange();
+        // Refresh users list
+        await fetchUsers();
+      } catch (error) {
+        console.error('Error reactivating user:', error);
+        toast.error('Failed to reactivate user');
+      }
     }
   };
 
@@ -154,12 +176,14 @@ const AdminUserManagement = () => {
     const styles = {
       verified: 'bg-green-100 text-green-800',
       pending: 'bg-yellow-100 text-yellow-800',
-      suspended: 'bg-red-100 text-red-800',
+      rejected: 'bg-red-100 text-red-800',
+      suspended: 'bg-orange-100 text-orange-800',
     };
     const icons = {
       verified: <CheckCircle className="w-3 h-3" />,
       pending: <Clock className="w-3 h-3" />,
-      suspended: <XCircle className="w-3 h-3" />,
+      rejected: <XCircle className="w-3 h-3" />,
+      suspended: <UserX className="w-3 h-3" />,
     };
     return (
       <span className={`badge ${styles[status]} flex items-center space-x-1`}>
@@ -195,7 +219,7 @@ const AdminUserManagement = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Total Users</p>
             <span className="text-3xl font-bold text-gray-900">{users.length}</span>
@@ -210,6 +234,12 @@ const AdminUserManagement = () => {
             <p className="text-sm text-gray-600 mb-1">Pending Verification</p>
             <span className="text-3xl font-bold text-yellow-600">
               {users.filter((u) => u.status === 'pending').length}
+            </span>
+          </div>
+          <div className="card p-6">
+            <p className="text-sm text-gray-600 mb-1">Rejected</p>
+            <span className="text-3xl font-bold text-red-600">
+              {users.filter((u) => u.status === 'rejected').length}
             </span>
           </div>
         </div>
@@ -259,6 +289,7 @@ const AdminUserManagement = () => {
                 <option value="all">All Statuses</option>
                 <option value="verified">Verified</option>
                 <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
               </select>
             </div>
           </div>
@@ -381,7 +412,17 @@ const AdminUserManagement = () => {
                             <UserCheck className="w-5 h-5" />
                           </button>
                         )}
-                        {hasPermission('manage_users') && user.status !== 'suspended' && (
+                        {hasPermission('manage_users') && user.status === 'rejected' && (
+                          <button
+                            onClick={() => handleReactivateUser(user.id)}
+                            className="text-blue-600 hover:text-blue-900"
+                            title="Reactivate User"
+                            aria-label="Reactivate user"
+                          >
+                            <CheckCircle className="w-5 h-5" />
+                          </button>
+                        )}
+                        {hasPermission('manage_users') && user.status !== 'suspended' && user.status !== 'rejected' && (
                           <button
                             onClick={() => handleSuspendUser(user.id)}
                             className="text-orange-600 hover:text-orange-900"
@@ -590,6 +631,14 @@ const AdminUserManagement = () => {
                         Verify User
                       </button>
                     </>
+                  )}
+                  {hasPermission('manage_users') && selectedUser.status === 'rejected' && (
+                    <button
+                      onClick={() => handleReactivateUser(selectedUser.id)}
+                      className="btn-primary flex-1"
+                    >
+                      Reactivate User
+                    </button>
                   )}
                 </div>
               </div>

@@ -10,12 +10,54 @@ const VerificationStatusBanner = () => {
   const { user } = useUser();
 
   // Don't show banner if no user or if user is verified
-  if (!user || user.isVerified) {
+  if (!user || user.verificationStatus === 'verified') {
     return null;
   }
 
   const settingsPath = user.userType === 'host' ? '/host/settings' : '/student/settings';
+  const helpPath = '/help';
 
+  // Show rejected status
+  if (user.verificationStatus === 'rejected') {
+    return (
+      <div className="mb-6">
+        <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r-lg shadow-sm">
+          <div className="flex items-start">
+            <XCircle className="w-6 h-6 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-semibold text-red-900 mb-1">
+                    Verification Not Approved
+                  </h3>
+                  <p className="text-sm text-red-800 mb-2">
+                    Your account verification was not approved. You cannot access restricted features at this time.
+                    Please contact support for more information.
+                  </p>
+                  <div className="flex items-center space-x-4">
+                    <Link
+                      to={helpPath}
+                      className="text-sm font-medium text-red-900 hover:text-red-800 underline inline-flex items-center"
+                    >
+                      Contact Support →
+                    </Link>
+                    <Link
+                      to={settingsPath}
+                      className="text-sm font-medium text-red-900 hover:text-red-800 underline inline-flex items-center"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show pending status (default)
   return (
     <div className="mb-6">
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg shadow-sm">
@@ -54,7 +96,8 @@ export const VerificationStatusBadge = () => {
 
   if (!user) return null;
 
-  if (user.isVerified) {
+  // Verified status
+  if (user.verificationStatus === 'verified') {
     return (
       <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
         <CheckCircle className="w-4 h-4 mr-1.5" />
@@ -63,6 +106,17 @@ export const VerificationStatusBadge = () => {
     );
   }
 
+  // Rejected status
+  if (user.verificationStatus === 'rejected') {
+    return (
+      <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+        <XCircle className="w-4 h-4 mr-1.5" />
+        Not Verified
+      </div>
+    );
+  }
+
+  // Pending status (default)
   return (
     <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
       <Clock className="w-4 h-4 mr-1.5" />

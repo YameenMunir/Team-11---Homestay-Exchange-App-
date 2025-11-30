@@ -43,6 +43,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RequiresVerification from './components/RequiresVerification';
 import { UserProvider, useUser } from './context/UserContext';
 import { AdminProvider } from './context/AdminContext';
+import { VerificationEventsProvider } from './context/VerificationEventsContext';
 import AuthProvider from './context/AuthContext';
 
 function AppContent() {
@@ -326,7 +327,9 @@ function App() {
     <AuthProvider>
       <UserProvider>
         <AdminProvider>
-          <AppContent />
+          <VerificationEventsProvider>
+            <AppContent />
+          </VerificationEventsProvider>
         </AdminProvider>
       </UserProvider>
     </AuthProvider>

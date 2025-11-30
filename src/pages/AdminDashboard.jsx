@@ -16,16 +16,26 @@ import {
   Loader2,
 } from 'lucide-react';
 import { adminService } from '../services/adminService';
+import { useVerificationEvents } from '../context/VerificationEventsContext';
 import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { lastUpdate } = useVerificationEvents();
 
+  // Fetch dashboard data on mount
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // Re-fetch stats when verification changes occur
+  useEffect(() => {
+    if (lastUpdate) {
+      fetchDashboardData();
+    }
+  }, [lastUpdate]);
 
   const fetchDashboardData = async () => {
     try {
