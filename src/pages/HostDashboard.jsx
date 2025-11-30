@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
+import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Home,
   Users,
@@ -123,6 +124,9 @@ const HostDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container-custom">
+        {/* Verification Status Banner */}
+        <VerificationStatusBanner />
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">

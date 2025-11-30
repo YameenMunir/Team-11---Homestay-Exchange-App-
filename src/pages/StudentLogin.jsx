@@ -102,7 +102,7 @@ const StudentLogin = () => {
         {/* Back Button */}
         <Link
           to="/"
-          className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-8 transition-colors"
+          className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-8 text-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Home</span>
@@ -117,13 +117,13 @@ const StudentLogin = () => {
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
               Student Login
             </h1>
-            <p className="text-lg text-gray-600">
-              Welcome back! Sign in to continue your journey
+            <p className="text-xl text-gray-600">
+              Welcome back! Sign in to your account
             </p>
           </div>
 
           {/* Login Form */}
-          <div className="card p-8 animate-slide-up">
+          <div className="card p-8 md:p-10 animate-slide-up">
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start space-x-3">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -136,13 +136,13 @@ const StudentLogin = () => {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-semibold text-gray-900 mb-2"
+                  className="block text-lg font-semibold text-gray-900 mb-2"
                 >
                   Email Address
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="w-5 h-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Mail className="w-6 h-6 text-gray-400" />
                   </div>
                   <input
                     type="email"
@@ -151,7 +151,7 @@ const StudentLogin = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="input-field pl-11"
+                    className="input-accessible pl-14"
                     placeholder="your.email@university.ac.uk"
                   />
                 </div>
@@ -161,13 +161,13 @@ const StudentLogin = () => {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-semibold text-gray-900 mb-2"
+                  className="block text-lg font-semibold text-gray-900 mb-2"
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="w-5 h-5 text-gray-400" />
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Lock className="w-6 h-6 text-gray-400" />
                   </div>
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -176,18 +176,18 @@ const StudentLogin = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="input-field pl-11 pr-11"
+                    className="input-accessible pl-14 pr-14"
                     placeholder="Enter your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      <EyeOff className="w-6 h-6 text-gray-400 hover:text-gray-600" />
                     ) : (
-                      <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                      <Eye className="w-6 h-6 text-gray-400 hover:text-gray-600" />
                     )}
                   </button>
                 </div>
@@ -195,17 +195,17 @@ const StudentLogin = () => {
 
               {/* Remember & Forgot */}
               <div className="flex items-center justify-between">
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                   />
-                  <span className="text-sm text-gray-700">Remember me</span>
+                  <span className="text-base text-gray-700">Remember me</span>
                 </label>
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-base text-purple-600 hover:text-purple-700 font-medium"
                 >
                   Forgot password?
                 </button>
@@ -214,7 +214,7 @@ const StudentLogin = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="btn-primary w-full"
+                className="btn-accessible w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white focus:ring-purple-300"
                 disabled={loading}
               >
                 {loading ? 'Signing In...' : 'Sign In'}
@@ -222,27 +222,27 @@ const StudentLogin = () => {
             </form>
 
             {/* Divider */}
-            <div className="relative my-6">
+            <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white text-gray-500">Don't have an account?</span>
+              <div className="relative flex justify-center text-base">
+                <span className="px-4 bg-white text-gray-500">Don't have an account?</span>
               </div>
             </div>
 
             {/* Sign Up Link */}
             <Link
               to="/student/signup"
-              className="btn-outline w-full text-center block"
+              className="block w-full btn-accessible bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-900 text-center"
             >
               Create Student Account
             </Link>
           </div>
 
           {/* Help Text */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="mt-8 text-center">
+            <p className="text-lg text-gray-600">
               Need help?{' '}
               <Link to="/help" className="text-purple-600 hover:text-purple-700 font-medium">
                 Visit our Help Center

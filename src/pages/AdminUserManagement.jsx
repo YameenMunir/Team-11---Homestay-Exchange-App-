@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Users,
   Search,
@@ -18,93 +18,44 @@ import {
   XCircle,
   Clock,
   Shield,
+  FileText,
+  ExternalLink,
+  Loader2,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
+import { adminService } from '../services/adminService';
+import toast from 'react-hot-toast';
 
 const AdminUserManagement = () => {
   const { hasPermission } = useAdmin();
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all'); // all, host, student
-  const [filterStatus, setFilterStatus] = useState('all'); // all, verified, pending, suspended
+  const [filterType, setFilterType] = useState('all'); // all, host, guest
+  const [filterStatus, setFilterStatus] = useState('all'); // all, verified, pending
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
-  // Mock user data - Replace with API call
-  const users = [
-    {
-      id: 1,
-      fullName: 'Robert Anderson',
-      email: 'robert.a@email.com',
-      phone: '07XXX 123 456',
-      userType: 'host',
-      address: '123 Main Street, London',
-      postcode: 'SW1A 1AA',
-      status: 'pending',
-      memberSince: '2025-01-18',
-      rating: null,
-      totalArrangements: 0,
-      documentsSubmitted: true,
-    },
-    {
-      id: 2,
-      fullName: 'Emma Wilson',
-      email: 'emma.w@ucl.ac.uk',
-      phone: '07XXX 789 012',
-      userType: 'student',
-      university: 'University College London',
-      course: 'Computer Science',
-      yearOfStudy: '2',
-      status: 'pending',
-      memberSince: '2025-01-19',
-      rating: null,
-      totalArrangements: 0,
-      documentsSubmitted: true,
-    },
-    {
-      id: 3,
-      fullName: 'Margaret Thompson',
-      email: 'margaret.t@email.com',
-      phone: '07XXX 456 789',
-      userType: 'host',
-      address: '45 Oak Avenue, Manchester',
-      postcode: 'M1 2AB',
-      status: 'verified',
-      memberSince: '2024-11-05',
-      rating: 4.8,
-      totalArrangements: 3,
-      documentsSubmitted: true,
-    },
-    {
-      id: 4,
-      fullName: 'Sarah K.',
-      email: 'sarah.k@ucl.ac.uk',
-      phone: '07XXX 999 888',
-      userType: 'student',
-      university: 'University College London',
-      course: 'Medicine',
-      yearOfStudy: '1',
-      status: 'verified',
-      memberSince: '2025-01-15',
-      rating: 4.9,
-      totalArrangements: 1,
-      documentsSubmitted: true,
-    },
-    {
-      id: 5,
-      fullName: 'John Smith',
-      email: 'john.s@gmail.com',
-      phone: '07XXX 111 222',
-      userType: 'host',
-      address: '78 Park Lane, Birmingham',
-      postcode: 'B1 3CD',
-      status: 'suspended',
-      memberSince: '2024-08-20',
-      rating: 2.1,
-      totalArrangements: 2,
-      documentsSubmitted: true,
-      suspensionReason: 'Multiple complaints received',
-    },
-  ];
+  // Fetch users on component mount
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const usersData = await adminService.getAllUsers();
+      setUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   // Filter users
   const filteredUsers = users.filter((user) => {
@@ -121,29 +72,82 @@ const AdminUserManagement = () => {
     setShowUserModal(true);
   };
 
-  const handleVerifyUser = (userId) => {
-    // TODO: Implement API call
-    alert(`User ${userId} verified successfully`);
+  const handleVerifyUser = async (userId) => {
+    try {
+      await adminService.verifyUser(userId);
+      toast.success('User verified successfully!');
+      // Refresh users list
+      await fetchUsers();
+      setShowUserModal(false);
+    } catch (error) {
+      console.error('Error verifying user:', error);
+      toast.error('Failed to verify user');
+    }
   };
 
-  const handleSuspendUser = (userId) => {
+  const handleRejectUser = (user) => {
+    setSelectedUser(user);
+    setShowRejectModal(true);
+  };
+
+  const handleRejectSubmit = async () => {
+    if (!rejectReason.trim()) {
+      toast.error('Please provide a reason for rejection');
+      return;
+    }
+
+    try {
+      await adminService.rejectUser(selectedUser.id, rejectReason);
+      toast.success('User verification rejected');
+      setRejectReason('');
+      setShowRejectModal(false);
+      setShowUserModal(false);
+      // Refresh users list
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error rejecting user:', error);
+      toast.error('Failed to reject user');
+    }
+  };
+
+  const handleSuspendUser = async (userId) => {
     const reason = prompt('Enter suspension reason:');
     if (reason) {
-      // TODO: Implement API call
-      alert(`User ${userId} suspended. Reason: ${reason}`);
+      try {
+        await adminService.suspendUser(userId, reason);
+        toast.success('User suspended successfully');
+        // Refresh users list
+        await fetchUsers();
+      } catch (error) {
+        console.error('Error suspending user:', error);
+        toast.error('Failed to suspend user');
+      }
     }
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
     if (window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
-      // TODO: Implement API call
-      alert(`User ${userId} deleted`);
+      try {
+        await adminService.deleteUser(userId);
+        toast.success('User deleted successfully');
+        // Refresh users list
+        await fetchUsers();
+        setShowUserModal(false);
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        toast.error('Failed to delete user');
+      }
     }
   };
 
-  const handleExportUsers = () => {
-    // TODO: Implement CSV export
-    alert('Exporting users to CSV...');
+  const handleExportUsers = async () => {
+    try {
+      await adminService.exportUsersToCSV();
+      toast.success('Users exported successfully');
+    } catch (error) {
+      console.error('Error exporting users:', error);
+      toast.error('Failed to export users');
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -165,6 +169,18 @@ const AdminUserManagement = () => {
     );
   };
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading users...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container-custom">
@@ -179,7 +195,7 @@ const AdminUserManagement = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Total Users</p>
             <span className="text-3xl font-bold text-gray-900">{users.length}</span>
@@ -191,15 +207,9 @@ const AdminUserManagement = () => {
             </span>
           </div>
           <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Pending</p>
+            <p className="text-sm text-gray-600 mb-1">Pending Verification</p>
             <span className="text-3xl font-bold text-yellow-600">
               {users.filter((u) => u.status === 'pending').length}
-            </span>
-          </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Suspended</p>
-            <span className="text-3xl font-bold text-red-600">
-              {users.filter((u) => u.status === 'suspended').length}
             </span>
           </div>
         </div>
@@ -234,7 +244,7 @@ const AdminUserManagement = () => {
               >
                 <option value="all">All Types</option>
                 <option value="host">Hosts Only</option>
-                <option value="student">Students Only</option>
+                <option value="guest">Students Only</option>
               </select>
             </div>
 
@@ -249,7 +259,6 @@ const AdminUserManagement = () => {
                 <option value="all">All Statuses</option>
                 <option value="verified">Verified</option>
                 <option value="pending">Pending</option>
-                <option value="suspended">Suspended</option>
               </select>
             </div>
           </div>
@@ -489,11 +498,72 @@ const AdminUserManagement = () => {
                   </div>
                 </div>
 
-                {/* Suspension Info */}
-                {selectedUser.status === 'suspended' && selectedUser.suspensionReason && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <h4 className="text-sm font-semibold text-red-900 mb-2">Suspension Reason</h4>
-                    <p className="text-sm text-red-800">{selectedUser.suspensionReason}</p>
+                {/* Submitted Documents */}
+                {selectedUser.documentsSubmitted && (
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-900 mb-3">Submitted Documents</h4>
+                    <div className="space-y-2">
+                      {selectedUser.idDocumentUrl && (
+                        <a
+                          href={selectedUser.idDocumentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-900">ID Document</span>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400" />
+                        </a>
+                      )}
+                      {selectedUser.proofOfAddressUrl && (
+                        <a
+                          href={selectedUser.proofOfAddressUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-900">Proof of Address</span>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400" />
+                        </a>
+                      )}
+                      {selectedUser.studentIdUrl && (
+                        <a
+                          href={selectedUser.studentIdUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-900">Student ID</span>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400" />
+                        </a>
+                      )}
+                      {selectedUser.dbsCheckUrl && (
+                        <a
+                          href={selectedUser.dbsCheckUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <FileText className="w-4 h-4 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-900">DBS Check</span>
+                          </div>
+                          <ExternalLink className="w-4 h-4 text-gray-400" />
+                        </a>
+                      )}
+                      {!selectedUser.idDocumentUrl && !selectedUser.proofOfAddressUrl &&
+                       !selectedUser.studentIdUrl && !selectedUser.dbsCheckUrl && (
+                        <p className="text-sm text-gray-500 italic">No documents uploaded yet</p>
+                      )}
+                    </div>
                   </div>
                 )}
 
@@ -506,17 +576,84 @@ const AdminUserManagement = () => {
                     Close
                   </button>
                   {hasPermission('verify_documents') && selectedUser.status === 'pending' && (
-                    <button
-                      onClick={() => {
-                        handleVerifyUser(selectedUser.id);
-                        setShowUserModal(false);
-                      }}
-                      className="btn-primary flex-1"
-                    >
-                      Verify User
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleRejectUser(selectedUser)}
+                        className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                      >
+                        Reject
+                      </button>
+                      <button
+                        onClick={() => handleVerifyUser(selectedUser.id)}
+                        className="btn-primary flex-1"
+                      >
+                        Verify User
+                      </button>
+                    </>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reject Modal */}
+        {showRejectModal && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-8">
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Reject Verification
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Rejecting verification for {selectedUser.fullName}
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setShowRejectModal(false);
+                    setRejectReason('');
+                  }}
+                  className="text-gray-400 hover:text-gray-600"
+                  aria-label="Close modal"
+                >
+                  <XCircle className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Reason for Rejection *
+                </label>
+                <textarea
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="Please provide a clear reason for rejecting this user's verification..."
+                  className="input-field min-h-[120px]"
+                  rows={5}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  This reason will be sent to the user via email
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowRejectModal(false);
+                    setRejectReason('');
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRejectSubmit}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                >
+                  Reject Verification
+                </button>
               </div>
             </div>
           </div>

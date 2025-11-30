@@ -38,6 +38,7 @@ import LandingPage from './pages/LandingPage';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
+import RequiresVerification from './components/RequiresVerification';
 import { UserProvider, useUser } from './context/UserContext';
 import { AdminProvider } from './context/AdminContext';
 import AuthProvider from './context/AuthContext';
@@ -135,7 +136,9 @@ function AppContent() {
               path="/host/create-task"
               element={
                 <ProtectedRoute requiredRole="host">
-                  <CreateTask />
+                  <RequiresVerification feature="Create Tasks">
+                    <CreateTask />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -143,7 +146,9 @@ function AppContent() {
               path="/host/manage-tasks"
               element={
                 <ProtectedRoute requiredRole="host">
-                  <ManageTasks />
+                  <RequiresVerification feature="Manage Tasks">
+                    <ManageTasks />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -151,7 +156,9 @@ function AppContent() {
               path="/host/edit-task/:taskId"
               element={
                 <ProtectedRoute requiredRole="host">
-                  <CreateTask />
+                  <RequiresVerification feature="Edit Tasks">
+                    <CreateTask />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -171,7 +178,9 @@ function AppContent() {
               path="/student/browse"
               element={
                 <ProtectedRoute requiredRole="guest">
-                  <BrowseHosts />
+                  <RequiresVerification feature="Browse Hosts">
+                    <BrowseHosts />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -179,7 +188,9 @@ function AppContent() {
               path="/student/browse-tasks"
               element={
                 <ProtectedRoute requiredRole="guest">
-                  <BrowseTasks />
+                  <RequiresVerification feature="Browse Tasks">
+                    <BrowseTasks />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -187,7 +198,9 @@ function AppContent() {
               path="/student/match/:id"
               element={
                 <ProtectedRoute requiredRole="guest">
-                  <MatchDetails />
+                  <RequiresVerification feature="Host Details">
+                    <MatchDetails />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
@@ -211,7 +224,9 @@ function AppContent() {
               path="/student/apply/:taskId"
               element={
                 <ProtectedRoute requiredRole="guest">
-                  <TaskApplication />
+                  <RequiresVerification feature="Task Applications">
+                    <TaskApplication />
+                  </RequiresVerification>
                 </ProtectedRoute>
               }
             />
