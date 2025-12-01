@@ -54,6 +54,27 @@ const StudentSignup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validation for Step 1
+    if (currentStep === 1) {
+      // Check if user is at least 18 years old
+      if (formData.dateOfBirth) {
+        const today = new Date();
+        const birthDate = new Date(formData.dateOfBirth);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const dayDiff = today.getDate() - birthDate.getDate();
+
+        // Adjust age if birthday hasn't occurred this year
+        const actualAge = (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) ? age - 1 : age;
+
+        if (actualAge < 18) {
+          alert('You must be at least 18 years old to register as a student');
+          return;
+        }
+      }
+    }
+
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     } else {
@@ -258,9 +279,13 @@ const StudentSignup = () => {
                           value={formData.dateOfBirth}
                           onChange={handleChange}
                           required
+                          max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                           className="input-field pl-11"
                         />
                       </div>
+                      <p className="text-xs text-gray-600 mt-2">
+                        You must be at least 18 years old to register
+                      </p>
                     </div>
 
                     <div className="md:col-span-2">
