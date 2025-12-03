@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import supabase from '../utils/supabase';
 
 const AdminContext = createContext();
 
@@ -13,7 +14,7 @@ export const useAdmin = () => {
 export const AdminProvider = ({ children }) => {
   // Admin user state with role-based permissions
   const [adminUser, setAdminUser] = useState({
-    id: 1,
+    id: null,
     fullName: 'Admin User',
     email: 'admin@hostfamilystay.com',
     role: 'super_admin', // super_admin, admin, moderator, support
@@ -30,6 +31,11 @@ export const AdminProvider = ({ children }) => {
     ],
     isAuthenticated: false,
   });
+
+  // Check for existing Supabase session on mount
+  useEffect(() => {
+    checkAdminSession();
+  }, []);
 
   // Role-based permission definitions
   const ROLE_PERMISSIONS = {
@@ -82,27 +88,116 @@ export const AdminProvider = ({ children }) => {
     return adminUser.role === role;
   };
 
-  // Login admin
-  const loginAdmin = (email, password, role = 'admin') => {
-    // TODO: Replace with actual API call
-    const permissions = ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS.admin;
-    setAdminUser({
-      id: 1,
-      fullName: 'Admin User',
-      email: email,
-      role: role,
-      permissions: permissions,
-      isAuthenticated: true,
-    });
-    return true;
+  // Check if there's an existing admin session
+  const checkAdminSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.error('Error checking session:', error);
+        return;
+      }
+
+      if (session?.user) {
+        // Fetch user profile to check if they're an admin
+        const { data: profile, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Error fetching admin profile:', profileError);
+          return;
+        }
+
+        // Only set admin user if they have admin role
+        if (profile && profile.role === 'admin') {
+          const permissions = ROLE_PERMISSIONS[profile.role] || ROLE_PERMISSIONS.admin;
+          setAdminUser({
+            id: profile.id,
+            fullName: profile.full_name,
+            email: profile.email,
+            role: profile.role,
+            permissions: permissions,
+            isAuthenticated: true,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error in checkAdminSession:', error);
+    }
+  };
+
+  // Login admin with Supabase authentication
+  const loginAdmin = async (email, password, role = 'admin') => {
+    try {
+      // Sign in with Supabase
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        console.error('Authentication error:', authError);
+        throw authError;
+      }
+
+      if (!authData.user) {
+        throw new Error('No user returned from authentication');
+      }
+
+      // Fetch user profile to verify admin role
+      const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('id', authData.user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+        throw profileError;
+      }
+
+      // Check if user has admin role
+      if (profile.role !== 'admin') {
+        await supabase.auth.signOut();
+        throw new Error('Access denied. This account does not have admin privileges.');
+      }
+
+      // Set admin user with proper permissions
+      const permissions = ROLE_PERMISSIONS[profile.role] || ROLE_PERMISSIONS.admin;
+      setAdminUser({
+        id: profile.id,
+        fullName: profile.full_name,
+        email: profile.email,
+        role: profile.role,
+        permissions: permissions,
+        isAuthenticated: true,
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   // Logout admin
-  const logoutAdmin = () => {
-    setAdminUser({
-      ...adminUser,
-      isAuthenticated: false,
-    });
+  const logoutAdmin = async () => {
+    try {
+      await supabase.auth.signOut();
+      setAdminUser({
+        id: null,
+        fullName: 'Admin User',
+        email: '',
+        role: 'admin',
+        permissions: [],
+        isAuthenticated: false,
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   // Update admin profile

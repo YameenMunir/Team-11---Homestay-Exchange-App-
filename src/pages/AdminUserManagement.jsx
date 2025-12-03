@@ -21,6 +21,7 @@ import {
   FileText,
   ExternalLink,
   Loader2,
+  Activity,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { useVerificationEvents } from '../context/VerificationEventsContext';
@@ -29,7 +30,7 @@ import toast from 'react-hot-toast';
 
 const AdminUserManagement = () => {
   const { hasPermission } = useAdmin();
-  const { notifyVerificationChange } = useVerificationEvents();
+  const { notifyVerificationChange, lastUpdate } = useVerificationEvents();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // all, host, guest
   const [filterStatus, setFilterStatus] = useState('all'); // all, verified, pending
@@ -39,11 +40,21 @@ const AdminUserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [isInitialMount, setIsInitialMount] = useState(true);
 
   // Fetch users on component mount
   useEffect(() => {
     fetchUsers();
+    setIsInitialMount(false);
   }, []);
+
+  // Re-fetch users when verification changes or new signups occur
+  useEffect(() => {
+    if (lastUpdate && !isInitialMount) {
+      fetchUsers();
+      toast.success('User list updated');
+    }
+  }, [lastUpdate]);
 
   const fetchUsers = async () => {
     try {
@@ -210,12 +221,30 @@ const AdminUserManagement = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
-            User Management
-          </h1>
-          <p className="text-lg text-gray-600">
-            Manage all hosts and students on the platform
-          </p>
+          <div className="flex items-start justify-between">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
+                User Management
+              </h1>
+              <p className="text-lg text-gray-600">
+                Manage all hosts and students on the platform
+              </p>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="badge bg-green-100 text-green-800 flex items-center space-x-1">
+                <Activity className="w-3 h-3" />
+                <span>Auto-refreshing</span>
+              </span>
+              <button
+                onClick={fetchUsers}
+                className="btn-outline flex items-center space-x-2"
+                title="Manually refresh user list"
+              >
+                <Activity className="w-4 h-4" />
+                <span>Refresh</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Stats */}

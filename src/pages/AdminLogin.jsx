@@ -40,16 +40,16 @@ const AdminLogin = () => {
     }
 
     try {
-      // TODO: Replace with actual API call
-      const success = loginAdmin(formData.email, formData.password, formData.role);
-
-      if (success) {
-        navigate('/admin/dashboard');
-      } else {
-        setError('Invalid credentials. Please try again.');
-      }
+      // Authenticate with Supabase
+      await loginAdmin(formData.email, formData.password, formData.role);
+      navigate('/admin/dashboard');
     } catch (err) {
-      setError('Login failed. Please try again.');
+      // Display specific error message from authentication
+      if (err.message) {
+        setError(err.message);
+      } else {
+        setError('Invalid credentials or access denied. Please ensure you have admin privileges.');
+      }
       console.error('Login error:', err);
     }
   };

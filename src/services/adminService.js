@@ -21,50 +21,79 @@ import supabase from '../utils/supabase';
  */
 export const adminService = {
   /**
-   * Fetch all users with their profiles and documents
+   * Fetch all users from user_profiles table with role 'guest' or 'host'
+   * Returns complete list with all profile fields needed for admin dashboard display
    */
   async getAllUsers() {
     try {
-      // Get all user profiles
+      console.log('=== STARTING getAllUsers() ===');
+
+      // Fetch all users from user_profiles where role is 'guest' or 'host'
       const { data: userProfiles, error: profilesError } = await supabase
         .from('user_profiles')
         .select('*')
+        .in('role', ['guest', 'host'])
         .order('created_at', { ascending: false });
 
+      console.log('Query result:', {
+        userProfiles,
+        profilesError,
+        count: userProfiles?.length
+      });
+
       if (profilesError) {
-        console.error('Error fetching user_profiles:', profilesError);
+        console.error('❌ Error fetching user_profiles:', profilesError);
         throw profilesError;
       }
 
       if (!userProfiles || userProfiles.length === 0) {
-        console.log('No user profiles found');
+        console.warn('⚠️ No user profiles found with role guest or host');
         return [];
       }
 
-      // Fetch role-specific data for each user
+      console.log(`✅ Found ${userProfiles.length} user profiles with role guest or host:`,
+        userProfiles.map(p => ({ id: p.id, email: p.email, role: p.role }))
+      );
+
+      // Process each user profile and fetch role-specific data
       const usersWithDetails = await Promise.all(
         userProfiles.map(async (profile) => {
+          console.log(`Processing user: ${profile.email} (${profile.role})`);
+
           try {
             let roleSpecificData = {};
 
-            if (profile.role === 'host') {
-              const { data: hostProfile, error: hostError } = await supabase
-                .from('host_profiles')
-                .select('*')
-                .eq('user_id', profile.id)
-                .maybeSingle();
-
-              if (hostError) console.error(`Error fetching host profile for ${profile.id}:`, hostError);
-              roleSpecificData = hostProfile || {};
-            } else if (profile.role === 'guest') {
+            // Fetch role-specific profile data
+            if (profile.role === 'guest') {
               const { data: guestProfile, error: guestError } = await supabase
                 .from('guest_profiles')
                 .select('*')
                 .eq('user_id', profile.id)
                 .maybeSingle();
 
-              if (guestError) console.error(`Error fetching guest profile for ${profile.id}:`, guestError);
+              if (guestError) {
+                console.error(`❌ Error fetching guest profile for ${profile.email}:`, guestError);
+              } else if (!guestProfile) {
+                console.warn(`⚠️ No guest_profile found for user ${profile.email} (${profile.id})`);
+              } else {
+                console.log(`✅ Found guest_profile for ${profile.email}`);
+              }
               roleSpecificData = guestProfile || {};
+            } else if (profile.role === 'host') {
+              const { data: hostProfile, error: hostError } = await supabase
+                .from('host_profiles')
+                .select('*')
+                .eq('user_id', profile.id)
+                .maybeSingle();
+
+              if (hostError) {
+                console.error(`❌ Error fetching host profile for ${profile.email}:`, hostError);
+              } else if (!hostProfile) {
+                console.warn(`⚠️ No host_profile found for user ${profile.email} (${profile.id})`);
+              } else {
+                console.log(`✅ Found host_profile for ${profile.email}`);
+              }
+              roleSpecificData = hostProfile || {};
             }
 
             // Get documents from user_documents table
@@ -73,37 +102,36 @@ export const adminService = {
               .select('document_type, file_url')
               .eq('user_id', profile.id);
 
-            if (docError) console.error(`Error fetching documents for ${profile.id}:`, docError);
+            if (docError) {
+              console.error(`Error fetching documents for ${profile.id}:`, docError);
+            }
 
-          // Map documents to their respective URL fields
-          const documentUrls = {
-            idDocumentUrl: null,
-            proofOfAddressUrl: null,
-            studentIdUrl: null,
-            dbsCheckUrl: null,
-          };
+            // Map documents to their respective URL fields
+            const documentUrls = {
+              idDocumentUrl: null,
+              proofOfAddressUrl: null,
+              studentIdUrl: null,
+              dbsCheckUrl: null,
+            };
 
-          if (documents && documents.length > 0) {
-            documents.forEach(doc => {
-              switch (doc.document_type) {
-                case 'government_id':
-                  documentUrls.idDocumentUrl = doc.file_url;
-                  break;
-                case 'proof_of_address':
-                  documentUrls.proofOfAddressUrl = doc.file_url;
-                  break;
-                case 'admission_proof':
-                  documentUrls.studentIdUrl = doc.file_url;
-                  break;
-                case 'dbs_check':
-                  documentUrls.dbsCheckUrl = doc.file_url;
-                  break;
-              }
-            });
-          }
-
-          // Get arrangement count - simplified to avoid errors
-          let arrangementCount = 0;
+            if (documents && documents.length > 0) {
+              documents.forEach(doc => {
+                switch (doc.document_type) {
+                  case 'government_id':
+                    documentUrls.idDocumentUrl = doc.file_url;
+                    break;
+                  case 'proof_of_address':
+                    documentUrls.proofOfAddressUrl = doc.file_url;
+                    break;
+                  case 'admission_proof':
+                    documentUrls.studentIdUrl = doc.file_url;
+                    break;
+                  case 'dbs_check':
+                    documentUrls.dbsCheckUrl = doc.file_url;
+                    break;
+                }
+              });
+            }
 
             // Determine status based on is_verified and is_active
             let status = 'pending';
@@ -115,16 +143,17 @@ export const adminService = {
               status = 'pending';
             }
 
-            return {
+            // Return complete user object with all fields needed for dashboard
+            const userObject = {
               id: profile.id,
-              fullName: profile.full_name,
-              email: profile.email,
-              phone: profile.phone_number,
+              fullName: profile.full_name || 'N/A',
+              email: profile.email || 'N/A',
+              phone: profile.phone_number || 'N/A',
               userType: profile.role,
               status,
               memberSince: profile.created_at,
               rating: roleSpecificData.average_rating || null,
-              totalArrangements: arrangementCount || 0,
+              totalArrangements: 0,
               documentsSubmitted: !!(
                 documentUrls.idDocumentUrl ||
                 documentUrls.proofOfAddressUrl ||
@@ -134,7 +163,7 @@ export const adminService = {
               // Host-specific fields
               address: roleSpecificData.address || null,
               postcode: roleSpecificData.postcode || null,
-              // Student-specific fields
+              // Student-specific fields (guest)
               university: roleSpecificData.university || null,
               course: roleSpecificData.course || null,
               yearOfStudy: roleSpecificData.year_of_study || null,
@@ -143,17 +172,21 @@ export const adminService = {
               proofOfAddressUrl: documentUrls.proofOfAddressUrl,
               studentIdUrl: documentUrls.studentIdUrl,
               dbsCheckUrl: documentUrls.dbsCheckUrl,
-              // Full profile data
+              // Full profile data for additional access if needed
               profileData: roleSpecificData,
             };
+
+            console.log(`✅ Successfully processed user: ${profile.email} as ${profile.role}`);
+            return userObject;
           } catch (profileError) {
-            console.error(`Error processing profile ${profile.id}:`, profileError);
-            // Return a basic user object even if there's an error
+            console.error(`❌ Error processing profile ${profile.email} (${profile.id}):`, profileError);
+            console.error('Stack trace:', profileError.stack);
+            // Return minimal user object on error to ensure user still appears in list
             return {
               id: profile.id,
-              fullName: profile.full_name,
-              email: profile.email,
-              phone: profile.phone_number,
+              fullName: profile.full_name || 'N/A',
+              email: profile.email || 'N/A',
+              phone: profile.phone_number || 'N/A',
               userType: profile.role,
               status: 'pending',
               memberSince: profile.created_at,
@@ -175,9 +208,18 @@ export const adminService = {
         })
       );
 
+      console.log(`✅ Successfully processed ${usersWithDetails.length} users for admin dashboard`);
+      console.log('User details:', usersWithDetails.map(u => ({
+        email: u.email,
+        name: u.fullName,
+        type: u.userType,
+        status: u.status
+      })));
+      console.log('=== COMPLETED getAllUsers() ===');
+
       return usersWithDetails;
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('❌ FATAL ERROR in getAllUsers():', error);
       throw error;
     }
   },
