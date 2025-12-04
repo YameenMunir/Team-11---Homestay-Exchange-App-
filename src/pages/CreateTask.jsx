@@ -8,9 +8,11 @@ import {
   FileText,
   Home,
   CheckCircle,
-  ArrowLeft
+  ArrowLeft,
+  Loader2
 } from 'lucide-react';
 import HelpOverlay from '../components/HelpOverlay';
+import { hostService } from '../services/hostService';
 
 export default function CreateTask() {
   const navigate = useNavigate();
@@ -26,6 +28,8 @@ export default function CreateTask() {
     requirements: '',
     additionalNotes: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const servicesOptions = [
     'Companionship',
@@ -59,11 +63,31 @@ export default function CreateTask() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Creating task:', formData);
-    // TODO: Submit to backend API
-    navigate('/host/dashboard');
+
+    // Validation
+    if (formData.servicesNeeded.length === 0) {
+      setError('Please select at least one service');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Create task in database
+      await hostService.createTask(formData);
+
+      // Navigate to dashboard on success
+      navigate('/host/dashboard', {
+        state: { message: 'Task posted successfully!' }
+      });
+    } catch (err) {
+      console.error('Error creating task:', err);
+      setError(err.message || 'Failed to create task. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,6 +112,13 @@ export default function CreateTask() {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 space-y-8">
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-800 text-sm">{error}</p>
+            </div>
+          )}
+
           {/* Task Details Section */}
           <div className="pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-6">
@@ -349,14 +380,23 @@ export default function CreateTask() {
               type="button"
               onClick={() => navigate(-1)}
               className="btn-secondary flex-1 py-3"
+              disabled={isSubmitting}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="btn-primary flex-1 py-3"
+              className="btn-primary flex-1 py-3 flex items-center justify-center gap-2"
+              disabled={isSubmitting}
             >
-              Post Task
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Posting Task...</span>
+                </>
+              ) : (
+                'Post Task'
+              )}
             </button>
           </div>
         </form>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Search,
@@ -10,13 +10,18 @@ import {
   X,
   CheckCircle,
   Heart,
+  Loader2,
 } from 'lucide-react';
+import { hostService } from '../services/hostService';
 
 const BrowseHosts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [savedHosts, setSavedHosts] = useState([]);
+  const [hosts, setHosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const servicesOptions = [
     'Companionship',
@@ -28,65 +33,24 @@ const BrowseHosts = () => {
     'Technology Help',
   ];
 
-  // Mock data - replace with actual API call
-  const hosts = [
-    {
-      id: 1,
-      name: 'Margaret Thompson',
-      location: 'Kensington, London',
-      distance: '2.3 miles from your university',
-      rating: 4.8,
-      reviewCount: 12,
-      servicesNeeded: ['Companionship', 'Grocery Shopping', 'Technology Help'],
-      accommodation: 'Private room with ensuite',
-      about:
-        'Retired teacher looking for a friendly student to help with weekly shopping and technology questions. I love gardening and cooking!',
-      verified: true,
-      imageUrl: 'https://randomuser.me/api/portraits/women/67.jpg',
-    },
-    {
-      id: 2,
-      name: 'John & Mary Wilson',
-      location: 'Chelsea, London',
-      distance: '3.1 miles from your university',
-      rating: 5.0,
-      reviewCount: 8,
-      servicesNeeded: ['Light Cleaning', 'Pet Care', 'Meal Preparation'],
-      accommodation: 'Furnished private room',
-      about:
-        'Friendly couple with a lovely golden retriever. We need occasional help with light household tasks and pet care when we travel.',
-      verified: true,
-      imageUrl: 'https://randomuser.me/api/portraits/men/52.jpg',
-    },
-    {
-      id: 3,
-      name: 'Dorothy Evans',
-      location: 'Notting Hill, London',
-      distance: '1.8 miles from your university',
-      rating: 4.9,
-      reviewCount: 15,
-      servicesNeeded: ['Companionship', 'Grocery Shopping', 'Light Cleaning'],
-      accommodation: 'Spacious room in Victorian house',
-      about:
-        'Former librarian who enjoys reading and classical music. Looking for a kind student for companionship and light assistance.',
-      verified: true,
-      imageUrl: 'https://randomuser.me/api/portraits/women/83.jpg',
-    },
-    {
-      id: 4,
-      name: 'Robert Anderson',
-      location: 'Hammersmith, London',
-      distance: '4.2 miles from your university',
-      rating: 4.7,
-      reviewCount: 10,
-      servicesNeeded: ['Garden Help', 'Technology Help', 'Grocery Shopping'],
-      accommodation: 'Private room with garden view',
-      about:
-        'Retired engineer with a passion for gardening. Need help maintaining my garden and navigating modern technology.',
-      verified: true,
-      imageUrl: 'https://randomuser.me/api/portraits/men/71.jpg',
-    },
-  ];
+  // Fetch hosts from database
+  useEffect(() => {
+    const fetchHosts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await hostService.getVerifiedHostsWithTasks();
+        setHosts(data);
+      } catch (err) {
+        console.error('Error fetching hosts:', err);
+        setError('Failed to load hosts. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHosts();
+  }, []);
 
   const toggleService = (service) => {
     setSelectedServices(
@@ -241,20 +205,43 @@ const BrowseHosts = () => {
               </div>
             )}
 
+            {/* Error Message */}
+            {error && (
+              <div className="card p-6 bg-red-50 border-red-200 mb-6">
+                <p className="text-red-800 text-center">{error}</p>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && (
+              <div className="card p-12 text-center">
+                <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Loading hosts...
+                </h3>
+                <p className="text-gray-600">
+                  Please wait while we find available hosts for you.
+                </p>
+              </div>
+            )}
+
             {/* Results Count */}
-            <div className="mb-4">
-              <p className="text-sm text-gray-600">
-                Showing <span className="font-semibold">{filteredHosts.length}</span>{' '}
-                {filteredHosts.length === 1 ? 'host' : 'hosts'}
-                {selectedServices.length > 0 &&
-                  ` matching ${selectedServices.length} ${
-                    selectedServices.length === 1 ? 'filter' : 'filters'
-                  }`}
-              </p>
-            </div>
+            {!loading && !error && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-600">
+                  Showing <span className="font-semibold">{filteredHosts.length}</span>{' '}
+                  {filteredHosts.length === 1 ? 'host' : 'hosts'}
+                  {selectedServices.length > 0 &&
+                    ` matching ${selectedServices.length} ${
+                      selectedServices.length === 1 ? 'filter' : 'filters'
+                    }`}
+                </p>
+              </div>
+            )}
 
             {/* Host Cards */}
-            <div className="space-y-6">
+            {!loading && !error && (
+              <div className="space-y-6">
               {filteredHosts.map((host) => (
                 <div
                   key={host.id}
@@ -263,12 +250,16 @@ const BrowseHosts = () => {
                   <div className="flex flex-col md:flex-row gap-6">
                     {/* Host Image */}
                     <div className="flex-shrink-0">
-                      <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-200">
-                        <img
-                          src={host.imageUrl}
-                          alt={host.name}
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-200 flex items-center justify-center">
+                        {host.imageUrl ? (
+                          <img
+                            src={host.imageUrl}
+                            alt={host.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Users className="w-16 h-16 text-gray-400" />
+                        )}
                       </div>
                     </div>
 
@@ -288,7 +279,6 @@ const BrowseHosts = () => {
                             <MapPin className="w-4 h-4" />
                             <span className="text-sm">{host.location}</span>
                           </div>
-                          <p className="text-xs text-gray-500">{host.distance}</p>
                         </div>
 
                         <button
@@ -307,17 +297,24 @@ const BrowseHosts = () => {
                       </div>
 
                       {/* Rating */}
-                      <div className="flex items-center space-x-2 mb-3">
-                        <div className="flex items-center space-x-1">
-                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                          <span className="font-semibold text-gray-900">
-                            {host.rating}
+                      {host.reviewCount > 0 && (
+                        <div className="flex items-center space-x-2 mb-3">
+                          <div className="flex items-center space-x-1">
+                            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                            <span className="font-semibold text-gray-900">
+                              {host.rating.toFixed(1)}
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-600">
+                            ({host.reviewCount} {host.reviewCount === 1 ? 'review' : 'reviews'})
                           </span>
                         </div>
-                        <span className="text-sm text-gray-600">
-                          ({host.reviewCount} reviews)
-                        </span>
-                      </div>
+                      )}
+                      {host.reviewCount === 0 && (
+                        <div className="mb-3">
+                          <span className="text-sm text-gray-500">New host - No reviews yet</span>
+                        </div>
+                      )}
 
                       {/* Services Needed */}
                       <div className="mb-3">
@@ -358,28 +355,33 @@ const BrowseHosts = () => {
                   </div>
                 </div>
               ))}
-            </div>
 
-            {/* No Results */}
-            {filteredHosts.length === 0 && (
-              <div className="card p-12 text-center">
-                <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  No hosts found
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Try adjusting your search or filters to find more matches.
-                </p>
-                <button
-                  onClick={() => {
-                    setSearchTerm('');
-                    setSelectedServices([]);
-                  }}
-                  className="btn-primary"
-                >
-                  Clear All Filters
-                </button>
-              </div>
+              {/* No Results */}
+              {filteredHosts.length === 0 && (
+                <div className="card p-12 text-center">
+                  <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {hosts.length === 0 ? 'No hosts available yet' : 'No hosts found'}
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    {hosts.length === 0
+                      ? 'There are currently no verified hosts with active tasks. Please check back later.'
+                      : 'Try adjusting your search or filters to find more matches.'}
+                  </p>
+                  {hosts.length > 0 && (
+                    <button
+                      onClick={() => {
+                        setSearchTerm('');
+                        setSelectedServices([]);
+                      }}
+                      className="btn-primary"
+                    >
+                      Clear All Filters
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             )}
           </div>
         </div>
