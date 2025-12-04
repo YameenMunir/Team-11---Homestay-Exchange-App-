@@ -105,19 +105,53 @@ const HostSignup = () => {
 
       // 2. Upload documents to storage if provided
       if (formData.idDocument) {
+        const idFileName = `${userId}/id-document-${Date.now()}.pdf`;
         const { error: idError } = await supabase.storage
           .from('user-documents')
-          .upload(`${userId}/id-document-${Date.now()}.pdf`, formData.idDocument);
+          .upload(idFileName, formData.idDocument);
 
-        if (idError) console.error('ID upload error:', idError);
+        if (idError) {
+          console.error('ID upload error:', idError);
+        } else {
+          // Insert record into user_documents table
+          const { error: idDocError } = await supabase
+            .from('user_documents')
+            .insert({
+              user_id: userId,
+              document_type: 'government_id',
+              file_url: idFileName,
+              file_name: formData.idDocument.name,
+              file_size: formData.idDocument.size,
+              verification_status: 'pending',
+            });
+
+          if (idDocError) console.error('ID document record error:', idDocError);
+        }
       }
 
       if (formData.utilityBill) {
+        const billFileName = `${userId}/utility-bill-${Date.now()}.pdf`;
         const { error: billError } = await supabase.storage
           .from('user-documents')
-          .upload(`${userId}/utility-bill-${Date.now()}.pdf`, formData.utilityBill);
+          .upload(billFileName, formData.utilityBill);
 
-        if (billError) console.error('Utility bill upload error:', billError);
+        if (billError) {
+          console.error('Utility bill upload error:', billError);
+        } else {
+          // Insert record into user_documents table
+          const { error: billDocError } = await supabase
+            .from('user_documents')
+            .insert({
+              user_id: userId,
+              document_type: 'proof_of_address',
+              file_url: billFileName,
+              file_name: formData.utilityBill.name,
+              file_size: formData.utilityBill.size,
+              verification_status: 'pending',
+            });
+
+          if (billDocError) console.error('Utility bill document record error:', billDocError);
+        }
       }
 
       // 3. Update user_profiles with phone number

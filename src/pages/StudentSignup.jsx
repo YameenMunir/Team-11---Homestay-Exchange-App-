@@ -130,19 +130,53 @@ const StudentSignup = () => {
 
       // 2. Upload documents to storage if provided
       if (formData.idDocument) {
+        const idFileName = `${userId}/id-document-${Date.now()}.pdf`;
         const { error: idError } = await supabase.storage
           .from('user-documents')
-          .upload(`${userId}/id-document-${Date.now()}.pdf`, formData.idDocument);
+          .upload(idFileName, formData.idDocument);
 
-        if (idError) console.error('ID upload error:', idError);
+        if (idError) {
+          console.error('ID upload error:', idError);
+        } else {
+          // Insert record into user_documents table
+          const { error: idDocError } = await supabase
+            .from('user_documents')
+            .insert({
+              user_id: userId,
+              document_type: 'government_id',
+              file_url: idFileName,
+              file_name: formData.idDocument.name,
+              file_size: formData.idDocument.size,
+              verification_status: 'pending',
+            });
+
+          if (idDocError) console.error('ID document record error:', idDocError);
+        }
       }
 
       if (formData.admissionLetter) {
+        const admissionFileName = `${userId}/admission-letter-${Date.now()}.pdf`;
         const { error: letterError } = await supabase.storage
           .from('user-documents')
-          .upload(`${userId}/admission-letter-${Date.now()}.pdf`, formData.admissionLetter);
+          .upload(admissionFileName, formData.admissionLetter);
 
-        if (letterError) console.error('Admission letter upload error:', letterError);
+        if (letterError) {
+          console.error('Admission letter upload error:', letterError);
+        } else {
+          // Insert record into user_documents table
+          const { error: admissionDocError } = await supabase
+            .from('user_documents')
+            .insert({
+              user_id: userId,
+              document_type: 'admission_proof',
+              file_url: admissionFileName,
+              file_name: formData.admissionLetter.name,
+              file_size: formData.admissionLetter.size,
+              verification_status: 'pending',
+            });
+
+          if (admissionDocError) console.error('Admission document record error:', admissionDocError);
+        }
       }
 
       // 3. Update user_profiles with phone number
