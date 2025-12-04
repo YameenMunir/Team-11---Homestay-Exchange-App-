@@ -335,83 +335,85 @@ export default function ManageTasks() {
         ) : (
           <div className="space-y-4">
             {tasks.map((task) => (
-              <div key={task.id} className="card hover:shadow-lg transition-shadow">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                  {/* Task Info */}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                          {task.title}
-                        </h3>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {task.services_needed && task.services_needed.map((service) => (
-                            <span
-                              key={service}
-                              className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded"
-                            >
-                              {service}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        task.status === 'active'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}>
-                        {task.status === 'active' ? 'Active' : 'Filled'}
+              <div key={task.id} className="card hover:shadow-lg transition-shadow p-6">
+                {/* Header: Title and Status */}
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 flex-1">
+                    {task.title}
+                  </h3>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
+                    task.status === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {task.status === 'active' ? 'Active' : 'Filled'}
+                  </span>
+                </div>
+
+                {/* Service Tags */}
+                {task.services_needed && task.services_needed.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {task.services_needed.map((service) => (
+                      <span
+                        key={service}
+                        className="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-medium"
+                      >
+                        {service}
                       </span>
-                    </div>
-
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        {task.hours_per_week} hours
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {task.frequency}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4" />
-                        {task.applicant_count || 0} applicant{(task.applicant_count || 0) !== 1 ? 's' : ''}
-                      </div>
-                    </div>
-
-                    <p className="text-sm text-gray-500 mt-2">
-                      Posted {new Date(task.created_at).toLocaleDateString('en-GB', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                      })}
-                    </p>
+                    ))}
                   </div>
+                )}
+
+                {/* Task Details */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 py-3 border-t border-b border-gray-100">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-gray-400" />
+                    <span>{task.hours_per_week} hours</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span>{task.frequency}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <span>{task.applicant_count || 0} applicant{(task.applicant_count || 0) !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+
+                {/* Footer: Posted Date + Actions */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4">
+                  <p className="text-xs text-gray-500">
+                    Posted {new Date(task.created_at).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </p>
 
                   {/* Action Buttons */}
-                  <div className="flex lg:flex-col gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {task.status === 'active' && (task.applicant_count || 0) > 0 && (
                       <button
                         onClick={() => handleViewApplicants(task)}
-                        className="btn-primary flex items-center gap-2 whitespace-nowrap"
+                        className="btn-primary flex items-center justify-center gap-2 text-xs px-3 py-2 whitespace-nowrap"
                       >
-                        <Users className="w-4 h-4" />
-                        View Applicants ({task.applicant_count})
+                        <Users className="w-3.5 h-3.5" />
+                        <span>View Applicants ({task.applicant_count})</span>
                       </button>
                     )}
                     <button
                       onClick={() => navigate(`/host/edit-task/${task.id}`)}
-                      className="btn-outline flex items-center gap-2"
+                      className="btn-outline flex items-center justify-center gap-2 text-xs px-3 py-2 whitespace-nowrap"
                     >
-                      <Edit className="w-4 h-4" />
-                      Edit
+                      <Edit className="w-3.5 h-3.5" />
+                      <span>Edit</span>
                     </button>
                     <button
                       onClick={() => handleDeleteTask(task.id)}
-                      className="btn-secondary flex items-center gap-2 text-red-600 hover:bg-red-50"
+                      className="btn-secondary flex items-center justify-center gap-2 text-red-600 hover:bg-red-50 border border-red-200 text-xs px-3 py-2 whitespace-nowrap"
                     >
-                      <Trash2 className="w-4 h-4" />
-                      Delete
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete</span>
                     </button>
                   </div>
                 </div>
