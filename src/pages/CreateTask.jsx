@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Briefcase,
   Clock,
@@ -16,6 +16,9 @@ import { hostService } from '../services/hostService';
 
 export default function CreateTask() {
   const navigate = useNavigate();
+  const { taskId } = useParams();
+  const isEditMode = !!taskId;
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -29,6 +32,7 @@ export default function CreateTask() {
     additionalNotes: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(isEditMode);
   const [error, setError] = useState(null);
 
   const servicesOptions = [
@@ -40,6 +44,41 @@ export default function CreateTask() {
     'Pet Care',
     'Technology Help'
   ];
+
+  // Fetch task data when in edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchTask = async () => {
+        try {
+          setIsLoading(true);
+          setError(null);
+
+          const task = await hostService.getTaskById(taskId);
+
+          // Populate form with existing task data
+          setFormData({
+            title: task.title || '',
+            description: task.description || '',
+            servicesNeeded: task.services_needed || [],
+            hoursPerWeek: task.hours_per_week || '',
+            frequency: task.frequency || '',
+            schedule: task.schedule || '',
+            duration: task.duration || '',
+            compensation: task.compensation || '',
+            requirements: task.requirements || '',
+            additionalNotes: task.additional_notes || ''
+          });
+        } catch (err) {
+          console.error('Error fetching task:', err);
+          setError('Failed to load task. Please try again.');
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchTask();
+    }
+  }, [isEditMode, taskId]);
 
   const handleChange = (e) => {
     setFormData({
@@ -76,19 +115,59 @@ export default function CreateTask() {
     setError(null);
 
     try {
-      // Create task in database
-      await hostService.createTask(formData);
+      if (isEditMode) {
+        // Update existing task
+        await hostService.updateTask(taskId, {
+          title: formData.title,
+          description: formData.description,
+          services_needed: formData.servicesNeeded,
+          hours_per_week: formData.hoursPerWeek,
+          frequency: formData.frequency,
+          schedule: formData.schedule,
+          duration: formData.duration,
+          compensation: formData.compensation,
+          requirements: formData.requirements,
+          additional_notes: formData.additionalNotes,
+        });
 
-      // Navigate to dashboard on success
-      navigate('/host/dashboard', {
-        state: { message: 'Task posted successfully!' }
-      });
+        // Navigate back to manage tasks on success
+        navigate('/host/manage-tasks', {
+          state: { message: 'Task updated successfully!' }
+        });
+      } else {
+        // Create new task
+        await hostService.createTask(formData);
+
+        // Navigate to dashboard on success
+        navigate('/host/dashboard', {
+          state: { message: 'Task posted successfully!' }
+        });
+      }
     } catch (err) {
-      console.error('Error creating task:', err);
-      setError(err.message || 'Failed to create task. Please try again.');
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} task:`, err);
+      setError(err.message || `Failed to ${isEditMode ? 'update' : 'create'} task. Please try again.`);
       setIsSubmitting(false);
     }
   };
+
+  // Show loading state while fetching task data in edit mode
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="card p-12 text-center">
+            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Loading task...
+            </h3>
+            <p className="text-gray-600">
+              Please wait while we fetch the task details.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -103,10 +182,12 @@ export default function CreateTask() {
             Back
           </button>
           <h1 className="text-3xl font-display font-bold text-gray-900">
-            Post a New Task
+            {isEditMode ? 'Edit Task' : 'Post a New Task'}
           </h1>
           <p className="mt-2 text-gray-600">
-            Create a task to find the perfect student helper
+            {isEditMode
+              ? 'Update your task details and requirements'
+              : 'Create a task to find the perfect student helper'}
           </p>
         </div>
 
@@ -392,10 +473,10 @@ export default function CreateTask() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Posting Task...</span>
+                  <span>{isEditMode ? 'Updating Task...' : 'Posting Task...'}</span>
                 </>
               ) : (
-                'Post Task'
+                isEditMode ? 'Update Task' : 'Post Task'
               )}
             </button>
           </div>
