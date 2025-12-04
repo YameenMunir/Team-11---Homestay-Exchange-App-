@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus,
@@ -13,95 +13,68 @@ import {
   XCircle,
   User,
   Mail,
-  Star
+  Star,
+  Loader2
 } from 'lucide-react';
+import { hostService } from '../services/hostService';
 
 export default function ManageTasks() {
   const navigate = useNavigate();
   const [selectedTask, setSelectedTask] = useState(null);
   const [showApplicants, setShowApplicants] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Mock tasks data
-  const tasks = [
-    {
-      id: 1,
-      title: 'Weekly Grocery Shopping and Light Cleaning',
-      status: 'active',
-      postedDate: '2025-01-10',
-      hoursPerWeek: '10-15 hours',
-      frequency: 'Weekly',
-      servicesNeeded: ['Grocery Shopping', 'Light Cleaning'],
-      applicantCount: 5,
-      viewCount: 23,
-      applicants: [
-        {
-          id: 101,
-          name: 'Sarah Johnson',
-          image: 'https://i.pravatar.cc/150?img=5',
-          university: 'King\'s College London',
-          rating: 4.8,
-          appliedDate: '2025-01-15',
-          status: 'pending',
-          availability: 'Available weekday mornings',
-          experience: 'I have experience helping my grandmother with groceries...',
-          whyInterested: 'Looking for accommodation near my university...'
-        },
-        {
-          id: 102,
-          name: 'Michael Chen',
-          image: 'https://i.pravatar.cc/150?img=12',
-          university: 'Imperial College London',
-          rating: 4.9,
-          appliedDate: '2025-01-14',
-          status: 'pending',
-          availability: 'Flexible schedule, available most days',
-          experience: 'I\'ve been helping with household tasks for 2 years...',
-          whyInterested: 'Your location is perfect for my studies...'
-        },
-        {
-          id: 103,
-          name: 'Emma Williams',
-          image: 'https://i.pravatar.cc/150?img=9',
-          university: 'UCL',
-          rating: 5.0,
-          appliedDate: '2025-01-16',
-          status: 'pending',
-          availability: 'Available Tuesday and Thursday afternoons',
-          experience: 'Experience with elderly care and light housework...',
-          whyInterested: 'I enjoy helping others and need affordable housing...'
+  // Fetch host's tasks from database
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Get current user
+        const { data: { user } } = await hostService.supabase.auth.getUser();
+
+        if (!user) {
+          setError('User not authenticated');
+          setLoading(false);
+          return;
         }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Garden Maintenance Help',
-      status: 'filled',
-      postedDate: '2025-01-05',
-      hoursPerWeek: '5-10 hours',
-      frequency: 'Bi-weekly',
-      servicesNeeded: ['Garden Help'],
-      applicantCount: 3,
-      viewCount: 15,
-      filledBy: 'David Miller',
-      applicants: []
-    },
-    {
-      id: 3,
-      title: 'Technology Help and Companionship',
-      status: 'active',
-      postedDate: '2025-01-12',
-      hoursPerWeek: '10-15 hours',
-      frequency: 'Weekly',
-      servicesNeeded: ['Technology Help', 'Companionship'],
-      applicantCount: 2,
-      viewCount: 18,
-      applicants: []
-    }
-  ];
+
+        // Fetch tasks for this host
+        const data = await hostService.getTasksByHostId(user.id);
+        setTasks(data);
+      } catch (err) {
+        console.error('Error fetching tasks:', err);
+        setError('Failed to load tasks. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, []);
 
   const handleViewApplicants = (task) => {
     setSelectedTask(task);
     setShowApplicants(true);
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await hostService.deleteTask(taskId);
+      // Remove task from local state
+      setTasks(tasks.filter(t => t.id !== taskId));
+      alert('Task deleted successfully');
+    } catch (err) {
+      console.error('Error deleting task:', err);
+      alert('Failed to delete task. Please try again.');
+    }
   };
 
   const handleAcceptApplicant = (taskId, applicantId) => {
@@ -119,8 +92,50 @@ export default function ManageTasks() {
   const stats = {
     active: tasks.filter(t => t.status === 'active').length,
     filled: tasks.filter(t => t.status === 'filled').length,
-    totalApplicants: tasks.reduce((sum, t) => sum + t.applicantCount, 0)
+    totalApplicants: tasks.reduce((sum, t) => sum + (t.applicant_count || 0), 0)
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="card p-12 text-center">
+            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Loading your tasks...
+            </h3>
+            <p className="text-gray-600">
+              Please wait while we fetch your posted tasks.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="card p-12 text-center bg-red-50 border-red-200">
+            <XCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Error Loading Tasks
+            </h3>
+            <p className="text-red-800 mb-6">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="btn-primary"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (showApplicants && selectedTask) {
     return (
@@ -143,17 +158,17 @@ export default function ManageTasks() {
           </div>
 
           {/* Applicants List */}
-          {selectedTask.applicants.length === 0 ? (
-            <div className="card text-center py-12">
-              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No applications yet
-              </h3>
-              <p className="text-gray-600">
-                Check back later for applications to this task
-              </p>
-            </div>
-          ) : (
+          {/* Note: Applicant system to be implemented */}
+          <div className="card text-center py-12">
+            <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Application system coming soon
+            </h3>
+            <p className="text-gray-600">
+              The applicant management feature will be available soon.
+            </p>
+          </div>
+          {false && (
             <div className="space-y-6">
               {selectedTask.applicants.map((applicant) => (
                 <div key={applicant.id} className="card">
@@ -330,7 +345,7 @@ export default function ManageTasks() {
                           {task.title}
                         </h3>
                         <div className="flex flex-wrap gap-2 mb-3">
-                          {task.servicesNeeded.map((service) => (
+                          {task.services_needed && task.services_needed.map((service) => (
                             <span
                               key={service}
                               className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded"
@@ -352,7 +367,7 @@ export default function ManageTasks() {
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        {task.hoursPerWeek}
+                        {task.hours_per_week} hours
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4" />
@@ -360,23 +375,12 @@ export default function ManageTasks() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="w-4 h-4" />
-                        {task.applicantCount} applicant{task.applicantCount !== 1 ? 's' : ''}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Eye className="w-4 h-4" />
-                        {task.viewCount} views
+                        {task.applicant_count || 0} applicant{(task.applicant_count || 0) !== 1 ? 's' : ''}
                       </div>
                     </div>
 
-                    {task.status === 'filled' && task.filledBy && (
-                      <div className="mt-3 text-sm">
-                        <span className="text-gray-600">Filled by: </span>
-                        <span className="font-medium text-gray-900">{task.filledBy}</span>
-                      </div>
-                    )}
-
                     <p className="text-sm text-gray-500 mt-2">
-                      Posted {new Date(task.postedDate).toLocaleDateString('en-GB', {
+                      Posted {new Date(task.created_at).toLocaleDateString('en-GB', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric'
@@ -386,13 +390,13 @@ export default function ManageTasks() {
 
                   {/* Action Buttons */}
                   <div className="flex lg:flex-col gap-2">
-                    {task.status === 'active' && task.applicantCount > 0 && (
+                    {task.status === 'active' && (task.applicant_count || 0) > 0 && (
                       <button
                         onClick={() => handleViewApplicants(task)}
                         className="btn-primary flex items-center gap-2 whitespace-nowrap"
                       >
                         <Users className="w-4 h-4" />
-                        View Applicants ({task.applicantCount})
+                        View Applicants ({task.applicant_count})
                       </button>
                     )}
                     <button
@@ -403,12 +407,7 @@ export default function ManageTasks() {
                       Edit
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm('Are you sure you want to delete this task?')) {
-                          console.log('Deleting task:', task.id);
-                          // TODO: Delete task
-                        }
-                      }}
+                      onClick={() => handleDeleteTask(task.id)}
                       className="btn-secondary flex items-center gap-2 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />

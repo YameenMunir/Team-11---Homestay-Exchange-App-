@@ -4,6 +4,8 @@ import supabase from '../utils/supabase';
  * Service for host-related operations
  */
 export const hostService = {
+  // Expose supabase for direct auth access
+  supabase,
   /**
    * Create a new host task
    * @param {Object} taskData - Task information
