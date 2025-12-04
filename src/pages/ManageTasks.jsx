@@ -277,39 +277,39 @@ export default function ManageTasks() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-purple-600" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Briefcase className="w-6 h-6 text-purple-600" />
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Active Tasks</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Filled</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.filled}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Active Tasks</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.active}</p>
               </div>
             </div>
           </div>
 
-          <div className="card">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-600" />
+          <div className="card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Applicants</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalApplicants}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Filled</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.filled}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="card p-5">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Total Applicants</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.totalApplicants}</p>
               </div>
             </div>
           </div>
