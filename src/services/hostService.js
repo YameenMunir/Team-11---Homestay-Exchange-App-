@@ -251,6 +251,140 @@ export const hostService = {
   },
 
   /**
+   * Get a single host's complete profile with all their tasks
+   * @param {string} hostId - Host user ID
+   * @returns {Promise} Host object with full details and tasks
+   */
+  async getHostById(hostId) {
+    console.log('[HostService] Fetching host details for ID:', hostId);
+
+    const { data, error } = await supabase
+      .from('host_tasks')
+      .select(`
+        id,
+        host_id,
+        title,
+        description,
+        services_needed,
+        hours_per_week,
+        frequency,
+        schedule,
+        duration,
+        compensation,
+        requirements,
+        additional_notes,
+        status,
+        created_at,
+        host:user_profiles!host_id (
+          id,
+          full_name,
+          email,
+          phone_number,
+          is_verified,
+          is_active,
+          created_at,
+          host_profile:host_profiles!user_id (
+            address,
+            city,
+            postcode,
+            property_description,
+            number_of_rooms,
+            amenities,
+            accessibility_features,
+            preferred_gender,
+            preferred_age_range,
+            support_needs,
+            additional_info,
+            profile_picture_url,
+            average_rating,
+            total_ratings
+          )
+        )
+      `)
+      .eq('host_id', hostId)
+      .eq('status', 'active');
+
+    if (error) {
+      console.error('[HostService] Error fetching host:', error);
+      throw error;
+    }
+
+    console.log('[HostService] Raw host tasks:', data?.length || 0);
+
+    if (!data || data.length === 0) {
+      throw new Error('Host not found or has no active tasks');
+    }
+
+    // Take the first task to get host details
+    const firstTask = data[0];
+    const hostProfile = firstTask.host.host_profile;
+
+    if (!hostProfile) {
+      throw new Error('Host profile not found');
+    }
+
+    // Build comprehensive host object with all tasks
+    const host = {
+      // Basic Info
+      id: hostId,
+      name: firstTask.host.full_name,
+      email: firstTask.host.email,
+      phone: firstTask.host.phone_number,
+      verified: firstTask.host.is_verified,
+      memberSince: new Date(firstTask.host.created_at).toLocaleDateString('en-GB', {
+        month: 'long',
+        year: 'numeric'
+      }),
+
+      // Profile Details
+      location: `${hostProfile.city}${hostProfile.postcode ? ', ' + hostProfile.postcode : ''}`,
+      city: hostProfile.city,
+      postcode: hostProfile.postcode,
+      address: hostProfile.address,
+      propertyDescription: hostProfile.property_description || 'No description provided',
+      numberOfRooms: hostProfile.number_of_rooms,
+      amenities: hostProfile.amenities || [],
+      accessibilityFeatures: hostProfile.accessibility_features || [],
+      preferredGender: hostProfile.preferred_gender,
+      preferredAgeRange: hostProfile.preferred_age_range,
+      supportNeeds: hostProfile.support_needs,
+      additionalInfo: hostProfile.additional_info,
+      profilePictureUrl: hostProfile.profile_picture_url,
+
+      // Rating Info
+      rating: parseFloat(hostProfile.average_rating) || 0,
+      reviewCount: hostProfile.total_ratings || 0,
+
+      // Tasks Array - all active tasks for this host
+      tasks: data.map(task => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        servicesNeeded: task.services_needed,
+        hoursPerWeek: task.hours_per_week,
+        frequency: task.frequency,
+        schedule: task.schedule,
+        duration: task.duration,
+        compensation: task.compensation,
+        requirements: task.requirements,
+        additionalNotes: task.additional_notes,
+        createdAt: task.created_at
+      })),
+
+      // Aggregated services across all tasks
+      allServicesNeeded: [...new Set(data.flatMap(task => task.services_needed))],
+
+      // Legacy fields for backward compatibility
+      servicesNeeded: [...new Set(data.flatMap(task => task.services_needed))],
+      imageUrl: hostProfile.profile_picture_url || null,
+      about: hostProfile.property_description || '',
+    };
+
+    console.log('[HostService] Host details built:', host);
+    return host;
+  },
+
+  /**
    * Get tasks by host ID
    * @param {string} hostId - Host user ID
    * @returns {Promise} Array of tasks

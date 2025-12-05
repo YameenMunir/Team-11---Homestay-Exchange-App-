@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -15,71 +15,44 @@ import {
   Phone,
   MessageCircle,
   Shield,
+  Loader2,
+  XCircle,
+  Briefcase,
+  DollarSign,
 } from 'lucide-react';
+import { hostService } from '../services/hostService';
 
 const MatchDetails = () => {
   const { id } = useParams();
+  const [host, setHost] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showFacilitateModal, setShowFacilitateModal] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [connectionMessage, setConnectionMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Mock data - replace with actual API call
-  const host = {
-    id: 1,
-    name: 'Margaret Thompson',
-    age: 68,
-    location: 'Kensington, London',
-    postcode: 'SW7 3AX',
-    distance: '2.3 miles from your university',
-    rating: 4.8,
-    reviewCount: 12,
-    servicesNeeded: ['Companionship', 'Grocery Shopping', 'Technology Help'],
-    accommodation: 'Private room with ensuite',
-    about:
-      "Hello! I'm Margaret, a retired teacher who loves reading, gardening, and cooking. I live in a lovely Victorian house in Kensington with a small garden. I'm looking for a friendly, responsible student to help me with weekly shopping trips and occasional technology questions. In return, you'll have a comfortable private room with your own bathroom. I enjoy having company for dinner and sharing stories, but I also respect privacy and quiet study time. Non-smoker preferred, and I have no pets.",
-    verified: true,
-    imageUrl: 'https://randomuser.me/api/portraits/women/67.jpg',
-    amenities: [
-      'Private bedroom',
-      'Ensuite bathroom',
-      'WiFi included',
-      'Shared kitchen',
-      'Laundry facilities',
-      'Garden access',
-      'Near public transport',
-    ],
-    houseRules: [
-      'No smoking',
-      'No pets',
-      'Quiet hours 10pm - 7am',
-      'Guests with advance notice',
-    ],
-    availableFrom: 'September 2025',
-    hoursRequired: '10-15 hours per week',
-    memberSince: 'January 2024',
-    responseRate: '95%',
-    reviews: [
-      {
-        id: 1,
-        studentName: 'Sarah K.',
-        rating: 5,
-        date: 'March 2025',
-        comment:
-          'Margaret is wonderful! Very kind and understanding. The room is spacious and comfortable. I help with grocery shopping and teaching her to use her tablet, which she really appreciates.',
-        verified: true,
-      },
-      {
-        id: 2,
-        studentName: 'Ahmed M.',
-        rating: 4.5,
-        date: 'January 2025',
-        comment:
-          'Great experience living with Margaret. The location is excellent for UCL students. She cooks amazing meals and loves to share stories about her teaching career.',
-        verified: true,
-      },
-    ],
-  };
+  // Fetch host data
+  useEffect(() => {
+    const fetchHost = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log('Fetching host details for ID:', id);
+        const hostData = await hostService.getHostById(id);
+        setHost(hostData);
+      } catch (err) {
+        console.error('Error fetching host:', err);
+        setError(err.message || 'Failed to load host details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchHost();
+    }
+  }, [id]);
 
   const handleFacilitate = () => {
     setShowFacilitateModal(true);
@@ -97,6 +70,82 @@ const MatchDetails = () => {
     setShowSuccessModal(true);
     setConnectionMessage('');
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container-custom">
+          <div className="card p-12 text-center">
+            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Loading host details...
+            </h3>
+            <p className="text-gray-600">
+              Please wait while we fetch the host information.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container-custom">
+          <Link
+            to="/student/browse"
+            className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Browse</span>
+          </Link>
+          <div className="card p-12 text-center bg-red-50 border-red-200">
+            <XCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Unable to Load Host
+            </h3>
+            <p className="text-red-800 mb-6">{error}</p>
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-primary"
+              >
+                Try Again
+              </button>
+              <Link to="/student/browse" className="btn-secondary">
+                Back to Browse
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No host data
+  if (!host) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container-custom">
+          <div className="card p-12 text-center">
+            <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Host Not Found
+            </h3>
+            <p className="text-gray-600 mb-6">
+              This host may not exist or may have removed their listing.
+            </p>
+            <Link to="/student/browse" className="btn-primary">
+              Back to Browse Hosts
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -118,12 +167,16 @@ const MatchDetails = () => {
               <div className="flex flex-col sm:flex-row gap-6">
                 {/* Host Image */}
                 <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-200">
-                    <img
-                      src={host.imageUrl}
-                      alt={host.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-32 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                    {host.imageUrl || host.profilePictureUrl ? (
+                      <img
+                        src={host.imageUrl || host.profilePictureUrl}
+                        alt={host.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Home className="w-16 h-16 text-purple-400" />
+                    )}
                   </div>
                 </div>
 
@@ -140,13 +193,17 @@ const MatchDetails = () => {
                         )}
                       </div>
                       <p className="text-gray-600 mb-2">
-                        {host.age} years old • Member since {host.memberSince}
+                        Member since {host.memberSince}
                       </p>
                       <div className="flex items-center space-x-1 text-gray-600 mb-1">
                         <MapPin className="w-4 h-4" />
                         <span className="text-sm">{host.location}</span>
                       </div>
-                      <p className="text-xs text-gray-500">{host.distance}</p>
+                      {host.numberOfRooms && (
+                        <p className="text-xs text-gray-500">
+                          {host.numberOfRooms} {host.numberOfRooms === 1 ? 'room' : 'rooms'} available
+                        </p>
+                      )}
                     </div>
 
                     {/* Action Buttons */}
@@ -175,21 +232,21 @@ const MatchDetails = () => {
 
                   {/* Rating */}
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold text-gray-900">
-                        {host.rating}
-                      </span>
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      {host.reviewCount} reviews
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      <MessageCircle className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">
-                        {host.responseRate} response rate
-                      </span>
-                    </div>
+                    {host.rating > 0 ? (
+                      <>
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                          <span className="font-semibold text-gray-900">
+                            {host.rating.toFixed(1)}
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          {host.reviewCount} {host.reviewCount === 1 ? 'review' : 'reviews'}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-sm text-gray-500 italic">New host - No reviews yet</span>
+                    )}
                   </div>
 
                   {/* Services Needed */}
@@ -216,93 +273,156 @@ const MatchDetails = () => {
             <div className="card p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">About {host.name}</h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {host.about}
+                {host.about || host.propertyDescription || 'No description provided.'}
               </p>
+              {host.additionalInfo && (
+                <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <p className="text-sm text-purple-900">{host.additionalInfo}</p>
+                </div>
+              )}
             </div>
 
-            {/* Accommodation Details */}
+            {/* Available Opportunities */}
             <div className="card p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Accommodation Details
+                Available Opportunities ({host.tasks?.length || 0})
               </h2>
 
               <div className="space-y-4">
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Home className="w-5 h-5 text-purple-600" />
-                  <span>{host.accommodation}</span>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Calendar className="w-5 h-5 text-purple-600" />
-                  <span>Available from {host.availableFrom}</span>
-                </div>
-                <div className="flex items-center space-x-3 text-gray-700">
-                  <Clock className="w-5 h-5 text-purple-600" />
-                  <span>{host.hoursRequired} of help required</span>
-                </div>
-              </div>
+                {host.tasks && host.tasks.length > 0 ? (
+                  host.tasks.map((task) => (
+                    <div key={task.id} className="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-3">{task.title}</h3>
 
-              {/* Amenities */}
-              <div className="mt-6">
-                <h3 className="font-semibold text-gray-900 mb-3">What's included:</h3>
+                      <p className="text-gray-700 mb-4">{task.description}</p>
+
+                      {/* Task Details Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-purple-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">Hours/Week</p>
+                            <p className="text-sm font-medium text-gray-900">{task.hoursPerWeek}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-purple-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">Frequency</p>
+                            <p className="text-sm font-medium text-gray-900">{task.frequency}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-purple-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">Duration</p>
+                            <p className="text-sm font-medium text-gray-900">{task.duration}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-purple-600" />
+                          <div>
+                            <p className="text-xs text-gray-500">Schedule</p>
+                            <p className="text-sm font-medium text-gray-900">{task.schedule || 'Flexible'}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Services for this task */}
+                      <div className="mb-4">
+                        <p className="text-xs font-semibold text-gray-700 mb-2">Services Needed:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {task.servicesNeeded.map((service, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Compensation */}
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                        <div className="flex items-start gap-2">
+                          <DollarSign className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-xs font-semibold text-green-900 mb-1">Compensation:</p>
+                            <p className="text-sm text-green-800">{task.compensation}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Requirements */}
+                      {task.requirements && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                          <div className="flex items-start gap-2">
+                            <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <p className="text-xs font-semibold text-blue-900 mb-1">Requirements:</p>
+                              <p className="text-sm text-blue-800">{task.requirements}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Additional Notes */}
+                      {task.additionalNotes && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                          <p className="text-xs text-gray-500 mb-1">Additional Notes:</p>
+                          <p className="text-sm text-gray-700">{task.additionalNotes}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center py-8">No tasks available at the moment.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Amenities */}
+            {host.amenities && host.amenities.length > 0 && (
+              <div className="card p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Amenities Included</h2>
                 <div className="grid grid-cols-2 gap-3">
-                  {host.amenities.map((amenity) => (
-                    <div key={amenity} className="flex items-center space-x-2">
+                  {host.amenities.map((amenity, idx) => (
+                    <div key={idx} className="flex items-center space-x-2">
                       <CheckCircle className="w-4 h-4 text-green-600" />
                       <span className="text-sm text-gray-700">{amenity}</span>
                     </div>
                   ))}
                 </div>
               </div>
+            )}
 
-              {/* House Rules */}
-              <div className="mt-6">
-                <h3 className="font-semibold text-gray-900 mb-3">House Rules:</h3>
-                <ul className="space-y-2">
-                  {host.houseRules.map((rule) => (
-                    <li key={rule} className="flex items-start space-x-2">
-                      <AlertCircle className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-gray-700">{rule}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Reviews */}
-            <div className="card p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">
-                Reviews from Students
-              </h2>
-
-              <div className="space-y-6">
-                {host.reviews.map((review) => (
-                  <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0 last:pb-0">
-                    <div className="flex items-start justify-between mb-3">
+            {/* Host Preferences */}
+            {(host.preferredGender || host.preferredAgeRange) && (
+              <div className="card p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Host Preferences</h2>
+                <div className="space-y-3">
+                  {host.preferredGender && (
+                    <div className="flex items-center space-x-3">
+                      <AlertCircle className="w-5 h-5 text-purple-600" />
                       <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-semibold text-gray-900">
-                            {review.studentName}
-                          </span>
-                          {review.verified && (
-                            <CheckCircle className="w-4 h-4 text-purple-600" />
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <div className="flex items-center space-x-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-semibold text-gray-900">
-                              {review.rating}
-                            </span>
-                          </div>
-                          <span className="text-sm text-gray-500">• {review.date}</span>
-                        </div>
+                        <p className="text-xs text-gray-500">Preferred Gender</p>
+                        <p className="text-sm font-medium text-gray-900">{host.preferredGender}</p>
                       </div>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">{review.comment}</p>
-                  </div>
-                ))}
+                  )}
+                  {host.preferredAgeRange && (
+                    <div className="flex items-center space-x-3">
+                      <AlertCircle className="w-5 h-5 text-purple-600" />
+                      <div>
+                        <p className="text-xs text-gray-500">Preferred Age Range</p>
+                        <p className="text-sm font-medium text-gray-900">{host.preferredAgeRange}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Sidebar - Facilitate Card */}
