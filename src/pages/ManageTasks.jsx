@@ -14,7 +14,8 @@ import {
   User,
   Mail,
   Star,
-  Loader2
+  Loader2,
+  ArrowLeft
 } from 'lucide-react';
 import { hostService } from '../services/hostService';
 
@@ -258,22 +259,31 @@ export default function ManageTasks() {
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-display font-bold text-gray-900">
-              My Posted Tasks
-            </h1>
-            <p className="mt-2 text-gray-600">
-              Manage your task postings and review applications
-            </p>
-          </div>
+        <div className="mb-8">
           <button
-            onClick={() => navigate('/host/create-task')}
-            className="btn-primary flex items-center gap-2"
+            onClick={() => navigate('/host/dashboard')}
+            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 transition-colors"
           >
-            <Plus className="w-4 h-4" />
-            Post New Task
+            <ArrowLeft className="w-4 h-4" />
+            Back
           </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-display font-bold text-gray-900">
+                My Posted Tasks
+              </h1>
+              <p className="mt-2 text-gray-600">
+                Manage your task postings and review applications
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/host/create-task')}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Post New Task
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
