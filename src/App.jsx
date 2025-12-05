@@ -21,6 +21,7 @@ import AdminCreateProfile from './pages/AdminCreateProfile';
 import AdminReportsManagement from './pages/AdminReportsManagement';
 import AdminFeedbackReview from './pages/AdminFeedbackReview';
 import Help from './pages/Help';
+import FAQ from './pages/FAQ';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -306,6 +307,7 @@ function AppContent() {
 
             {/* Help/Support */}
             <Route path="/help" element={<Help />} />
+            <Route path="/faq" element={<FAQ />} />
 
             {/* Connection Requests */}
             <Route path="/connection-requests" element={<ConnectionRequests />} />
