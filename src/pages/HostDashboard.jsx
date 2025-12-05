@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
+import { facilitationService } from '../services/facilitationService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Home,
@@ -17,14 +18,20 @@ import {
   HelpCircle,
   Briefcase,
   Loader2,
+  Mail,
+  Phone,
+  GraduationCap,
+  XCircle,
 } from 'lucide-react';
 
 const HostDashboard = () => {
-  const { user, getFirstName, loading: userLoading } = useUser();
+  const { user, getFirstName, loading: userLoading} = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [notifications, setNotifications] = useState([]);
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [facilitationRequests, setFacilitationRequests] = useState([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
 
   // Fetch dashboard data
   useEffect(() => {
@@ -54,6 +61,27 @@ const HostDashboard = () => {
     }
   }, [user, userLoading]);
 
+  // Fetch facilitation requests
+  useEffect(() => {
+    const fetchRequests = async () => {
+      if (!user) return;
+
+      try {
+        setRequestsLoading(true);
+        const requests = await facilitationService.getHostRequests();
+        setFacilitationRequests(requests);
+      } catch (error) {
+        console.error('Error fetching facilitation requests:', error);
+      } finally {
+        setRequestsLoading(false);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchRequests();
+    }
+  }, [user, userLoading]);
+
   // Prepare host data
   const hostData = user ? {
     name: user.fullName,
@@ -62,7 +90,7 @@ const HostDashboard = () => {
     rating: user.rating || 0,
     reviewCount: dashboardData?.reviewCount || 0,
     currentStudent: dashboardData?.currentStudent,
-    pendingRequests: dashboardData?.pendingRequestsCount || 0,
+    pendingRequests: facilitationRequests.filter(r => r.status === 'pending').length,
   } : null;
 
   // Mark notification as read
@@ -95,6 +123,38 @@ const HostDashboard = () => {
       setNotifications(notifications.filter(notif => notif.id !== notificationId));
     } catch (error) {
       console.error('Error deleting notification:', error);
+    }
+  };
+
+  // Accept facilitation request
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await facilitationService.acceptRequest(requestId);
+      // Refresh requests
+      const requests = await facilitationService.getHostRequests();
+      setFacilitationRequests(requests);
+      alert('Request accepted! It has been forwarded to admin for verification.');
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      alert('Failed to accept request. Please try again.');
+    }
+  };
+
+  // Decline facilitation request
+  const handleDeclineRequest = async (requestId) => {
+    if (!confirm('Are you sure you want to decline this request? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await facilitationService.declineRequest(requestId);
+      // Refresh requests
+      const requests = await facilitationService.getHostRequests();
+      setFacilitationRequests(requests);
+      alert('Request declined.');
+    } catch (error) {
+      console.error('Error declining request:', error);
+      alert('Failed to decline request. Please try again.');
     }
   };
 
@@ -173,7 +233,7 @@ const HostDashboard = () => {
             </div>
 
             <button
-              onClick={() => setActiveTab('overview')}
+              onClick={() => setActiveTab('requests')}
               className="card p-6 hover:shadow-lg transition-shadow cursor-pointer text-left w-full"
             >
               <div className="flex items-center justify-between">
@@ -220,6 +280,21 @@ const HostDashboard = () => {
                 }`}
               >
                 Overview
+              </button>
+              <button
+                onClick={() => setActiveTab('requests')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
+                  activeTab === 'requests'
+                    ? 'border-purple-600 text-purple-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Requests
+                {hostData && hostData.pendingRequests > 0 && (
+                  <span className="absolute -top-1 -right-2 w-5 h-5 bg-purple-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {hostData.pendingRequests}
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => setActiveTab('profile')}
@@ -453,6 +528,175 @@ const HostDashboard = () => {
                   Contact Support
                 </Link>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'requests' && (
+          <div className="space-y-6">
+            <div className="card p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Facilitation Requests
+              </h2>
+
+              {requestsLoading ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+                  <p className="text-gray-600">Loading requests...</p>
+                </div>
+              ) : facilitationRequests.length === 0 ? (
+                <div className="text-center py-12">
+                  <MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    No Requests Yet
+                  </h3>
+                  <p className="text-gray-600">
+                    When students request to connect with you, they'll appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {facilitationRequests.map((request) => (
+                    <div key={request.id} className="border border-gray-200 rounded-lg p-6">
+                      {/* Student Header */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            {request.studentName}
+                          </h3>
+                          <div className="space-y-1 text-sm text-gray-600">
+                            {request.university && (
+                              <div className="flex items-center space-x-2">
+                                <GraduationCap className="w-4 h-4" />
+                                <span>{request.university}</span>
+                              </div>
+                            )}
+                            {request.studentEmail && (
+                              <div className="flex items-center space-x-2">
+                                <Mail className="w-4 h-4" />
+                                <span>{request.studentEmail}</span>
+                              </div>
+                            )}
+                            {request.studentPhone && (
+                              <div className="flex items-center space-x-2">
+                                <Phone className="w-4 h-4" />
+                                <span>{request.studentPhone}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Status Badge */}
+                        <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          request.status === 'reviewing' ? 'bg-purple-100 text-purple-800' :
+                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {request.status === 'pending' && 'Pending'}
+                          {request.status === 'reviewing' && 'Under Admin Review'}
+                          {request.status === 'approved' && 'Approved'}
+                          {request.status === 'rejected' && 'Declined'}
+                        </div>
+                      </div>
+
+                      {/* Field of Study */}
+                      {request.fieldOfStudy && (
+                        <div className="mb-3">
+                          <span className="text-sm font-medium text-gray-700">Field of Study: </span>
+                          <span className="text-sm text-gray-600">{request.fieldOfStudy}</span>
+                        </div>
+                      )}
+
+                      {/* Student's Message */}
+                      {request.message && (
+                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                            Student's Message:
+                          </h4>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {request.message}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Student Bio */}
+                      {request.bio && (
+                        <div className="mb-4">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                            About the Student:
+                          </h4>
+                          <p className="text-sm text-gray-700">
+                            {request.bio}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Request Date */}
+                      <div className="text-xs text-gray-500 mb-4">
+                        Requested on {new Date(request.requestDate).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric'
+                        })}
+                      </div>
+
+                      {/* Action Buttons */}
+                      {request.status === 'pending' && (
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => handleAcceptRequest(request.id)}
+                            className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                          >
+                            <CheckCircle className="w-4 h-4 inline mr-2" />
+                            Accept Request
+                          </button>
+                          <button
+                            onClick={() => handleDeclineRequest(request.id)}
+                            className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                          >
+                            <XCircle className="w-4 h-4 inline mr-2" />
+                            Decline Request
+                          </button>
+                        </div>
+                      )}
+
+                      {request.status === 'reviewing' && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                          <p className="text-sm text-purple-900">
+                            <strong>Status:</strong> This request has been forwarded to the admin team for verification and final approval.
+                          </p>
+                        </div>
+                      )}
+
+                      {request.status === 'approved' && request.adminContact && (
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                          <p className="text-sm text-green-900 mb-2">
+                            <strong>Admin Approved!</strong> Admin contact details:
+                          </p>
+                          <div className="text-sm text-green-800">
+                            <p><strong>{request.adminContact.name}</strong></p>
+                            {request.adminContact.email && (
+                              <p>Email: {request.adminContact.email}</p>
+                            )}
+                            {request.adminContact.phone && (
+                              <p>Phone: {request.adminContact.phone}</p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {request.status === 'rejected' && request.adminNotes && (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                          <p className="text-sm text-red-900">
+                            <strong>Admin Notes:</strong> {request.adminNotes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -16,20 +16,18 @@ export const dashboardService = {
         .from('facilitation_requests')
         .select(`
           *,
-          guest:guest_id (
+          requester:user_profiles!requester_id (
             id,
-            user_id,
-            university,
-            course,
-            profile_picture_url,
-            average_rating,
-            user_profiles!inner (
-              full_name,
-              email
+            full_name,
+            email,
+            guest_profile:guest_profiles!user_id (
+              university,
+              course,
+              profile_picture_url
             )
           )
         `)
-        .eq('host_id', userId)
+        .eq('target_id', userId)
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(1)
@@ -40,18 +38,18 @@ export const dashboardService = {
         .from('facilitation_requests')
         .select(`
           *,
-          guest:guest_id (
+          requester:user_profiles!requester_id (
             id,
-            user_id,
-            university,
-            course,
-            user_profiles!inner (
-              full_name
+            full_name,
+            email,
+            guest_profile:guest_profiles!user_id (
+              university,
+              course
             )
           )
         `)
-        .eq('host_id', userId)
-        .in('status', ['pending', 'under_review'])
+        .eq('target_id', userId)
+        .in('status', ['pending', 'reviewing'])
         .order('created_at', { ascending: false });
 
       // Fetch host's ratings
@@ -66,8 +64,9 @@ export const dashboardService = {
 
       // Get current student details if arrangement exists
       let currentStudent = null;
-      if (currentArrangement && currentArrangement.guest) {
-        const guestProfile = currentArrangement.guest;
+      if (currentArrangement && currentArrangement.requester) {
+        const requesterProfile = currentArrangement.requester;
+        const guestProfile = requesterProfile.guest_profile;
 
         // Fetch hours logged this month for current student
         const startOfMonth = new Date();
@@ -86,25 +85,25 @@ export const dashboardService = {
         ) || 0;
 
         currentStudent = {
-          name: guestProfile.user_profiles?.full_name || 'Student',
-          university: guestProfile.university || '',
+          name: requesterProfile.full_name || 'Student',
+          university: guestProfile?.university || '',
           startDate: new Date(currentArrangement.created_at).toLocaleDateString('en-US', {
             month: 'long',
             year: 'numeric',
           }),
           servicesProvided: currentArrangement.services_offered || [],
           hoursThisMonth,
-          rating: guestProfile.average_rating || 0,
-          imageUrl: guestProfile.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(guestProfile.user_profiles?.full_name || 'Student')}`,
+          rating: 0, // Note: We'll need to calculate this from ratings table
+          imageUrl: guestProfile?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(requesterProfile.full_name || 'Student')}`,
         };
       }
 
       // Format pending requests
       const formattedPendingRequests = pendingRequests?.map((request) => ({
         id: request.id,
-        studentName: request.guest?.user_profiles?.full_name || 'Student',
-        university: request.guest?.university || '',
-        course: request.guest?.course || '',
+        studentName: request.requester?.full_name || 'Student',
+        university: request.requester?.guest_profile?.university || '',
+        course: request.requester?.guest_profile?.course || '',
         status: request.status,
         createdAt: request.created_at,
       })) || [];
@@ -134,20 +133,19 @@ export const dashboardService = {
         .from('facilitation_requests')
         .select(`
           *,
-          host:host_id (
+          target:user_profiles!target_id (
             id,
-            user_id,
-            address,
-            city,
-            postcode,
-            profile_picture_url,
-            average_rating,
-            user_profiles!inner (
-              full_name
+            full_name,
+            email,
+            host_profile:host_profiles!user_id (
+              address,
+              city,
+              postcode,
+              profile_picture_url
             )
           )
         `)
-        .eq('guest_id', userId)
+        .eq('requester_id', userId)
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(1)
@@ -157,7 +155,7 @@ export const dashboardService = {
       const { data: allRequests, error: requestsError } = await supabase
         .from('facilitation_requests')
         .select('*')
-        .eq('guest_id', userId)
+        .eq('requester_id', userId)
         .order('created_at', { ascending: false });
 
       // Fetch student's ratings to calculate recognition level
@@ -198,8 +196,9 @@ export const dashboardService = {
 
       // Get current host details if arrangement exists
       let currentHost = null;
-      if (currentArrangement && currentArrangement.host) {
-        const hostProfile = currentArrangement.host;
+      if (currentArrangement && currentArrangement.target) {
+        const targetProfile = currentArrangement.target;
+        const hostProfile = targetProfile.host_profile;
 
         // Fetch hours logged this month
         const startOfMonth = new Date();
@@ -217,12 +216,12 @@ export const dashboardService = {
           0
         ) || 0;
 
-        const location = [hostProfile.city, hostProfile.postcode]
+        const location = [hostProfile?.city, hostProfile?.postcode]
           .filter(Boolean)
           .join(', ') || 'Location not specified';
 
         currentHost = {
-          name: hostProfile.user_profiles?.full_name || 'Host',
+          name: targetProfile.full_name || 'Host',
           location,
           since: new Date(currentArrangement.created_at).toLocaleDateString('en-US', {
             month: 'long',
@@ -230,7 +229,7 @@ export const dashboardService = {
           }),
           servicesProvided: currentArrangement.services_offered || [],
           hoursThisMonth,
-          imageUrl: hostProfile.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(hostProfile.user_profiles?.full_name || 'Host')}`,
+          imageUrl: hostProfile?.profile_picture_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(targetProfile.full_name || 'Host')}`,
         };
       }
 

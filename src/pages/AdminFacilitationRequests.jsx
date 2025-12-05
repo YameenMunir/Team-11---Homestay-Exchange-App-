@@ -15,13 +15,13 @@ import {
   FileText,
   Loader2,
 } from 'lucide-react';
-import { adminService } from '../services/adminService';
+import { facilitationService } from '../services/facilitationService';
 import toast from 'react-hot-toast';
 
 const AdminFacilitationRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState('under_review'); // all, pending, under_review, approved, rejected
+  const [filterStatus, setFilterStatus] = useState('reviewing'); // all, pending, reviewing, approved, rejected
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -30,13 +30,12 @@ const AdminFacilitationRequests = () => {
 
   useEffect(() => {
     fetchRequests();
-  }, [filterStatus]);
+  }, []);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const statusFilter = filterStatus === 'all' ? null : filterStatus;
-      const data = await adminService.getFacilitationRequests(statusFilter);
+      const data = await facilitationService.getAdminRequests();
       setRequests(data);
     } catch (error) {
       console.error('Error fetching requests:', error);
@@ -48,7 +47,7 @@ const AdminFacilitationRequests = () => {
 
   const handleApprove = async (requestId) => {
     try {
-      await adminService.approveFacilitationRequest(requestId, adminNotes);
+      await facilitationService.approveRequest(requestId, adminNotes);
       toast.success('Facilitation request approved!');
       setShowModal(false);
       setAdminNotes('');
@@ -71,7 +70,7 @@ const AdminFacilitationRequests = () => {
     }
 
     try {
-      await adminService.rejectFacilitationRequest(selectedRequest.id, rejectReason);
+      await facilitationService.rejectRequest(selectedRequest.id, rejectReason);
       toast.success('Facilitation request rejected');
       setShowRejectModal(false);
       setShowModal(false);
@@ -91,20 +90,26 @@ const AdminFacilitationRequests = () => {
   const getStatusBadge = (status) => {
     const styles = {
       pending: 'bg-yellow-100 text-yellow-800',
-      under_review: 'bg-purple-100 text-purple-800',
+      reviewing: 'bg-purple-100 text-purple-800',
       approved: 'bg-green-100 text-green-800',
       rejected: 'bg-red-100 text-red-800',
     };
     const icons = {
       pending: <Clock className="w-3 h-3" />,
-      under_review: <Eye className="w-3 h-3" />,
+      reviewing: <Eye className="w-3 h-3" />,
       approved: <CheckCircle className="w-3 h-3" />,
       rejected: <XCircle className="w-3 h-3" />,
+    };
+    const labels = {
+      pending: 'Pending',
+      reviewing: 'Under Review',
+      approved: 'Approved',
+      rejected: 'Rejected',
     };
     return (
       <span className={`badge ${styles[status]} flex items-center space-x-1`}>
         {icons[status]}
-        <span className="capitalize">{status.replace('_', ' ')}</span>
+        <span>{labels[status]}</span>
       </span>
     );
   };
@@ -145,7 +150,7 @@ const AdminFacilitationRequests = () => {
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Under Review</p>
             <span className="text-3xl font-bold text-purple-600">
-              {requests.filter(r => r.status === 'under_review').length}
+              {requests.filter(r => r.status === 'reviewing').length}
             </span>
           </div>
           <div className="card p-6">
@@ -172,8 +177,8 @@ const AdminFacilitationRequests = () => {
               className="input-field"
             >
               <option value="all">All Statuses</option>
-              <option value="pending">Pending</option>
-              <option value="under_review">Under Review</option>
+              <option value="pending">Pending (Host Review)</option>
+              <option value="reviewing">Under Review (Admin)</option>
               <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
             </select>
@@ -181,7 +186,7 @@ const AdminFacilitationRequests = () => {
         </div>
 
         {/* Requests List */}
-        {requests.length === 0 ? (
+        {(filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus)).length === 0 ? (
           <div className="card p-12 text-center">
             <Link2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -190,12 +195,12 @@ const AdminFacilitationRequests = () => {
             <p className="text-gray-600">
               {filterStatus === 'all'
                 ? 'There are no facilitation requests at this time.'
-                : `There are no ${filterStatus.replace('_', ' ')} requests.`}
+                : `There are no ${filterStatus === 'reviewing' ? 'under review' : filterStatus} requests.`}
             </p>
           </div>
         ) : (
           <div className="space-y-6">
-            {requests.map((request) => (
+            {(filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus)).map((request) => (
               <div key={request.id} className="card p-6">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-start space-x-4 flex-1">
@@ -205,7 +210,7 @@ const AdminFacilitationRequests = () => {
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
                         <h3 className="text-xl font-bold text-gray-900">
-                          {request.guestName} → {request.hostName}
+                          {request.studentName} → {request.hostName}
                         </h3>
                         {getStatusBadge(request.status)}
                       </div>
@@ -222,43 +227,69 @@ const AdminFacilitationRequests = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   {/* Student Info */}
-                  <div className="border-l-4 border-blue-500 pl-4">
+                  <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
                     <div className="flex items-center space-x-2 mb-3">
                       <GraduationCap className="w-5 h-5 text-blue-600" />
-                      <h4 className="font-semibold text-gray-900">Student</h4>
+                      <h4 className="font-semibold text-gray-900">Student (Guest)</h4>
                     </div>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <p className="font-medium text-gray-900">{request.guestName}</p>
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4" />
-                        <span>{request.guestEmail}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <GraduationCap className="w-4 h-4" />
-                        <span>{request.guestUniversity}</span>
-                      </div>
-                      {request.guestCourse && (
-                        <p className="text-xs text-gray-500">Course: {request.guestCourse}</p>
+                    <div className="space-y-2 text-sm">
+                      <p className="font-medium text-gray-900">{request.studentName}</p>
+                      {request.studentEmail && (
+                        <div className="flex items-center space-x-2 text-gray-700">
+                          <Mail className="w-4 h-4 text-blue-600" />
+                          <a href={`mailto:${request.studentEmail}`} className="hover:text-blue-600">
+                            {request.studentEmail}
+                          </a>
+                        </div>
+                      )}
+                      {request.studentPhone && (
+                        <div className="flex items-center space-x-2 text-gray-700">
+                          <Phone className="w-4 h-4 text-blue-600" />
+                          <a href={`tel:${request.studentPhone}`} className="hover:text-blue-600">
+                            {request.studentPhone}
+                          </a>
+                        </div>
+                      )}
+                      {request.studentUniversity && (
+                        <div className="flex items-center space-x-2 text-gray-600">
+                          <GraduationCap className="w-4 h-4" />
+                          <span>{request.studentUniversity}</span>
+                        </div>
+                      )}
+                      {request.studentFieldOfStudy && (
+                        <p className="text-xs text-gray-600">Field: {request.studentFieldOfStudy}</p>
                       )}
                     </div>
                   </div>
 
                   {/* Host Info */}
-                  <div className="border-l-4 border-purple-500 pl-4">
+                  <div className="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
                     <div className="flex items-center space-x-2 mb-3">
                       <Home className="w-5 h-5 text-purple-600" />
                       <h4 className="font-semibold text-gray-900">Host</h4>
                     </div>
-                    <div className="space-y-2 text-sm text-gray-600">
+                    <div className="space-y-2 text-sm">
                       <p className="font-medium text-gray-900">{request.hostName}</p>
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4" />
-                        <span>{request.hostEmail}</span>
-                      </div>
-                      {request.hostAddress && (
-                        <div className="flex items-center space-x-2">
+                      {request.hostEmail && (
+                        <div className="flex items-center space-x-2 text-gray-700">
+                          <Mail className="w-4 h-4 text-purple-600" />
+                          <a href={`mailto:${request.hostEmail}`} className="hover:text-purple-600">
+                            {request.hostEmail}
+                          </a>
+                        </div>
+                      )}
+                      {request.hostPhone && (
+                        <div className="flex items-center space-x-2 text-gray-700">
+                          <Phone className="w-4 h-4 text-purple-600" />
+                          <a href={`tel:${request.hostPhone}`} className="hover:text-purple-600">
+                            {request.hostPhone}
+                          </a>
+                        </div>
+                      )}
+                      {request.hostLocation && (
+                        <div className="flex items-center space-x-2 text-gray-600">
                           <MapPin className="w-4 h-4" />
-                          <span>{request.hostAddress}</span>
+                          <span>{request.hostLocation}</span>
                         </div>
                       )}
                     </div>
@@ -311,7 +342,7 @@ const AdminFacilitationRequests = () => {
                     <span>View Full Details</span>
                   </button>
 
-                  {request.status === 'under_review' && (
+                  {request.status === 'reviewing' && (
                     <>
                       <button
                         onClick={() => {
@@ -339,7 +370,7 @@ const AdminFacilitationRequests = () => {
         )}
 
         {/* Approve Modal */}
-        {showModal && selectedRequest && selectedRequest.status === 'under_review' && (
+        {showModal && selectedRequest && selectedRequest.status === 'reviewing' && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-8">
               <div className="mb-6">
@@ -347,7 +378,7 @@ const AdminFacilitationRequests = () => {
                   Approve Facilitation Request
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Approving match between {selectedRequest.guestName} and {selectedRequest.hostName}
+                  Approving match between {selectedRequest.studentName} and {selectedRequest.hostName}
                 </p>
               </div>
 
@@ -394,7 +425,7 @@ const AdminFacilitationRequests = () => {
                   Reject Facilitation Request
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Rejecting match between {selectedRequest.guestName} and {selectedRequest.hostName}
+                  Rejecting match between {selectedRequest.studentName} and {selectedRequest.hostName}
                 </p>
               </div>
 
