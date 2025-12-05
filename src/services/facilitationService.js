@@ -179,9 +179,9 @@ export const facilitationService = {
 
       const counts = {
         pending: data.filter(r => r.status === 'pending').length,
-        approved: data.filter(r => r.status === 'approved').length,
-        reviewing: data.filter(r => r.status === 'reviewing').length,
-        rejected: data.filter(r => r.status === 'rejected').length,
+        matched: data.filter(r => r.status === 'matched').length,
+        in_review: data.filter(r => r.status === 'in_review').length,
+        cancelled: data.filter(r => r.status === 'cancelled').length,
         total: data.length,
       };
 
@@ -334,7 +334,7 @@ export const facilitationService = {
     const { data, error } = await supabase
       .from('facilitation_requests')
       .update({
-        status: 'reviewing',
+        status: 'in_review',
         reviewed_at: new Date().toISOString(),
       })
       .eq('id', requestId)
@@ -359,7 +359,7 @@ export const facilitationService = {
     const { data, error } = await supabase
       .from('facilitation_requests')
       .update({
-        status: 'rejected',
+        status: 'cancelled',
         reviewed_at: new Date().toISOString(),
       })
       .eq('id', requestId)
@@ -474,7 +474,7 @@ export const facilitationService = {
     const { data, error } = await supabase
       .from('facilitation_requests')
       .update({
-        status: 'approved',
+        status: 'matched',
         admin_notes: adminNotes,
         reviewed_by: user?.id,
         matched_at: new Date().toISOString(),
@@ -504,7 +504,7 @@ export const facilitationService = {
     const { data, error } = await supabase
       .from('facilitation_requests')
       .update({
-        status: 'rejected',
+        status: 'cancelled',
         admin_notes: adminNotes,
         reviewed_by: user?.id,
       })

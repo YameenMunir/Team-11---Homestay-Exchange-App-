@@ -589,14 +589,14 @@ const HostDashboard = () => {
                         {/* Status Badge */}
                         <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          request.status === 'reviewing' ? 'bg-purple-100 text-purple-800' :
-                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          request.status === 'in_review' ? 'bg-purple-100 text-purple-800' :
+                          request.status === 'matched' ? 'bg-green-100 text-green-800' :
                           'bg-red-100 text-red-800'
                         }`}>
                           {request.status === 'pending' && 'Pending'}
-                          {request.status === 'reviewing' && 'Under Admin Review'}
-                          {request.status === 'approved' && 'Approved'}
-                          {request.status === 'rejected' && 'Declined'}
+                          {request.status === 'in_review' && 'Under Admin Review'}
+                          {request.status === 'matched' && 'matched'}
+                          {request.status === 'cancelled' && 'Declined'}
                         </div>
                       </div>
 
@@ -661,7 +661,7 @@ const HostDashboard = () => {
                         </div>
                       )}
 
-                      {request.status === 'reviewing' && (
+                      {request.status === 'in_review' && (
                         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                           <p className="text-sm text-purple-900">
                             <strong>Status:</strong> This request has been forwarded to the admin team for verification and final approval.
@@ -669,7 +669,7 @@ const HostDashboard = () => {
                         </div>
                       )}
 
-                      {request.status === 'approved' && request.adminContact && (
+                      {request.status === 'matched' && request.adminContact && (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                           <p className="text-sm text-green-900 mb-2">
                             <strong>Admin Approved!</strong> Admin contact details:
@@ -686,7 +686,7 @@ const HostDashboard = () => {
                         </div>
                       )}
 
-                      {request.status === 'rejected' && request.adminNotes && (
+                      {request.status === 'cancelled' && request.adminNotes && (
                         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                           <p className="text-sm text-red-900">
                             <strong>Admin Notes:</strong> {request.adminNotes}
@@ -893,3 +893,4 @@ const HostDashboard = () => {
 };
 
 export default HostDashboard;
+

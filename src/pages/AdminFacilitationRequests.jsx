@@ -21,9 +21,10 @@ import toast from 'react-hot-toast';
 const AdminFacilitationRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState('reviewing'); // all, pending, reviewing, approved, rejected
+  const [filterStatus, setFilterStatus] = useState('in_review'); // all, pending, reviewing, approved, rejected
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
@@ -84,7 +85,17 @@ const AdminFacilitationRequests = () => {
 
   const handleViewDetails = (request) => {
     setSelectedRequest(request);
+    setShowDetailsModal(true);
+  };
+
+  const handleApproveFromDetails = () => {
+    setShowDetailsModal(false);
     setShowModal(true);
+  };
+
+  const handleRejectFromDetails = () => {
+    setShowDetailsModal(false);
+    setShowRejectModal(true);
   };
 
   const getStatusBadge = (status) => {
@@ -103,8 +114,8 @@ const AdminFacilitationRequests = () => {
     const labels = {
       pending: 'Pending',
       reviewing: 'Under Review',
-      approved: 'Approved',
-      rejected: 'Rejected',
+      approved: 'matched',
+      rejected: 'cancelled',
     };
     return (
       <span className={`badge ${styles[status]} flex items-center space-x-1`}>
@@ -150,19 +161,19 @@ const AdminFacilitationRequests = () => {
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Under Review</p>
             <span className="text-3xl font-bold text-purple-600">
-              {requests.filter(r => r.status === 'reviewing').length}
+              {requests.filter(r => r.status === 'in_review').length}
             </span>
           </div>
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Approved</p>
             <span className="text-3xl font-bold text-green-600">
-              {requests.filter(r => r.status === 'approved').length}
+              {requests.filter(r => r.status === 'matched').length}
             </span>
           </div>
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Rejected</p>
             <span className="text-3xl font-bold text-red-600">
-              {requests.filter(r => r.status === 'rejected').length}
+              {requests.filter(r => r.status === 'cancelled').length}
             </span>
           </div>
         </div>
@@ -195,7 +206,7 @@ const AdminFacilitationRequests = () => {
             <p className="text-gray-600">
               {filterStatus === 'all'
                 ? 'There are no facilitation requests at this time.'
-                : `There are no ${filterStatus === 'reviewing' ? 'under review' : filterStatus} requests.`}
+                : `There are no ${filterStatus === 'in_review' ? 'under review' : filterStatus} requests.`}
             </p>
           </div>
         ) : (
@@ -323,7 +334,7 @@ const AdminFacilitationRequests = () => {
                 {/* Admin Notes (if approved/rejected) */}
                 {request.adminNotes && (
                   <div className={`p-4 rounded-lg mb-6 ${
-                    request.status === 'approved'
+                    request.status === 'matched'
                       ? 'bg-green-50 border border-green-200'
                       : 'bg-red-50 border border-red-200'
                   }`}>
@@ -342,7 +353,7 @@ const AdminFacilitationRequests = () => {
                     <span>View Full Details</span>
                   </button>
 
-                  {request.status === 'reviewing' && (
+                  {request.status === 'in_review' && (
                     <>
                       <button
                         onClick={() => {
@@ -369,8 +380,186 @@ const AdminFacilitationRequests = () => {
           </div>
         )}
 
+        {/* Details Modal */}
+        {showDetailsModal && selectedRequest && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-8">
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-2xl font-bold text-gray-900">
+                    Facilitation Request Details
+                  </h3>
+                  <button
+                    onClick={() => setShowDetailsModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <XCircle className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="flex items-center space-x-3 mb-2">
+                  <h4 className="text-lg font-semibold text-gray-700">
+                    {selectedRequest.studentName} → {selectedRequest.hostName}
+                  </h4>
+                  {getStatusBadge(selectedRequest.status)}
+                </div>
+                <p className="text-sm text-gray-500">
+                  Requested on {new Date(selectedRequest.requestDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {/* Student Info */}
+                <div className="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <GraduationCap className="w-5 h-5 text-blue-600" />
+                    <h4 className="font-semibold text-gray-900">Student (Guest)</h4>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-medium text-gray-900">{selectedRequest.studentName}</p>
+                    {selectedRequest.studentEmail && (
+                      <div className="flex items-center space-x-2 text-gray-700">
+                        <Mail className="w-4 h-4 text-blue-600" />
+                        <a href={`mailto:${selectedRequest.studentEmail}`} className="hover:text-blue-600">
+                          {selectedRequest.studentEmail}
+                        </a>
+                      </div>
+                    )}
+                    {selectedRequest.studentPhone && (
+                      <div className="flex items-center space-x-2 text-gray-700">
+                        <Phone className="w-4 h-4 text-blue-600" />
+                        <a href={`tel:${selectedRequest.studentPhone}`} className="hover:text-blue-600">
+                          {selectedRequest.studentPhone}
+                        </a>
+                      </div>
+                    )}
+                    {selectedRequest.studentUniversity && (
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <GraduationCap className="w-4 h-4" />
+                        <span>{selectedRequest.studentUniversity}</span>
+                      </div>
+                    )}
+                    {selectedRequest.studentFieldOfStudy && (
+                      <p className="text-xs text-gray-600">Field: {selectedRequest.studentFieldOfStudy}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Host Info */}
+                <div className="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Home className="w-5 h-5 text-purple-600" />
+                    <h4 className="font-semibold text-gray-900">Host</h4>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-medium text-gray-900">{selectedRequest.hostName}</p>
+                    {selectedRequest.hostEmail && (
+                      <div className="flex items-center space-x-2 text-gray-700">
+                        <Mail className="w-4 h-4 text-purple-600" />
+                        <a href={`mailto:${selectedRequest.hostEmail}`} className="hover:text-purple-600">
+                          {selectedRequest.hostEmail}
+                        </a>
+                      </div>
+                    )}
+                    {selectedRequest.hostPhone && (
+                      <div className="flex items-center space-x-2 text-gray-700">
+                        <Phone className="w-4 h-4 text-purple-600" />
+                        <a href={`tel:${selectedRequest.hostPhone}`} className="hover:text-purple-600">
+                          {selectedRequest.hostPhone}
+                        </a>
+                      </div>
+                    )}
+                    {selectedRequest.hostLocation && (
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <MapPin className="w-4 h-4" />
+                        <span>{selectedRequest.hostLocation}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Student's Message */}
+              {selectedRequest.message && (
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Student's Message:
+                  </h4>
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    {selectedRequest.message}
+                  </p>
+                </div>
+              )}
+
+              {/* Services Offered */}
+              {selectedRequest.servicesOffered && selectedRequest.servicesOffered.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">Services Offered:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedRequest.servicesOffered.map((service, index) => (
+                      <span key={index} className="badge bg-purple-100 text-purple-800">
+                        {service}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Duration */}
+              {selectedRequest.duration && (
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Calendar className="w-4 h-4" />
+                    <span>Duration: {selectedRequest.duration} months</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Notes (if exists) */}
+              {selectedRequest.adminNotes && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm font-semibold text-gray-900 mb-1">Admin Notes:</p>
+                  <p className="text-sm text-gray-700">{selectedRequest.adminNotes}</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-6 border-t border-gray-200">
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="btn-secondary flex-1"
+                >
+                  Close
+                </button>
+                {selectedRequest.status === 'in_review' && (
+                  <>
+                    <button
+                      onClick={handleApproveFromDetails}
+                      className="btn-primary flex-1 flex items-center justify-center space-x-2"
+                    >
+                      <CheckCircle className="w-5 h-5" />
+                      <span>Approve Request</span>
+                    </button>
+                    <button
+                      onClick={handleRejectFromDetails}
+                      className="flex-1 px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-medium flex items-center justify-center space-x-2"
+                    >
+                      <XCircle className="w-5 h-5" />
+                      <span>Reject</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Approve Modal */}
-        {showModal && selectedRequest && selectedRequest.status === 'reviewing' && (
+        {showModal && selectedRequest && selectedRequest.status === 'in_review' && (
           <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl max-w-md w-full p-8">
               <div className="mb-6">
@@ -384,15 +573,18 @@ const AdminFacilitationRequests = () => {
 
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Admin Notes (Optional)
+                  Admin Notes <span className="text-gray-500 font-normal">(Optional)</span>
                 </label>
                 <textarea
                   value={adminNotes}
                   onChange={(e) => setAdminNotes(e.target.value)}
-                  placeholder="Add any notes about this approval..."
+                  placeholder="Add any notes about this approval (optional)..."
                   className="input-field min-h-[100px]"
                   rows={4}
                 />
+                <p className="text-xs text-gray-500 mt-2">
+                  You can approve without adding notes. Notes will be visible to both parties if added.
+                </p>
               </div>
 
               <div className="flex gap-3">
@@ -471,3 +663,4 @@ const AdminFacilitationRequests = () => {
 };
 
 export default AdminFacilitationRequests;
+

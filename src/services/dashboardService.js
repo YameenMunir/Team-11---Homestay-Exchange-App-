@@ -28,7 +28,7 @@ export const dashboardService = {
           )
         `)
         .eq('target_id', userId)
-        .eq('status', 'approved')
+        .eq('status', 'matched')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -49,7 +49,7 @@ export const dashboardService = {
           )
         `)
         .eq('target_id', userId)
-        .in('status', ['pending', 'reviewing'])
+        .in('status', ['pending', 'in_review'])
         .order('created_at', { ascending: false });
 
       // Fetch host's ratings
@@ -146,7 +146,7 @@ export const dashboardService = {
           )
         `)
         .eq('requester_id', userId)
-        .eq('status', 'approved')
+        .eq('status', 'matched')
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -236,7 +236,7 @@ export const dashboardService = {
       // Count requests by status
       const connectionRequests = {
         pending: allRequests?.filter((r) => r.status === 'pending').length || 0,
-        approved: allRequests?.filter((r) => r.status === 'approved').length || 0,
+        approved: allRequests?.filter((r) => r.status === 'matched').length || 0,
         total: allRequests?.length || 0,
       };
 
@@ -340,3 +340,4 @@ export const dashboardService = {
     }
   },
 };
+
