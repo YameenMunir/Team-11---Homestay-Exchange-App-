@@ -10,6 +10,7 @@ import StudentSignup from './pages/StudentSignup';
 import HostDashboard from './pages/HostDashboard';
 import StudentDashboard from './pages/StudentDashboard';
 import BrowseHosts from './pages/BrowseHosts';
+import SavedHosts from './pages/SavedHosts';
 import MatchDetails from './pages/MatchDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
@@ -183,6 +184,16 @@ function AppContent() {
                 <ProtectedRoute requiredRole="guest">
                   <RequiresVerification feature="Browse Hosts">
                     <BrowseHosts />
+                  </RequiresVerification>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student/saved-hosts"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <RequiresVerification feature="Saved Hosts">
+                    <SavedHosts />
                   </RequiresVerification>
                 </ProtectedRoute>
               }

@@ -21,6 +21,7 @@ import {
   DollarSign,
 } from 'lucide-react';
 import { hostService } from '../services/hostService';
+import { savedHostsService } from '../services/savedHostsService';
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -32,15 +33,22 @@ const MatchDetails = () => {
   const [connectionMessage, setConnectionMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // Fetch host data
+  // Fetch host data and check saved status
   useEffect(() => {
-    const fetchHost = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         console.log('Fetching host details for ID:', id);
-        const hostData = await hostService.getHostById(id);
+
+        // Fetch host data and saved status in parallel
+        const [hostData, savedStatus] = await Promise.all([
+          hostService.getHostById(id),
+          savedHostsService.isHostSaved(id)
+        ]);
+
         setHost(hostData);
+        setIsSaved(savedStatus);
       } catch (err) {
         console.error('Error fetching host:', err);
         setError(err.message || 'Failed to load host details');
@@ -50,12 +58,22 @@ const MatchDetails = () => {
     };
 
     if (id) {
-      fetchHost();
+      fetchData();
     }
   }, [id]);
 
   const handleFacilitate = () => {
     setShowFacilitateModal(true);
+  };
+
+  const handleToggleSave = async () => {
+    try {
+      const newSavedStatus = await savedHostsService.toggleSavedHost(id);
+      setIsSaved(newSavedStatus);
+    } catch (err) {
+      console.error('Error toggling saved status:', err);
+      alert('Failed to update favorites. Please try again.');
+    }
   };
 
   const handleSubmitRequest = () => {
@@ -209,9 +227,10 @@ const MatchDetails = () => {
                     {/* Action Buttons */}
                     <div className="flex gap-2">
                       <button
-                        onClick={() => setIsSaved(!isSaved)}
+                        onClick={handleToggleSave}
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                        aria-label="Save host"
+                        aria-label={isSaved ? 'Unsave host' : 'Save host'}
+                        title={isSaved ? 'Remove from favorites' : 'Add to favorites'}
                       >
                         <Heart
                           className={`w-6 h-6 ${

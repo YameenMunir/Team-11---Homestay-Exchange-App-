@@ -20,13 +20,14 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { hostService } from '../services/hostService';
+import { savedHostsService } from '../services/savedHostsService';
 
 const BrowseHosts = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const [savedHosts, setSavedHosts] = useState([]);
+  const [savedHostIds, setSavedHostIds] = useState([]);
   const [hosts, setHosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,19 +42,28 @@ const BrowseHosts = () => {
     'Technology Help',
   ];
 
-  // Fetch hosts from database
+  // Fetch hosts and saved hosts from database
   useEffect(() => {
-    const fetchHosts = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         console.log('Fetching verified hosts with tasks...');
-        const data = await hostService.getVerifiedHostsWithTasks();
-        console.log('Received hosts data:', data);
-        console.log('Number of hosts:', data?.length || 0);
-        setHosts(data);
+
+        // Fetch hosts and saved host IDs in parallel
+        const [hostsData, savedIds] = await Promise.all([
+          hostService.getVerifiedHostsWithTasks(),
+          savedHostsService.getSavedHostIds()
+        ]);
+
+        console.log('Received hosts data:', hostsData);
+        console.log('Number of hosts:', hostsData?.length || 0);
+        console.log('Saved host IDs:', savedIds);
+
+        setHosts(hostsData);
+        setSavedHostIds(savedIds);
       } catch (err) {
-        console.error('Error fetching hosts:', err);
+        console.error('Error fetching data:', err);
         console.error('Error details:', err.message);
         setError(`Failed to load hosts: ${err.message}`);
       } finally {
@@ -61,7 +71,7 @@ const BrowseHosts = () => {
       }
     };
 
-    fetchHosts();
+    fetchData();
   }, []);
 
   const toggleService = (service) => {
@@ -72,12 +82,20 @@ const BrowseHosts = () => {
     );
   };
 
-  const toggleSaveHost = (hostId) => {
-    setSavedHosts(
-      savedHosts.includes(hostId)
-        ? savedHosts.filter((id) => id !== hostId)
-        : [...savedHosts, hostId]
-    );
+  const toggleSaveHost = async (hostId) => {
+    try {
+      const newSavedStatus = await savedHostsService.toggleSavedHost(hostId);
+
+      // Update local state
+      if (newSavedStatus) {
+        setSavedHostIds([...savedHostIds, hostId]);
+      } else {
+        setSavedHostIds(savedHostIds.filter((id) => id !== hostId));
+      }
+    } catch (err) {
+      console.error('Error toggling saved host:', err);
+      alert('Failed to update favorites. Please try again.');
+    }
   };
 
   const filteredHosts = hosts.filter((host) => {
@@ -286,7 +304,7 @@ const BrowseHosts = () => {
                         >
                           <Heart
                             className={`w-5 h-5 ${
-                              savedHosts.includes(host.id)
+                              savedHostIds.includes(host.id)
                                 ? 'fill-red-500 text-red-500'
                                 : 'text-gray-400'
                             }`}

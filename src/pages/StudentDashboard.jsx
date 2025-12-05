@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
+import { savedHostsService } from '../services/savedHostsService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Search,
@@ -23,6 +24,7 @@ const StudentDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [savedHostsCount, setSavedHostsCount] = useState(0);
 
   // Fetch dashboard data
   useEffect(() => {
@@ -48,6 +50,22 @@ const StudentDashboard = () => {
     }
   }, [user, userLoading]);
 
+  // Fetch saved hosts count
+  useEffect(() => {
+    const fetchSavedHostsCount = async () => {
+      try {
+        const count = await savedHostsService.getSavedHostsCount();
+        setSavedHostsCount(count);
+      } catch (error) {
+        console.error('Error fetching saved hosts count:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchSavedHostsCount();
+    }
+  }, [user, userLoading]);
+
   // Prepare student data
   const studentData = user && dashboardData ? {
     name: user.fullName,
@@ -57,7 +75,7 @@ const StudentDashboard = () => {
     rating: user.rating || 0,
     reviewCount: dashboardData.reviewCount || 0,
     currentHost: dashboardData.currentHost,
-    savedHosts: dashboardData.savedHosts || 0,
+    savedHosts: savedHostsCount,
     totalHours: dashboardData.totalHours || 0,
     connectionRequests: dashboardData.connectionRequests || {
       pending: 0,
@@ -166,7 +184,7 @@ const StudentDashboard = () => {
               </div>
             </div>
 
-            <div className="card p-6">
+            <Link to="/student/saved-hosts" className="card p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Saved Hosts</p>
@@ -177,7 +195,7 @@ const StudentDashboard = () => {
                 </div>
                 <Heart className="w-10 h-10 text-red-500" />
               </div>
-            </div>
+            </Link>
 
             <Link to="/connection-requests" className="card p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
