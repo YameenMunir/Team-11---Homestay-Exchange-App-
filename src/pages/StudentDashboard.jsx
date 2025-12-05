@@ -15,7 +15,6 @@ import {
   Heart,
   Settings,
   HelpCircle,
-  Link2,
   Loader2,
 } from 'lucide-react';
 
@@ -194,28 +193,6 @@ const StudentDashboard = () => {
                   <p className="text-xs text-gray-500 mt-1">For later</p>
                 </div>
                 <Heart className="w-10 h-10 text-red-500" />
-              </div>
-            </Link>
-
-            <Link to="/connection-requests" className="card p-6 hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Requests</p>
-                  <span className="text-2xl font-bold text-gray-900">
-                    {studentData.connectionRequests.total}
-                  </span>
-                  {studentData.connectionRequests.pending > 0 && (
-                    <p className="text-xs text-yellow-600 mt-1 font-medium">
-                      {studentData.connectionRequests.pending} pending
-                    </p>
-                  )}
-                  {studentData.connectionRequests.approved > 0 && studentData.connectionRequests.pending === 0 && (
-                    <p className="text-xs text-green-600 mt-1 font-medium">
-                      {studentData.connectionRequests.approved} approved
-                    </p>
-                  )}
-                </div>
-                <Link2 className="w-10 h-10 text-purple-600" />
               </div>
             </Link>
           </div>
