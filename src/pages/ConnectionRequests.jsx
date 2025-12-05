@@ -1,30 +1,50 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link2, Clock, CheckCircle, Eye, Mail, Phone, MapPin, AlertCircle, Loader2, XCircle, ArrowLeft } from 'lucide-react';
+import { Link2, Clock, CheckCircle, Eye, Mail, Phone, MapPin, AlertCircle, Loader2, XCircle, ArrowLeft, RefreshCw } from 'lucide-react';
 import { facilitationService } from '../services/facilitationService';
+import toast from 'react-hot-toast';
 
 const ConnectionRequests = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchRequests = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setError(null);
       const data = await facilitationService.getUserRequests();
       setRequests(data);
+      if (isRefresh) {
+        toast.success('Requests refreshed successfully');
+      }
     } catch (err) {
       console.error('[ConnectionRequests] Error fetching requests:', err);
       setError('Failed to load requests. Please try again later.');
+      if (isRefresh) {
+        toast.error('Failed to refresh requests');
+      }
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRefresh = () => {
+    fetchRequests(true);
   };
 
   const getStatusBadge = (status) => {
@@ -34,17 +54,17 @@ const ConnectionRequests = () => {
         text: 'Pending Review',
         class: 'bg-yellow-100 text-yellow-800 border-yellow-200',
       },
-      reviewing: {
+      in_review: {
         icon: Eye,
         text: 'Under Review',
         class: 'bg-purple-100 text-purple-800 border-purple-200',
       },
-      approved: {
+      matched: {
         icon: CheckCircle,
         text: 'Approved',
         class: 'bg-green-100 text-green-800 border-green-200',
       },
-      rejected: {
+      cancelled: {
         icon: XCircle,
         text: 'Not Approved',
         class: 'bg-red-100 text-red-800 border-red-200',
@@ -91,14 +111,24 @@ const ConnectionRequests = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
         <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
-            <Link2 className="w-16 h-16 mx-auto mb-4" />
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Connection Requests
-            </h1>
-            <p className="text-xl text-purple-100">
-              Track your requests to connect with hosts
-            </p>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center">
+              <Link2 className="w-16 h-16 mx-auto mb-4" />
+              <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+                Connection Requests
+              </h1>
+              <p className="text-xl text-purple-100 mb-6">
+                Track your requests to connect with hosts
+              </p>
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="btn-secondary bg-white text-purple-700 hover:bg-purple-50 border-white flex items-center space-x-2 mx-auto"
+              >
+                <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+                <span>{refreshing ? 'Refreshing...' : 'Refresh Requests'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -246,7 +276,7 @@ const ConnectionRequests = () => {
                       </div>
                     )}
 
-                    {request.status === 'reviewing' && (
+                    {request.status === 'in_review' && (
                       <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
                           <Eye className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
@@ -262,7 +292,7 @@ const ConnectionRequests = () => {
                       </div>
                     )}
 
-                    {request.status === 'approved' && request.adminContact && (
+                    {request.status === 'matched' && request.adminContact && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
                           <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
@@ -310,7 +340,7 @@ const ConnectionRequests = () => {
                       </div>
                     )}
 
-                    {request.status === 'rejected' && (
+                    {request.status === 'cancelled' && (
                       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
                           <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />

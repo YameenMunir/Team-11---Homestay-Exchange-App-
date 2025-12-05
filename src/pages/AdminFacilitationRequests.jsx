@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Link2,
   Home,
@@ -14,11 +14,14 @@ import {
   Calendar,
   FileText,
   Loader2,
+  RefreshCw,
+  ArrowLeft,
 } from 'lucide-react';
 import { facilitationService } from '../services/facilitationService';
 import toast from 'react-hot-toast';
 
 const AdminFacilitationRequests = () => {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('in_review'); // all, pending, reviewing, approved, rejected
@@ -28,22 +31,38 @@ const AdminFacilitationRequests = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchRequests = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const data = await facilitationService.getAdminRequests();
       setRequests(data);
+      if (isRefresh) {
+        toast.success('Requests refreshed successfully');
+      }
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast.error('Failed to load facilitation requests');
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRefresh = () => {
+    fetchRequests(true);
   };
 
   const handleApprove = async (requestId) => {
@@ -101,21 +120,21 @@ const AdminFacilitationRequests = () => {
   const getStatusBadge = (status) => {
     const styles = {
       pending: 'bg-yellow-100 text-yellow-800',
-      reviewing: 'bg-purple-100 text-purple-800',
-      approved: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800',
+      in_review: 'bg-purple-100 text-purple-800',
+      matched: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800',
     };
     const icons = {
       pending: <Clock className="w-3 h-3" />,
-      reviewing: <Eye className="w-3 h-3" />,
-      approved: <CheckCircle className="w-3 h-3" />,
-      rejected: <XCircle className="w-3 h-3" />,
+      in_review: <Eye className="w-3 h-3" />,
+      matched: <CheckCircle className="w-3 h-3" />,
+      cancelled: <XCircle className="w-3 h-3" />,
     };
     const labels = {
       pending: 'Pending',
-      reviewing: 'Under Review',
-      approved: 'matched',
-      rejected: 'cancelled',
+      in_review: 'Under Review',
+      matched: 'Approved',
+      cancelled: 'Rejected',
     };
     return (
       <span className={`badge ${styles[status]} flex items-center space-x-1`}>
@@ -142,9 +161,26 @@ const AdminFacilitationRequests = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
-            Facilitation Requests
-          </h1>
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="btn-secondary flex items-center space-x-2 mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Dashboard</span>
+          </button>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
+              Facilitation Requests
+            </h1>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
           <p className="text-lg text-gray-600">
             Review and approve host-student matching requests
           </p>
@@ -189,9 +225,9 @@ const AdminFacilitationRequests = () => {
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending (Host Review)</option>
-              <option value="reviewing">Under Review (Admin)</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
+              <option value="in_review">Under Review (Admin)</option>
+              <option value="matched">Approved</option>
+              <option value="cancelled">Rejected</option>
             </select>
           </div>
         </div>

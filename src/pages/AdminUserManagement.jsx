@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Users,
   Search,
@@ -22,6 +23,7 @@ import {
   ExternalLink,
   Loader2,
   Activity,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { useVerificationEvents } from '../context/VerificationEventsContext';
@@ -29,6 +31,7 @@ import { adminService } from '../services/adminService';
 import toast from 'react-hot-toast';
 
 const AdminUserManagement = () => {
+  const navigate = useNavigate();
   const { hasPermission } = useAdmin();
   const { notifyVerificationChange, lastUpdate } = useVerificationEvents();
   const [searchTerm, setSearchTerm] = useState('');
@@ -221,6 +224,13 @@ const AdminUserManagement = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="btn-secondary flex items-center space-x-2 mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Dashboard</span>
+          </button>
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
