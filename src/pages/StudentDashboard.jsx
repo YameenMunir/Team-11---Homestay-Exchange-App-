@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
 import { savedHostsService } from '../services/savedHostsService';
+import { facilitationService } from '../services/facilitationService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Search,
@@ -16,6 +17,7 @@ import {
   Settings,
   HelpCircle,
   Loader2,
+  Link2,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
@@ -24,6 +26,13 @@ const StudentDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savedHostsCount, setSavedHostsCount] = useState(0);
+  const [connectionRequestCounts, setConnectionRequestCounts] = useState({
+    pending: 0,
+    approved: 0,
+    reviewing: 0,
+    rejected: 0,
+    total: 0,
+  });
 
   // Fetch dashboard data
   useEffect(() => {
@@ -65,6 +74,22 @@ const StudentDashboard = () => {
     }
   }, [user, userLoading]);
 
+  // Fetch connection request counts
+  useEffect(() => {
+    const fetchConnectionRequestCounts = async () => {
+      try {
+        const counts = await facilitationService.getRequestCounts();
+        setConnectionRequestCounts(counts);
+      } catch (error) {
+        console.error('Error fetching connection request counts:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchConnectionRequestCounts();
+    }
+  }, [user, userLoading]);
+
   // Prepare student data
   const studentData = user && dashboardData ? {
     name: user.fullName,
@@ -76,11 +101,7 @@ const StudentDashboard = () => {
     currentHost: dashboardData.currentHost,
     savedHosts: savedHostsCount,
     totalHours: dashboardData.totalHours || 0,
-    connectionRequests: dashboardData.connectionRequests || {
-      pending: 0,
-      approved: 0,
-      total: 0,
-    },
+    connectionRequests: connectionRequestCounts,
   } : null;
 
   const recognitionBadge = {
@@ -193,6 +214,23 @@ const StudentDashboard = () => {
                   <p className="text-xs text-gray-500 mt-1">For later</p>
                 </div>
                 <Heart className="w-10 h-10 text-red-500" />
+              </div>
+            </Link>
+
+            <Link to="/connection-requests" className="card p-6 hover:shadow-lg transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1">Requests</p>
+                  <span className="text-2xl font-bold text-gray-900">
+                    {studentData.connectionRequests.total}
+                  </span>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {studentData.connectionRequests.pending > 0 && `${studentData.connectionRequests.pending} pending`}
+                    {studentData.connectionRequests.pending === 0 && studentData.connectionRequests.approved > 0 && `${studentData.connectionRequests.approved} approved`}
+                    {studentData.connectionRequests.pending === 0 && studentData.connectionRequests.approved === 0 && 'No active requests'}
+                  </p>
+                </div>
+                <Link2 className="w-10 h-10 text-purple-600" />
               </div>
             </Link>
           </div>

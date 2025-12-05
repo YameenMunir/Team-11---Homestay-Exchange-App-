@@ -19,9 +19,11 @@ import {
   XCircle,
   Briefcase,
   DollarSign,
+  Eye,
 } from 'lucide-react';
 import { hostService } from '../services/hostService';
 import { savedHostsService } from '../services/savedHostsService';
+import { facilitationService } from '../services/facilitationService';
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -32,6 +34,7 @@ const MatchDetails = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [connectionMessage, setConnectionMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [existingRequest, setExistingRequest] = useState(null);
 
   // Fetch host data and check saved status
   useEffect(() => {
@@ -41,14 +44,16 @@ const MatchDetails = () => {
         setError(null);
         console.log('Fetching host details for ID:', id);
 
-        // Fetch host data and saved status in parallel
-        const [hostData, savedStatus] = await Promise.all([
+        // Fetch host data, saved status, and existing request in parallel
+        const [hostData, savedStatus, requestData] = await Promise.all([
           hostService.getHostById(id),
-          savedHostsService.isHostSaved(id)
+          savedHostsService.isHostSaved(id),
+          facilitationService.checkExistingRequest(id)
         ]);
 
         setHost(hostData);
         setIsSaved(savedStatus);
+        setExistingRequest(requestData);
       } catch (err) {
         console.error('Error fetching host:', err);
         setError(err.message || 'Failed to load host details');
@@ -76,17 +81,28 @@ const MatchDetails = () => {
     }
   };
 
-  const handleSubmitRequest = () => {
+  const handleSubmitRequest = async () => {
     if (!connectionMessage.trim()) {
       alert('Please write a message introducing yourself.');
       return;
     }
 
-    // TODO: Implement API call to notify admin
-    console.log('Connection request sent for host:', id, 'Message:', connectionMessage);
-    setShowFacilitateModal(false);
-    setShowSuccessModal(true);
-    setConnectionMessage('');
+    try {
+      const newRequest = await facilitationService.createRequest(id, connectionMessage);
+      console.log('Facilitation request sent for host:', id);
+      setShowFacilitateModal(false);
+      setShowSuccessModal(true);
+      setConnectionMessage('');
+      // Update existing request to prevent duplicate submissions
+      setExistingRequest({
+        id: newRequest.id,
+        status: newRequest.status,
+        created_at: newRequest.created_at
+      });
+    } catch (err) {
+      console.error('Error creating facilitation request:', err);
+      alert('Failed to submit request. Please try again.');
+    }
   };
 
   // Loading state
@@ -447,49 +463,109 @@ const MatchDetails = () => {
           {/* Sidebar - Facilitate Card */}
           <div className="lg:col-span-1">
             <div className="card p-6 sticky top-24">
-              <div className="mb-6">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
-                  <div className="flex items-start space-x-3">
-                    <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-green-900 text-sm mb-1">
-                        Verified Host
-                      </h4>
-                      <p className="text-xs text-green-800">
-                        ID, address, and DBS check verified
-                      </p>
+              {existingRequest ? (
+                /* Existing Request - Show Status */
+                <div>
+                  <div className={`rounded-xl p-4 mb-4 ${
+                    existingRequest.status === 'pending' ? 'bg-yellow-50 border border-yellow-200' :
+                    existingRequest.status === 'reviewing' ? 'bg-purple-50 border border-purple-200' :
+                    existingRequest.status === 'approved' ? 'bg-green-50 border border-green-200' :
+                    'bg-red-50 border border-red-200'
+                  }`}>
+                    <div className="flex items-start space-x-3">
+                      {existingRequest.status === 'pending' && <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />}
+                      {existingRequest.status === 'reviewing' && <Eye className="w-6 h-6 text-purple-600 flex-shrink-0" />}
+                      {existingRequest.status === 'approved' && <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />}
+                      {existingRequest.status === 'rejected' && <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
+                      <div>
+                        <h4 className={`font-semibold mb-1 ${
+                          existingRequest.status === 'pending' ? 'text-yellow-900' :
+                          existingRequest.status === 'reviewing' ? 'text-purple-900' :
+                          existingRequest.status === 'approved' ? 'text-green-900' :
+                          'text-red-900'
+                        }`}>
+                          {existingRequest.status === 'pending' && 'Request Pending'}
+                          {existingRequest.status === 'reviewing' && 'Under Review'}
+                          {existingRequest.status === 'approved' && 'Request Approved!'}
+                          {existingRequest.status === 'rejected' && 'Request Not Approved'}
+                        </h4>
+                        <p className={`text-sm ${
+                          existingRequest.status === 'pending' ? 'text-yellow-800' :
+                          existingRequest.status === 'reviewing' ? 'text-purple-800' :
+                          existingRequest.status === 'approved' ? 'text-green-800' :
+                          'text-red-800'
+                        }`}>
+                          {existingRequest.status === 'pending' && 'Your facilitation request is awaiting admin review.'}
+                          {existingRequest.status === 'reviewing' && 'Our admin team is currently reviewing your request.'}
+                          {existingRequest.status === 'approved' && 'Your request has been approved! Check your Connection Requests page for admin contact details.'}
+                          {existingRequest.status === 'rejected' && 'Unfortunately, this request was not approved. You may browse other hosts.'}
+                        </p>
+                      </div>
                     </div>
                   </div>
+
+                  <Link
+                    to="/connection-requests"
+                    className="btn-primary w-full mb-4 text-center block"
+                  >
+                    View Request Status
+                  </Link>
+
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <p className="text-xs text-purple-800">
+                      <strong>Note:</strong> You can only send one facilitation request per host.
+                      Check your Connection Requests page to track the status of this request.
+                    </p>
+                  </div>
                 </div>
+              ) : (
+                /* No Existing Request - Show Request Button */
+                <div>
+                  <div className="mb-6">
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+                      <div className="flex items-start space-x-3">
+                        <Shield className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-green-900 text-sm mb-1">
+                            Verified Host
+                          </h4>
+                          <p className="text-xs text-green-800">
+                            ID, address, and DBS check verified
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Interested in this host?
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Our team will facilitate the arrangement and coordinate with both
-                  parties to set up a meeting.
-                </p>
-              </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      Interested in this host?
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Our team will facilitate the arrangement and coordinate with both
+                      parties to set up a meeting.
+                    </p>
+                  </div>
 
-              <button
-                onClick={handleFacilitate}
-                className="btn-primary w-full mb-4 text-lg py-4"
-              >
-                Request Connection
-              </button>
+                  <button
+                    onClick={handleFacilitate}
+                    className="btn-primary w-full mb-4 text-lg py-4"
+                  >
+                    Request Facilitation
+                  </button>
 
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                <h4 className="font-semibold text-purple-900 text-sm mb-2">
-                  What happens next?
-                </h4>
-                <ol className="text-xs text-purple-800 space-y-2 list-decimal list-inside">
-                  <li>You submit a facilitation request</li>
-                  <li>Our team reviews your profile match</li>
-                  <li>Both parties are contacted within 24-48 hours</li>
-                  <li>We arrange a safe first meeting</li>
-                  <li>If both agree, the arrangement begins!</li>
-                </ol>
-              </div>
+                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <h4 className="font-semibold text-purple-900 text-sm mb-2">
+                      What happens next?
+                    </h4>
+                    <ol className="text-xs text-purple-800 space-y-2 list-decimal list-inside">
+                      <li>You submit a facilitation request</li>
+                      <li>Our team reviews your profile match</li>
+                      <li>Both parties are contacted within 24-48 hours</li>
+                      <li>We arrange a safe first meeting</li>
+                      <li>If both agree, the arrangement begins!</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <h4 className="font-semibold text-gray-900 text-sm mb-3">Need help?</h4>
@@ -520,7 +596,7 @@ const MatchDetails = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-8 animate-fade-in max-h-[90vh] overflow-y-auto">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Request Connection with {host.name}
+              Request Facilitation with {host.name}
             </h3>
 
             <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">

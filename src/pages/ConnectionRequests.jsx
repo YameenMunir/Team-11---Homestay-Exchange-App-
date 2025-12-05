@@ -1,41 +1,31 @@
-import { useState } from 'react';
-import { Link2, Clock, CheckCircle, Eye, Mail, Phone, MapPin, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Link2, Clock, CheckCircle, Eye, Mail, Phone, MapPin, AlertCircle, Loader2, XCircle, ArrowLeft } from 'lucide-react';
+import { facilitationService } from '../services/facilitationService';
 
 const ConnectionRequests = () => {
-  // Mock connection requests data
-  const [requests] = useState([
-    {
-      id: 1,
-      hostName: 'Margaret Thompson',
-      hostLocation: 'Kensington, London',
-      requestDate: '2025-01-15',
-      status: 'approved',
-      message: 'Hello! I\'m a Computer Science student at UCL and I\'d love to help with technology assistance and companionship.',
-      adminContact: {
-        name: 'Sarah Johnson',
-        email: 'sarah@hostfamilystay.co.uk',
-        phone: '+44 20 1234 5678',
-      },
-    },
-    {
-      id: 2,
-      hostName: 'Robert Davies',
-      hostLocation: 'Camden, London',
-      requestDate: '2025-01-18',
-      status: 'reviewing',
-      message: 'Hi! I\'m studying Medicine and would be happy to help with light cleaning and grocery shopping.',
-      adminContact: null,
-    },
-    {
-      id: 3,
-      hostName: 'Elizabeth Brown',
-      hostLocation: 'Westminster, London',
-      requestDate: '2025-01-20',
-      status: 'pending',
-      message: 'Hello! I\'m an Engineering student interested in providing companionship and garden help.',
-      adminContact: null,
-    },
-  ]);
+  const navigate = useNavigate();
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await facilitationService.getUserRequests();
+      setRequests(data);
+    } catch (err) {
+      console.error('[ConnectionRequests] Error fetching requests:', err);
+      setError('Failed to load requests. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusBadge = (status) => {
     const badges = {
@@ -54,9 +44,14 @@ const ConnectionRequests = () => {
         text: 'Approved',
         class: 'bg-green-100 text-green-800 border-green-200',
       },
+      rejected: {
+        icon: XCircle,
+        text: 'Not Approved',
+        class: 'bg-red-100 text-red-800 border-red-200',
+      },
     };
 
-    const badge = badges[status];
+    const badge = badges[status] || badges.pending;
     const Icon = badge.icon;
 
     return (
@@ -67,8 +62,32 @@ const ConnectionRequests = () => {
     );
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading your requests...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Back Button */}
+      <div className="bg-white border-b">
+        <div className="container-custom py-4">
+          <button
+            onClick={() => navigate('/student/dashboard')}
+            className="inline-flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Back to Dashboard</span>
+          </button>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
         <div className="container-custom">
@@ -135,6 +154,12 @@ const ConnectionRequests = () => {
       <section className="py-12">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+                {error}
+              </div>
+            )}
+
             {requests.length === 0 ? (
               <div className="card p-12 text-center">
                 <Link2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -181,14 +206,28 @@ const ConnectionRequests = () => {
                     </div>
 
                     {/* Your Message */}
-                    <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">
-                        Your Message:
-                      </h4>
-                      <p className="text-gray-700 text-sm leading-relaxed">
-                        {request.message}
-                      </p>
-                    </div>
+                    {request.message && (
+                      <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                          Your Message:
+                        </h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          {request.message}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Admin Notes */}
+                    {request.adminNotes && (
+                      <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                        <h4 className="text-sm font-semibold text-blue-900 mb-2">
+                          Admin Notes:
+                        </h4>
+                        <p className="text-blue-800 text-sm leading-relaxed">
+                          {request.adminNotes}
+                        </p>
+                      </div>
+                    )}
 
                     {/* Status Information */}
                     {request.status === 'pending' && (
@@ -240,27 +279,47 @@ const ConnectionRequests = () => {
                                   {request.adminContact.name}
                                 </p>
                               </div>
-                              <div className="flex items-center space-x-2 text-sm text-gray-700">
-                                <Mail className="w-4 h-4 text-purple-600" />
-                                <a
-                                  href={`mailto:${request.adminContact.email}`}
-                                  className="text-purple-600 hover:text-purple-700 font-medium"
-                                >
-                                  {request.adminContact.email}
-                                </a>
-                              </div>
-                              <div className="flex items-center space-x-2 text-sm text-gray-700">
-                                <Phone className="w-4 h-4 text-purple-600" />
-                                <a
-                                  href={`tel:${request.adminContact.phone}`}
-                                  className="text-purple-600 hover:text-purple-700 font-medium"
-                                >
-                                  {request.adminContact.phone}
-                                </a>
-                              </div>
+                              {request.adminContact.email && (
+                                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                                  <Mail className="w-4 h-4 text-purple-600" />
+                                  <a
+                                    href={`mailto:${request.adminContact.email}`}
+                                    className="text-purple-600 hover:text-purple-700 font-medium"
+                                  >
+                                    {request.adminContact.email}
+                                  </a>
+                                </div>
+                              )}
+                              {request.adminContact.phone && (
+                                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                                  <Phone className="w-4 h-4 text-purple-600" />
+                                  <a
+                                    href={`tel:${request.adminContact.phone}`}
+                                    className="text-purple-600 hover:text-purple-700 font-medium"
+                                  >
+                                    {request.adminContact.phone}
+                                  </a>
+                                </div>
+                              )}
                             </div>
                             <p className="text-xs text-green-800 mt-3">
                               Contact your admin facilitator to arrange a meeting with the host. They will guide you through the next steps.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {request.status === 'rejected' && (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div className="flex items-start space-x-3">
+                          <XCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <h4 className="text-sm font-semibold text-red-900 mb-1">
+                              Request Not Approved
+                            </h4>
+                            <p className="text-sm text-red-800">
+                              Unfortunately, this request was not approved. Please check the admin notes above for more information. You can browse other hosts and submit new requests.
                             </p>
                           </div>
                         </div>
