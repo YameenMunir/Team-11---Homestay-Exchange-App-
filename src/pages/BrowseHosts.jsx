@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Search,
   MapPin,
@@ -11,10 +11,12 @@ import {
   CheckCircle,
   Heart,
   Loader2,
+  ArrowLeft,
 } from 'lucide-react';
 import { hostService } from '../services/hostService';
 
 const BrowseHosts = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedServices, setSelectedServices] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -85,6 +87,13 @@ const BrowseHosts = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
             Browse Hosts
           </h1>
