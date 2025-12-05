@@ -138,8 +138,8 @@ export default function CreateTask() {
         // Create new task
         await hostService.createTask(formData);
 
-        // Navigate to dashboard on success
-        navigate('/host/dashboard', {
+        // Navigate to manage tasks on success
+        navigate('/host/manage-tasks', {
           state: { message: 'Task posted successfully!' }
         });
       }
