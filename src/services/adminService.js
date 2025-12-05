@@ -442,12 +442,13 @@ export const adminService = {
    */
   async getDashboardStats() {
     try {
-      // Get pending verifications count (is_verified = false AND is_active = true)
+      // Get pending verifications count (is_verified = false AND is_active = true, only hosts and guests)
       const { count: pendingVerifications } = await supabase
         .from('user_profiles')
         .select('*', { count: 'exact', head: true })
         .eq('is_verified', false)
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .in('role', ['host', 'guest']);
 
       // Get pending facilitation requests count
       const { count: pendingFacilitations } = await supabase
