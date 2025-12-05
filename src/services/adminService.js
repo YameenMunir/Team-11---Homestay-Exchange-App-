@@ -442,28 +442,30 @@ export const adminService = {
    */
   async getDashboardStats() {
     try {
-      // Get pending verifications count
+      // Get pending verifications count (is_verified = false AND is_active = true)
       const { count: pendingVerifications } = await supabase
         .from('user_profiles')
         .select('*', { count: 'exact', head: true })
-        .eq('is_verified', false);
+        .eq('is_verified', false)
+        .eq('is_active', true);
 
       // Get pending facilitation requests count
       const { count: pendingFacilitations } = await supabase
         .from('facilitation_requests')
         .select('*', { count: 'exact', head: true })
-        .in('status', ['pending', 'under_review']);
+        .in('status', ['pending', 'in_review']);
 
       // Get active arrangements count
       const { count: activeArrangements } = await supabase
         .from('facilitation_requests')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'approved');
+        .eq('status', 'matched');
 
-      // Get total users count
+      // Get total users count (only hosts and guests, not admins)
       const { count: totalUsers } = await supabase
         .from('user_profiles')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .in('role', ['host', 'guest']);
 
       // Get total hosts and students
       const { count: totalHosts } = await supabase

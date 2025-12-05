@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Activity,
   Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { adminService } from '../services/adminService';
 import { useVerificationEvents } from '../context/VerificationEventsContext';
@@ -23,6 +24,7 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const { lastUpdate } = useVerificationEvents();
 
   // Fetch dashboard data on mount
@@ -37,21 +39,36 @@ const AdminDashboard = () => {
     }
   }, [lastUpdate]);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const [statsData, activityData] = await Promise.all([
         adminService.getDashboardStats(),
         adminService.getRecentActivity(10),
       ]);
       setStats(statsData);
       setRecentActivity(activityData);
+      if (isRefresh) {
+        toast.success('Dashboard refreshed successfully');
+      }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       toast.error('Failed to load dashboard data');
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRefresh = () => {
+    fetchDashboardData(true);
   };
 
   // Show loading state
@@ -71,9 +88,19 @@ const AdminDashboard = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
-            Admin Dashboard
-          </h1>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
+              Admin Dashboard
+            </h1>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
           <p className="text-lg text-gray-600">
             Manage verifications, facilitation requests, and platform operations
           </p>
@@ -270,10 +297,11 @@ const AdminDashboard = () => {
               <h2 className="text-2xl font-bold text-gray-900">Recent Activity</h2>
             </div>
             <button
-              onClick={fetchDashboardData}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="text-sm text-purple-600 hover:text-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Refresh
+              {refreshing ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
 
