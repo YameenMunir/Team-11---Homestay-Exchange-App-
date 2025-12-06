@@ -469,35 +469,35 @@ const MatchDetails = () => {
                   <div className={`rounded-xl p-4 mb-4 ${
                     existingRequest.status === 'pending' ? 'bg-yellow-50 border border-yellow-200' :
                     existingRequest.status === 'reviewing' ? 'bg-purple-50 border border-purple-200' :
-                    existingRequest.status === 'approved' ? 'bg-green-50 border border-green-200' :
+                    existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'bg-green-50 border border-green-200' :
                     'bg-red-50 border border-red-200'
                   }`}>
                     <div className="flex items-start space-x-3">
                       {existingRequest.status === 'pending' && <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />}
                       {existingRequest.status === 'reviewing' && <Eye className="w-6 h-6 text-purple-600 flex-shrink-0" />}
-                      {existingRequest.status === 'approved' && <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />}
+                      {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />}
                       {existingRequest.status === 'rejected' && <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
                       <div>
                         <h4 className={`font-semibold mb-1 ${
                           existingRequest.status === 'pending' ? 'text-yellow-900' :
                           existingRequest.status === 'reviewing' ? 'text-purple-900' :
-                          existingRequest.status === 'approved' ? 'text-green-900' :
+                          existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-900' :
                           'text-red-900'
                         }`}>
                           {existingRequest.status === 'pending' && 'Request Pending'}
                           {existingRequest.status === 'reviewing' && 'Under Review'}
-                          {existingRequest.status === 'approved' && 'Request Approved!'}
+                          {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && 'Request Approved!'}
                           {existingRequest.status === 'rejected' && 'Request Not Approved'}
                         </h4>
                         <p className={`text-sm ${
                           existingRequest.status === 'pending' ? 'text-yellow-800' :
                           existingRequest.status === 'reviewing' ? 'text-purple-800' :
-                          existingRequest.status === 'approved' ? 'text-green-800' :
+                          existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-800' :
                           'text-red-800'
                         }`}>
                           {existingRequest.status === 'pending' && 'Your facilitation request is awaiting admin review.'}
                           {existingRequest.status === 'reviewing' && 'Our admin team is currently reviewing your request.'}
-                          {existingRequest.status === 'approved' && 'Your request has been approved! Check your Connection Requests page for admin contact details.'}
+                          {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && 'Your request has been approved! Check your Connection Requests page for admin contact details.'}
                           {existingRequest.status === 'rejected' && 'Unfortunately, this request was not approved. You may browse other hosts.'}
                         </p>
                       </div>
