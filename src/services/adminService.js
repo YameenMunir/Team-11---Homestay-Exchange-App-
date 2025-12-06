@@ -1,4 +1,5 @@
 import supabase from '../utils/supabase';
+import { documentService } from './documentService';
 
 /**
  * Admin service for user management and verification
@@ -106,7 +107,7 @@ export const adminService = {
               console.error(`Error fetching documents for ${profile.id}:`, docError);
             }
 
-            // Map documents to their respective URL fields
+            // Map documents to their respective URL fields with signed URLs
             const documentUrls = {
               idDocumentUrl: null,
               proofOfAddressUrl: null,
@@ -115,22 +116,29 @@ export const adminService = {
             };
 
             if (documents && documents.length > 0) {
-              documents.forEach(doc => {
-                switch (doc.document_type) {
-                  case 'government_id':
-                    documentUrls.idDocumentUrl = doc.file_url;
-                    break;
-                  case 'proof_of_address':
-                    documentUrls.proofOfAddressUrl = doc.file_url;
-                    break;
-                  case 'admission_proof':
-                    documentUrls.studentIdUrl = doc.file_url;
-                    break;
-                  case 'dbs_check':
-                    documentUrls.dbsCheckUrl = doc.file_url;
-                    break;
-                }
-              });
+              // Generate signed URLs for each document (valid for 1 hour)
+              await Promise.all(
+                documents.map(async (doc) => {
+                  if (doc.file_url) {
+                    const signedUrl = await documentService.getSignedUrl(doc.file_url, 3600);
+
+                    switch (doc.document_type) {
+                      case 'government_id':
+                        documentUrls.idDocumentUrl = signedUrl;
+                        break;
+                      case 'proof_of_address':
+                        documentUrls.proofOfAddressUrl = signedUrl;
+                        break;
+                      case 'admission_proof':
+                        documentUrls.studentIdUrl = signedUrl;
+                        break;
+                      case 'dbs_check':
+                        documentUrls.dbsCheckUrl = signedUrl;
+                        break;
+                    }
+                  }
+                })
+              );
             }
 
             // Determine status based on is_verified and is_active

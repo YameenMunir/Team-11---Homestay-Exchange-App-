@@ -42,18 +42,15 @@ export default function FileUpload({ documentType, onUploadComplete }) {
 
       if (storageError) throw storageError;
 
-      // 2. Get public URL
-      const { data: urlData } = supabase.storage
-        .from('user-documents')
-        .getPublicUrl(fileName);
-
-      // 3. Insert record in user_documents (or update if exists)
+      // 2. Insert record in user_documents (or update if exists)
+      // Store the storage path (fileName) instead of public URL for security
+      // Signed URLs will be generated when documents are accessed
       const { error: dbError } = await supabase.from('user_documents').upsert(
         [
           {
             user_id: user.id,
             document_type: documentType,
-            file_url: urlData.publicUrl,
+            file_url: fileName, // Store storage path instead of public URL
             file_name: file.name,
             file_size: file.size,
             verification_status: 'pending',

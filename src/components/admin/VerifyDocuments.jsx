@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useAuth } from '../../context/AuthContextNew';
 import { DOCUMENT_TYPE_LABELS } from '../../lib/constants';
+import { documentService } from '../../services/documentService';
 import { CheckCircle, XCircle, ExternalLink, FileText } from 'lucide-react';
 
 export default function VerifyDocuments() {
@@ -28,7 +29,22 @@ export default function VerifyDocuments() {
         .order('uploaded_at', { ascending: true });
 
       if (error) throw error;
-      setDocuments(data || []);
+
+      // Generate signed URLs for each document
+      if (data && data.length > 0) {
+        const documentsWithSignedUrls = await Promise.all(
+          data.map(async (doc) => {
+            const signedUrl = await documentService.getSignedUrl(doc.file_url, 3600);
+            return {
+              ...doc,
+              signedUrl: signedUrl || doc.file_url, // Fallback to original if signed URL fails
+            };
+          })
+        );
+        setDocuments(documentsWithSignedUrls);
+      } else {
+        setDocuments([]);
+      }
     } catch (error) {
       console.error('Error fetching documents:', error);
     } finally {
@@ -141,7 +157,7 @@ export default function VerifyDocuments() {
                   </div>
 
                   <a
-                    href={doc.file_url}
+                    href={doc.signedUrl || doc.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-colors"
