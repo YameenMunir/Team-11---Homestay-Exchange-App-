@@ -146,12 +146,30 @@ const AdminUserManagement = () => {
     }
   };
 
+  const handleUnsuspendUser = async (userId) => {
+    if (window.confirm('Remove suspension from this user? They will be reactivated.')) {
+      try {
+        await adminService.unsuspendUser(userId);
+        toast.success('User suspension removed successfully');
+        // Notify other components that verification status changed
+        notifyVerificationChange();
+        // Refresh users list
+        await fetchUsers();
+      } catch (error) {
+        console.error('Error unsuspending user:', error);
+        toast.error('Failed to unsuspend user');
+      }
+    }
+  };
+
   const handleSuspendUser = async (userId) => {
     const reason = prompt('Enter suspension reason:');
     if (reason) {
       try {
         await adminService.suspendUser(userId, reason);
         toast.success('User suspended successfully');
+        // Notify other components that verification status changed
+        notifyVerificationChange();
         // Refresh users list
         await fetchUsers();
       } catch (error) {
@@ -161,11 +179,48 @@ const AdminUserManagement = () => {
     }
   };
 
+  const handleBanUser = async (userId) => {
+    const reason = prompt('Enter ban reason:');
+    if (reason) {
+      if (window.confirm('Ban this user? They will not be able to access the platform but can be unbanned later.')) {
+        try {
+          await adminService.banUser(userId, reason);
+          toast.success('User banned successfully');
+          // Notify other components that verification status changed
+          notifyVerificationChange();
+          // Refresh users list
+          await fetchUsers();
+        } catch (error) {
+          console.error('Error banning user:', error);
+          toast.error('Failed to ban user');
+        }
+      }
+    }
+  };
+
+  const handleUnbanUser = async (userId) => {
+    if (window.confirm('Remove ban from this user? They will be restored to their previous status.')) {
+      try {
+        await adminService.unbanUser(userId);
+        toast.success('User unbanned successfully');
+        // Notify other components that verification status changed
+        notifyVerificationChange();
+        // Refresh users list
+        await fetchUsers();
+      } catch (error) {
+        console.error('Error unbanning user:', error);
+        toast.error('Failed to unban user');
+      }
+    }
+  };
+
   const handleDeleteUser = async (userId) => {
-    if (window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+    if (window.confirm('Are you sure you want to PERMANENTLY delete this user? This action CANNOT be undone and will remove all their data.')) {
       try {
         await adminService.deleteUser(userId);
-        toast.success('User deleted successfully');
+        toast.success('User permanently deleted');
+        // Notify other components that verification status changed
+        notifyVerificationChange();
         // Refresh users list
         await fetchUsers();
         setShowUserModal(false);
@@ -192,12 +247,14 @@ const AdminUserManagement = () => {
       pending: 'bg-yellow-100 text-yellow-800',
       rejected: 'bg-red-100 text-red-800',
       suspended: 'bg-orange-100 text-orange-800',
+      banned: 'bg-gray-800 text-white',
     };
     const icons = {
       verified: <CheckCircle className="w-3 h-3" />,
       pending: <Clock className="w-3 h-3" />,
       rejected: <XCircle className="w-3 h-3" />,
       suspended: <UserX className="w-3 h-3" />,
+      banned: <Shield className="w-3 h-3" />,
     };
     return (
       <span className={`badge ${styles[status]} flex items-center space-x-1`}>
@@ -258,7 +315,7 @@ const AdminUserManagement = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Total Users</p>
             <span className="text-3xl font-bold text-gray-900">{users.length}</span>
@@ -270,9 +327,21 @@ const AdminUserManagement = () => {
             </span>
           </div>
           <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Pending Verification</p>
+            <p className="text-sm text-gray-600 mb-1">Pending</p>
             <span className="text-3xl font-bold text-yellow-600">
               {users.filter((u) => u.status === 'pending').length}
+            </span>
+          </div>
+          <div className="card p-6">
+            <p className="text-sm text-gray-600 mb-1">Suspended</p>
+            <span className="text-3xl font-bold text-orange-600">
+              {users.filter((u) => u.status === 'suspended').length}
+            </span>
+          </div>
+          <div className="card p-6">
+            <p className="text-sm text-gray-600 mb-1">Banned</p>
+            <span className="text-3xl font-bold text-gray-800">
+              {users.filter((u) => u.status === 'banned').length}
             </span>
           </div>
           <div className="card p-6">
@@ -328,6 +397,8 @@ const AdminUserManagement = () => {
                 <option value="all">All Statuses</option>
                 <option value="verified">Verified</option>
                 <option value="pending">Pending</option>
+                <option value="suspended">Suspended</option>
+                <option value="banned">Banned</option>
                 <option value="rejected">Rejected</option>
               </select>
             </div>
@@ -441,6 +512,8 @@ const AdminUserManagement = () => {
                         >
                           <Eye className="w-5 h-5" />
                         </button>
+
+                        {/* Actions for Pending Users */}
                         {hasPermission('verify_documents') && user.status === 'pending' && (
                           <>
                             <button
@@ -461,17 +534,87 @@ const AdminUserManagement = () => {
                             </button>
                           </>
                         )}
+
+                        {/* Actions for Verified Users */}
+                        {hasPermission('manage_users') && user.status === 'verified' && (
+                          <>
+                            <button
+                              onClick={() => handleSuspendUser(user.id)}
+                              className="p-1.5 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg transition-colors"
+                              title="Suspend User"
+                              aria-label="Suspend user account"
+                            >
+                              <UserX className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleBanUser(user.id)}
+                              className="p-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                              title="Ban User"
+                              aria-label="Ban user account"
+                            >
+                              <Shield className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+
+                        {/* Actions for Suspended Users */}
+                        {hasPermission('manage_users') && user.status === 'suspended' && (
+                          <>
+                            <button
+                              onClick={() => handleUnsuspendUser(user.id)}
+                              className="p-1.5 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
+                              title="Remove Suspension"
+                              aria-label="Remove user suspension"
+                            >
+                              <CheckCircle className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleBanUser(user.id)}
+                              className="p-1.5 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
+                              title="Ban User"
+                              aria-label="Ban user account"
+                            >
+                              <Shield className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+
+                        {/* Actions for Banned Users */}
+                        {hasPermission('manage_users') && user.status === 'banned' && (
+                          <>
+                            <button
+                              onClick={() => handleUnbanUser(user.id)}
+                              className="p-1.5 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
+                              title="Unban User"
+                              aria-label="Unban user account"
+                            >
+                              <CheckCircle className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="p-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors"
+                              title="Delete Permanently"
+                              aria-label="Permanently delete user"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+
+                        {/* Actions for Rejected Users */}
                         {hasPermission('manage_users') && user.status === 'rejected' && (
                           <button
                             onClick={() => handleReactivateUser(user.id)}
-                            className="text-blue-600 hover:text-blue-900 transition-colors"
+                            className="p-1.5 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-lg transition-colors"
                             title="Reactivate User"
                             aria-label="Reactivate user"
                           >
                             <CheckCircle className="w-5 h-5" />
                           </button>
                         )}
-                        {hasPermission('delete_users') && (
+
+                        {/* Delete button for non-verified, non-suspended users */}
+                        {hasPermission('delete_users') && user.status !== 'verified' && user.status !== 'suspended' && (
                           <button
                             onClick={() => handleDeleteUser(user.id)}
                             className="text-gray-400 hover:text-red-600 transition-colors"
@@ -555,6 +698,38 @@ const AdminUserManagement = () => {
                       Rejection Reason
                     </h4>
                     <p className="text-sm text-red-800">{selectedUser.rejectionReason}</p>
+                  </div>
+                )}
+
+                {/* Suspension Reason (if suspended) */}
+                {selectedUser.status === 'suspended' && selectedUser.suspensionReason && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-orange-900 mb-2 flex items-center gap-2">
+                      <UserX className="w-4 h-4" />
+                      Suspension Reason
+                    </h4>
+                    <p className="text-sm text-orange-800">{selectedUser.suspensionReason}</p>
+                    {selectedUser.suspendedAt && (
+                      <p className="text-xs text-orange-600 mt-2">
+                        Suspended on: {new Date(selectedUser.suspendedAt).toLocaleString('en-GB')}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Ban Reason (if banned) */}
+                {selectedUser.status === 'banned' && selectedUser.banReason && (
+                  <div className="bg-gray-800 border border-gray-900 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      Ban Reason
+                    </h4>
+                    <p className="text-sm text-gray-100">{selectedUser.banReason}</p>
+                    {selectedUser.bannedAt && (
+                      <p className="text-xs text-gray-300 mt-2">
+                        Banned on: {new Date(selectedUser.bannedAt).toLocaleString('en-GB')}
+                      </p>
+                    )}
                   </div>
                 )}
 
@@ -679,6 +854,30 @@ const AdminUserManagement = () => {
                         className="btn-primary flex-1"
                       >
                         Verify User
+                      </button>
+                    </>
+                  )}
+                  {hasPermission('manage_users') && selectedUser.status === 'suspended' && (
+                    <button
+                      onClick={() => handleUnsuspendUser(selectedUser.id)}
+                      className="btn-primary flex-1"
+                    >
+                      Remove Suspension
+                    </button>
+                  )}
+                  {hasPermission('manage_users') && selectedUser.status === 'banned' && (
+                    <>
+                      <button
+                        onClick={() => handleUnbanUser(selectedUser.id)}
+                        className="btn-primary flex-1"
+                      >
+                        Unban User
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(selectedUser.id)}
+                        className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                      >
+                        Delete Permanently
                       </button>
                     </>
                   )}

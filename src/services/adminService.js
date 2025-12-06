@@ -5,10 +5,18 @@ import { documentService } from './documentService';
  * Admin service for user management and verification
  *
  * USER STATUS SYSTEM:
- * The user status is determined by two database fields: is_verified and is_active
+ * The user status is determined by multiple database fields with priority order:
+ * is_banned > is_suspended > is_verified + is_active
  *
- * - PENDING: is_verified = false, is_active = true
- *   → User just signed up and awaiting admin review
+ * - BANNED: is_banned = true
+ *   → User permanently banned from platform
+ *   → Cannot access any features but can be unbanned by admin
+ *   → Reversible action (soft delete)
+ *
+ * - SUSPENDED: is_suspended = true
+ *   → User temporarily suspended from platform
+ *   → Cannot access protected features
+ *   → Can be unsuspended by admin
  *
  * - VERIFIED: is_verified = true, is_active = true
  *   → User approved by admin, has full access to all features
@@ -17,8 +25,12 @@ import { documentService } from './documentService';
  *   → User rejected by admin, cannot access protected features
  *   → Can be reactivated by admin to move back to pending status
  *
- * - SUSPENDED: Similar to rejected but for different reason
- *   → Future enhancement will add is_suspended field
+ * - PENDING: is_verified = false, is_active = true
+ *   → User just signed up and awaiting admin review
+ *
+ * PERMANENT DELETE:
+ * - Completely removes user account and all associated data (irreversible)
+ * - Different from ban which is reversible
  */
 export const adminService = {
   /**
@@ -141,9 +153,14 @@ export const adminService = {
               );
             }
 
-            // Determine status based on is_verified and is_active
+            // Determine status based on is_banned, is_suspended, is_verified, and is_active
+            // Status priority: banned > suspended > verified/rejected > pending
             let status = 'pending';
-            if (profile.is_verified && profile.is_active) {
+            if (profile.is_banned) {
+              status = 'banned';
+            } else if (profile.is_suspended) {
+              status = 'suspended';
+            } else if (profile.is_verified && profile.is_active) {
               status = 'verified';
             } else if (!profile.is_verified && !profile.is_active) {
               status = 'rejected';
@@ -160,6 +177,10 @@ export const adminService = {
               userType: profile.role,
               status,
               rejectionReason: profile.rejection_reason || null,
+              suspensionReason: profile.suspension_reason || null,
+              suspendedAt: profile.suspended_at || null,
+              banReason: profile.ban_reason || null,
+              bannedAt: profile.banned_at || null,
               memberSince: profile.created_at,
               rating: roleSpecificData.average_rating || null,
               totalArrangements: 0,
@@ -314,22 +335,24 @@ export const adminService = {
 
   /**
    * Suspend a user account
-   * TODO: Add is_suspended and suspension_reason fields to database schema
+   * Sets is_suspended to true and stores the suspension reason
+   * Suspended users lose verification but keep their account active
    */
   async suspendUser(userId, reason) {
     try {
-      // For now, we can use is_verified = false to simulate suspension
-      // Later, add dedicated is_suspended field
       const { error } = await supabase
         .from('user_profiles')
         .update({
-          is_verified: false,
-          // TODO: Add is_suspended and suspension_reason when schema is updated
+          is_suspended: true,
+          suspension_reason: reason,
+          suspended_at: new Date().toISOString(),
+          // Note: suspended_by would need the current admin's ID
         })
         .eq('id', userId);
 
       if (error) throw error;
 
+      // TODO: Send suspension notification email
       console.log(`User ${userId} suspended. Reason: ${reason}`);
       return { success: true, reason };
     } catch (error) {
@@ -339,7 +362,88 @@ export const adminService = {
   },
 
   /**
-   * Delete a user permanently
+   * Unsuspend a user account (reactivate from suspension)
+   * Clears suspension flags and restores their previous verification status
+   */
+  async unsuspendUser(userId) {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          is_suspended: false,
+          suspension_reason: null,
+          suspended_at: null,
+          suspended_by: null,
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      console.log(`User ${userId} unsuspended and reactivated`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error unsuspending user:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Ban a user account permanently
+   * Sets is_banned to true and stores the ban reason
+   * Banned users cannot access the platform but can be unbanned
+   */
+  async banUser(userId, reason) {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          is_banned: true,
+          ban_reason: reason,
+          banned_at: new Date().toISOString(),
+          // Note: banned_by would need the current admin's ID
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // TODO: Send ban notification email
+      console.log(`User ${userId} banned. Reason: ${reason}`);
+      return { success: true, reason };
+    } catch (error) {
+      console.error('Error banning user:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Unban a user account (restore from ban)
+   * Clears ban flags and restores their previous status
+   */
+  async unbanUser(userId) {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({
+          is_banned: false,
+          ban_reason: null,
+          banned_at: null,
+          banned_by: null,
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      console.log(`User ${userId} unbanned successfully`);
+      return { success: true };
+    } catch (error) {
+      console.error('Error unbanning user:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Delete a user permanently (irreversible)
+   * This completely removes the user account and all associated data
    */
   async deleteUser(userId) {
     try {
@@ -366,7 +470,7 @@ export const adminService = {
 
       if (error) throw error;
 
-      console.log(`User ${userId} deleted successfully`);
+      console.log(`User ${userId} permanently deleted`);
       return { success: true };
     } catch (error) {
       console.error('Error deleting user:', error);
