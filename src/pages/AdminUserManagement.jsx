@@ -435,46 +435,46 @@ const AdminUserManagement = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleViewUser(user)}
-                          className="text-purple-600 hover:text-purple-900"
+                          className="text-purple-600 hover:text-purple-900 transition-colors"
                           title="View Details"
                           aria-label="View user details"
                         >
                           <Eye className="w-5 h-5" />
                         </button>
                         {hasPermission('verify_documents') && user.status === 'pending' && (
-                          <button
-                            onClick={() => handleVerifyUser(user.id)}
-                            className="text-green-600 hover:text-green-900"
-                            title="Verify User"
-                            aria-label="Verify user"
-                          >
-                            <UserCheck className="w-5 h-5" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleVerifyUser(user.id)}
+                              className="p-1.5 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors"
+                              title="Approve Verification"
+                              aria-label="Approve user verification"
+                            >
+                              <UserCheck className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={() => handleRejectUser(user)}
+                              className="p-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors"
+                              title="Reject Verification"
+                              aria-label="Reject user verification"
+                            >
+                              <UserX className="w-5 h-5" />
+                            </button>
+                          </>
                         )}
                         {hasPermission('manage_users') && user.status === 'rejected' && (
                           <button
                             onClick={() => handleReactivateUser(user.id)}
-                            className="text-blue-600 hover:text-blue-900"
+                            className="text-blue-600 hover:text-blue-900 transition-colors"
                             title="Reactivate User"
                             aria-label="Reactivate user"
                           >
                             <CheckCircle className="w-5 h-5" />
                           </button>
                         )}
-                        {hasPermission('manage_users') && user.status !== 'suspended' && user.status !== 'rejected' && (
-                          <button
-                            onClick={() => handleSuspendUser(user.id)}
-                            className="text-orange-600 hover:text-orange-900"
-                            title="Suspend User"
-                            aria-label="Suspend user"
-                          >
-                            <UserX className="w-5 h-5" />
-                          </button>
-                        )}
                         {hasPermission('delete_users') && (
                           <button
                             onClick={() => handleDeleteUser(user.id)}
-                            className="text-red-600 hover:text-red-900"
+                            className="text-gray-400 hover:text-red-600 transition-colors"
                             title="Delete User"
                             aria-label="Delete user"
                           >
@@ -546,6 +546,17 @@ const AdminUserManagement = () => {
                     )}
                   </div>
                 </div>
+
+                {/* Rejection Reason (if rejected) */}
+                {selectedUser.status === 'rejected' && selectedUser.rejectionReason && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-red-900 mb-2 flex items-center gap-2">
+                      <XCircle className="w-4 h-4" />
+                      Rejection Reason
+                    </h4>
+                    <p className="text-sm text-red-800">{selectedUser.rejectionReason}</p>
+                  </div>
+                )}
 
                 {/* Stats */}
                 <div>

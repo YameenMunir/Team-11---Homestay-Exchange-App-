@@ -159,6 +159,7 @@ export const adminService = {
               phone: profile.phone_number || 'N/A',
               userType: profile.role,
               status,
+              rejectionReason: profile.rejection_reason || null,
               memberSince: profile.created_at,
               rating: roleSpecificData.average_rating || null,
               totalArrangements: 0,
@@ -197,6 +198,7 @@ export const adminService = {
               phone: profile.phone_number || 'N/A',
               userType: profile.role,
               status: 'pending',
+              rejectionReason: profile.rejection_reason || null,
               memberSince: profile.created_at,
               rating: null,
               totalArrangements: 0,
@@ -234,12 +236,16 @@ export const adminService = {
 
   /**
    * Verify a user (set is_verified to true)
+   * Clears any rejection reason if present
    */
   async verifyUser(userId) {
     try {
       const { error } = await supabase
         .from('user_profiles')
-        .update({ is_verified: true })
+        .update({
+          is_verified: true,
+          rejection_reason: null, // Clear any previous rejection reason
+        })
         .eq('id', userId);
 
       if (error) throw error;
@@ -256,6 +262,7 @@ export const adminService = {
   /**
    * Reject a user verification
    * Sets is_verified to false and is_active to false to mark as rejected
+   * Stores the rejection reason in the database
    */
   async rejectUser(userId, reason) {
     try {
@@ -264,8 +271,7 @@ export const adminService = {
         .update({
           is_verified: false,
           is_active: false,
-          // TODO: Add rejection_reason field when schema is updated
-          // For now, reason is passed but not stored in DB
+          rejection_reason: reason,
         })
         .eq('id', userId);
 
@@ -283,6 +289,7 @@ export const adminService = {
   /**
    * Reactivate a rejected user (set them back to pending status)
    * This allows users to reapply after addressing rejection reasons
+   * Clears the rejection reason when reactivating
    */
   async reactivateUser(userId) {
     try {
@@ -291,6 +298,7 @@ export const adminService = {
         .update({
           is_active: true,
           is_verified: false, // Back to pending for review
+          rejection_reason: null, // Clear the rejection reason
         })
         .eq('id', userId);
 
