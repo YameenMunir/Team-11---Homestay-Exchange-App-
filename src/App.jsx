@@ -37,6 +37,9 @@ import MyApplications from './pages/MyApplications';
 import ManageTasks from './pages/ManageTasks';
 import RateExperience from './pages/RateExperience';
 import MonthlyReport from './pages/MonthlyReport';
+import MonthlyFeedbackForm from './pages/MonthlyFeedbackForm';
+import FeedbackHistory from './pages/FeedbackHistory';
+import RecognitionStatus from './pages/RecognitionStatus';
 import KnowledgeHub from './pages/KnowledgeHub';
 import LandingPage from './pages/LandingPage';
 import ScrollToTop from './components/ScrollToTop';
@@ -315,6 +318,30 @@ function AppContent() {
             {/* Ratings & Reports */}
             <Route path="/rate-experience" element={<RateExperience />} />
             <Route path="/monthly-report" element={<MonthlyReport />} />
+            <Route
+              path="/monthly-feedback/:facilitationId"
+              element={
+                <ProtectedRoute>
+                  <MonthlyFeedbackForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback-history"
+              element={
+                <ProtectedRoute>
+                  <FeedbackHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/recognition-status"
+              element={
+                <ProtectedRoute requiredRole="guest">
+                  <RecognitionStatus />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Knowledge Hub & Landing */}
             <Route path="/knowledge-hub" element={<KnowledgeHub />} />

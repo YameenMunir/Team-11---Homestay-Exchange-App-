@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
 import { facilitationService } from '../services/facilitationService';
+import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Home,
   Users,
   Star,
   MessageCircle,
+  MessageSquare,
   Settings,
   Bell,
   Calendar,
@@ -32,6 +34,8 @@ const HostDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [facilitationRequests, setFacilitationRequests] = useState([]);
   const [requestsLoading, setRequestsLoading] = useState(false);
+  const [matchedStudents, setMatchedStudents] = useState([]);
+  const [feedbackEligibility, setFeedbackEligibility] = useState({});
 
   // Fetch dashboard data
   useEffect(() => {
@@ -79,6 +83,33 @@ const HostDashboard = () => {
 
     if (!userLoading && user) {
       fetchRequests();
+    }
+  }, [user, userLoading]);
+
+  // Fetch matched students and check feedback eligibility
+  useEffect(() => {
+    const fetchMatchedStudents = async () => {
+      if (!user) return;
+
+      try {
+        const students = await facilitationService.getMatchedStudents();
+        setMatchedStudents(students);
+
+        // Check feedback eligibility for all students
+        if (students.length > 0) {
+          const facilitationIds = students.map(s => s.facilitationId);
+          const eligibilityResult = await checkMultipleFeedbackEligibility(facilitationIds);
+          if (eligibilityResult.success) {
+            setFeedbackEligibility(eligibilityResult.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching matched students:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchMatchedStudents();
     }
   }, [user, userLoading]);
 
@@ -330,88 +361,105 @@ const HostDashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Current Student */}
+              {/* Matched Students */}
               <div className="card p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Current Student
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between">
+                  <span>Active Student Arrangements</span>
+                  {matchedStudents.length > 0 && (
+                    <span className="text-sm font-normal text-gray-600">
+                      {matchedStudents.length} student{matchedStudents.length !== 1 ? 's' : ''}
+                    </span>
+                  )}
                 </h2>
 
-                {hostData.currentStudent ? (
-                  <>
-                    <div className="flex items-start space-x-4 mb-6">
-                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200">
-                        <img
-                          src={hostData.currentStudent.imageUrl}
-                          alt={hostData.currentStudent.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                {matchedStudents.length > 0 ? (
+                  <div className="space-y-4">
+                    {matchedStudents.map((student) => {
+                      const canSubmit = feedbackEligibility[student.facilitationId]?.canSubmit;
+                      const currentMonth = getCurrentMonth();
 
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {hostData.currentStudent.name}
-                          </h3>
-                          {hostData.currentStudent.rating > 0 && (
-                            <div className="flex items-center space-x-1">
-                              <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                              <span className="font-semibold text-gray-900">
-                                {hostData.currentStudent.rating.toFixed(1)}
-                              </span>
+                      return (
+                        <div
+                          key={student.facilitationId}
+                          className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors"
+                        >
+                          <div className="flex items-start space-x-4 mb-4">
+                            <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0">
+                              {student.profilePicture ? (
+                                <img
+                                  src={student.profilePicture}
+                                  alt={student.studentName}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-purple-100">
+                                  <Users className="w-8 h-8 text-purple-600" />
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {hostData.currentStudent.university}
-                        </p>
-                        <div className="flex items-center space-x-2 text-sm text-gray-500">
-                          <Calendar className="w-4 h-4" />
-                          <span>Since {hostData.currentStudent.startDate}</span>
-                        </div>
-                      </div>
-                    </div>
 
-                    {hostData.currentStudent.servicesProvided && hostData.currentStudent.servicesProvided.length > 0 && (
-                      <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                        <p className="text-sm font-semibold text-gray-900 mb-2">
-                          Services Provided:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {hostData.currentStudent.servicesProvided.map((service) => (
-                            <span
-                              key={service}
-                              className="badge bg-purple-100 text-purple-800"
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-2">
+                                <h3 className="text-lg font-semibold text-gray-900 truncate">
+                                  {student.studentName}
+                                </h3>
+                                {student.rating > 0 && (
+                                  <div className="flex items-center space-x-1 flex-shrink-0 ml-2">
+                                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                    <span className="font-semibold text-gray-900 text-sm">
+                                      {student.rating.toFixed(1)}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-sm text-gray-600 mb-1">
+                                {student.university}
+                                {student.course && ` • ${student.course}`}
+                              </p>
+                              <div className="flex items-center space-x-2 text-xs text-gray-500">
+                                <Calendar className="w-3 h-3" />
+                                <span>
+                                  Matched {student.matchedAt ? new Date(student.matchedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Recently'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex gap-3">
+                            {canSubmit ? (
+                              <Link
+                                to={`/monthly-feedback/${student.facilitationId}`}
+                                state={{
+                                  partnerName: student.studentName,
+                                  partnerId: student.studentId,
+                                  partnerRole: 'guest'
+                                }}
+                                className="btn-primary flex-1 text-center flex items-center justify-center space-x-2"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                                <span>Submit Feedback ({currentMonth})</span>
+                              </Link>
+                            ) : (
+                              <button
+                                disabled
+                                className="btn-outline flex-1 text-center opacity-50 cursor-not-allowed flex items-center justify-center space-x-2"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                <span>Feedback Submitted ({currentMonth})</span>
+                              </button>
+                            )}
+                            <Link
+                              to="/feedback-history"
+                              className="btn-outline flex-1 text-center flex items-center justify-center space-x-2"
                             >
-                              {service}
-                            </span>
-                          ))}
+                              <MessageCircle className="w-4 h-4" />
+                              <span>View History</span>
+                            </Link>
+                          </div>
                         </div>
-                      </div>
-                    )}
-
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-green-900 font-medium">
-                            Hours this month
-                          </p>
-                          <p className="text-2xl font-bold text-green-900">
-                            {hostData.currentStudent.hoursThisMonth || 0}
-                          </p>
-                        </div>
-                        <Clock className="w-10 h-10 text-green-600" />
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3 mt-4">
-                      <Link to="/rate-experience" className="btn-primary flex-1 text-center">
-                        Rate This Month
-                      </Link>
-                      <Link to="/monthly-report" className="btn-outline flex-1 text-center">
-                        Submit Report
-                      </Link>
-                    </div>
-                  </>
+                      );
+                    })}
+                  </div>
                 ) : (
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
@@ -491,6 +539,20 @@ const HostDashboard = () => {
                   >
                     <Briefcase className="w-5 h-5" />
                     <span>Post New Task</span>
+                  </Link>
+                  <Link
+                    to="/feedback-history"
+                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    <span>Submit Monthly Reviews</span>
+                  </Link>
+                  <Link
+                    to="/feedback-history"
+                    className="w-full btn-outline flex items-center justify-center space-x-2"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    <span>Feedback History</span>
                   </Link>
                   <Link
                     to="/host/manage-tasks"

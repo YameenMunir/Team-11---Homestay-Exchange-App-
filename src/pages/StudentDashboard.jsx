@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
 import { savedHostsService } from '../services/savedHostsService';
 import { facilitationService } from '../services/facilitationService';
+import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Search,
@@ -18,6 +19,8 @@ import {
   HelpCircle,
   Loader2,
   Link2,
+  MessageSquare,
+  TrendingUp,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
@@ -33,6 +36,8 @@ const StudentDashboard = () => {
     rejected: 0,
     total: 0,
   });
+  const [matchedHosts, setMatchedHosts] = useState([]);
+  const [feedbackEligibility, setFeedbackEligibility] = useState({});
 
   // Fetch dashboard data
   useEffect(() => {
@@ -87,6 +92,33 @@ const StudentDashboard = () => {
 
     if (!userLoading && user) {
       fetchConnectionRequestCounts();
+    }
+  }, [user, userLoading]);
+
+  // Fetch matched hosts and check feedback eligibility
+  useEffect(() => {
+    const fetchMatchedHosts = async () => {
+      if (!user) return;
+
+      try {
+        const hosts = await facilitationService.getMatchedHosts();
+        setMatchedHosts(hosts);
+
+        // Check feedback eligibility for all hosts
+        if (hosts.length > 0) {
+          const facilitationIds = hosts.map(h => h.facilitationId);
+          const eligibilityResult = await checkMultipleFeedbackEligibility(facilitationIds);
+          if (eligibilityResult.success) {
+            setFeedbackEligibility(eligibilityResult.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching matched hosts:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchMatchedHosts();
     }
   }, [user, userLoading]);
 
@@ -159,7 +191,7 @@ const StudentDashboard = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="card p-6">
+            <Link to="/recognition-status" className="card p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Recognition</p>
@@ -172,7 +204,7 @@ const StudentDashboard = () => {
                 </div>
                 <Award className={`w-10 h-10 text-${currentBadge.color}-600`} />
               </div>
-            </div>
+            </Link>
 
             <div className="card p-6">
               <div className="flex items-center justify-between">
@@ -335,13 +367,41 @@ const StudentDashboard = () => {
                       </div>
                     </div>
 
-                    <div className="flex gap-3 mt-4">
-                      <Link to="/monthly-report" className="btn-primary flex-1 text-center">
-                        Log Hours
-                      </Link>
-                      <Link to="/rate-experience" className="btn-outline flex-1 text-center">
-                        Rate Host
-                      </Link>
+                    <div className="flex flex-col gap-3 mt-4">
+                      <div className="flex gap-3">
+                        <Link to="/monthly-report" className="btn-primary flex-1 text-center">
+                          Log Hours
+                        </Link>
+                        <Link to="/rate-experience" className="btn-outline flex-1 text-center">
+                          Rate Host
+                        </Link>
+                      </div>
+                      {matchedHosts.length > 0 && matchedHosts[0] && (
+                        <div className="flex gap-3">
+                          {feedbackEligibility[matchedHosts[0].facilitationId]?.canSubmit ? (
+                            <Link
+                              to={`/monthly-feedback/${matchedHosts[0].facilitationId}`}
+                              state={{
+                                partnerName: matchedHosts[0].hostName,
+                                partnerId: matchedHosts[0].hostId,
+                                partnerRole: 'host'
+                              }}
+                              className="btn-primary w-full text-center flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                            >
+                              <MessageSquare className="w-4 h-4" />
+                              <span>Submit Monthly Review ({getCurrentMonth()})</span>
+                            </Link>
+                          ) : (
+                            <button
+                              disabled
+                              className="btn-outline w-full text-center opacity-50 cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                              <span>Review Submitted ({getCurrentMonth()})</span>
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -438,6 +498,16 @@ const StudentDashboard = () => {
                     <p className="text-xs text-gray-600 mt-1">6 ratings</p>
                   </div>
                 </div>
+
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <Link
+                    to="/recognition-status"
+                    className="w-full btn-primary flex items-center justify-center space-x-2"
+                  >
+                    <TrendingUp className="w-4 h-4" />
+                    <span>View Full Recognition Status</span>
+                  </Link>
+                </div>
               </div>
             </div>
 
@@ -453,6 +523,20 @@ const StudentDashboard = () => {
                   >
                     <Search className="w-5 h-5" />
                     <span>Browse Hosts</span>
+                  </Link>
+                  <Link
+                    to="/feedback-history"
+                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <MessageSquare className="w-5 h-5" />
+                    <span>View Feedback History</span>
+                  </Link>
+                  <Link
+                    to="/recognition-status"
+                    className="w-full btn-outline flex items-center justify-center space-x-2"
+                  >
+                    <Award className="w-5 h-5" />
+                    <span>Recognition Status</span>
                   </Link>
                   <Link
                     to="/student/settings"

@@ -14,6 +14,7 @@ import {
   Mail,
   Phone,
   MessageCircle,
+  MessageSquare,
   Shield,
   Loader2,
   XCircle,
@@ -510,6 +511,22 @@ const MatchDetails = () => {
                   >
                     View Request Status
                   </Link>
+
+                  {/* Show feedback button for matched arrangements */}
+                  {(existingRequest.status === 'matched' || existingRequest.status === 'approved') && (
+                    <Link
+                      to={`/monthly-feedback/${existingRequest.id}`}
+                      state={{
+                        partnerName: host.name,
+                        partnerId: host.id,
+                        partnerRole: 'host'
+                      }}
+                      className="btn-outline w-full mb-4 text-center flex items-center justify-center space-x-2"
+                    >
+                      <MessageSquare className="w-5 h-5" />
+                      <span>Submit Monthly Feedback</span>
+                    </Link>
+                  )}
 
                   <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
                     <p className="text-xs text-purple-800">

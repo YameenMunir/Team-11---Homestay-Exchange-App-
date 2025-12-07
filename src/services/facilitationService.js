@@ -326,6 +326,128 @@ export const facilitationService = {
   },
 
   /**
+   * Get matched students for a host (active arrangements)
+   * @returns {Promise<Array>} Array of matched students
+   */
+  async getMatchedStudents() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('facilitation_requests')
+        .select(`
+          id,
+          requester_id,
+          status,
+          matched_at,
+          requester:user_profiles!requester_id (
+            id,
+            full_name,
+            email,
+            guest_profile:guest_profiles!user_id (
+              university,
+              course,
+              profile_picture_url,
+              average_rating
+            )
+          )
+        `)
+        .eq('target_id', user.id)
+        .in('status', ['matched', 'completed'])
+        .order('matched_at', { ascending: false });
+
+      if (error) {
+        console.error('[FacilitationService] Error getting matched students:', error);
+        throw error;
+      }
+
+      // Transform the data
+      const students = data.map(req => ({
+        facilitationId: req.id,
+        studentId: req.requester_id,
+        studentName: req.requester?.full_name || 'Unknown Student',
+        studentEmail: req.requester?.email,
+        university: req.requester?.guest_profile?.university,
+        course: req.requester?.guest_profile?.course,
+        profilePicture: req.requester?.guest_profile?.profile_picture_url,
+        rating: req.requester?.guest_profile?.average_rating || 0,
+        matchedAt: req.matched_at,
+        status: req.status,
+      }));
+
+      return students;
+    } catch (err) {
+      console.error('[FacilitationService] Error getting matched students:', err);
+      return [];
+    }
+  },
+
+  /**
+   * Get matched hosts for a student (active arrangements)
+   * @returns {Promise<Array>} Array of matched hosts
+   */
+  async getMatchedHosts() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('facilitation_requests')
+        .select(`
+          id,
+          target_id,
+          status,
+          matched_at,
+          target:user_profiles!target_id (
+            id,
+            full_name,
+            email,
+            host_profile:host_profiles!user_id (
+              city,
+              postcode,
+              profile_picture_url,
+              average_rating
+            )
+          )
+        `)
+        .eq('requester_id', user.id)
+        .in('status', ['matched', 'completed'])
+        .order('matched_at', { ascending: false });
+
+      if (error) {
+        console.error('[FacilitationService] Error getting matched hosts:', error);
+        throw error;
+      }
+
+      // Transform the data
+      const hosts = data.map(req => ({
+        facilitationId: req.id,
+        hostId: req.target_id,
+        hostName: req.target?.full_name || 'Unknown Host',
+        hostEmail: req.target?.email,
+        city: req.target?.host_profile?.city,
+        postcode: req.target?.host_profile?.postcode,
+        profilePicture: req.target?.host_profile?.profile_picture_url,
+        rating: req.target?.host_profile?.average_rating || 0,
+        matchedAt: req.matched_at,
+        status: req.status,
+      }));
+
+      return hosts;
+    } catch (err) {
+      console.error('[FacilitationService] Error getting matched hosts:', err);
+      return [];
+    }
+  },
+
+  /**
    * Host accepts a facilitation request
    * @param {string} requestId - Request ID
    * @returns {Promise} Updated request data

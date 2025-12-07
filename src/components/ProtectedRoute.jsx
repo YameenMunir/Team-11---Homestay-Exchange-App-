@@ -32,8 +32,8 @@ const ProtectedRoute = ({ children, requiredRole, redirectTo = null }) => {
     return <Navigate to={loginPath} replace />;
   }
 
-  // Check if user's role matches the required role
-  if (user.userType !== requiredRole) {
+  // Check if user's role matches the required role (only if a role is specified)
+  if (requiredRole && user.userType !== requiredRole) {
     // Determine appropriate redirect based on user's actual role
     const defaultRedirect = user.userType === 'host'
       ? '/host/dashboard'
