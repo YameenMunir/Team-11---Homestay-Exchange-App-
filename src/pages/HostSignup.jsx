@@ -15,6 +15,7 @@ import {
   FileText,
 } from 'lucide-react';
 import supabase from '../utils/supabase';
+import PhoneInput from '../components/PhoneInput';
 
 const HostSignup = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const HostSignup = () => {
     email: '',
     confirmEmail: '',
     phone: '',
+    countryCode: '+44', // Add country code field
     password: '',
     confirmPassword: '',
     address: '',
@@ -154,11 +156,12 @@ const HostSignup = () => {
         }
       }
 
-      // 3. Update user_profiles with phone number
+      // 3. Update user_profiles with phone number and country code
       const { error: updateError } = await supabase
         .from('user_profiles')
         .update({
           phone_number: formData.phone,
+          country_code: formData.countryCode,
         })
         .eq('id', userId);
 
@@ -192,9 +195,21 @@ const HostSignup = () => {
   };
 
   const handleChange = (e) => {
+    const { name, value, countryCode: eventCountryCode } = e.target;
+
+    // Handle phone input with country code
+    if (name === 'phone' && eventCountryCode) {
+      setFormData({
+        ...formData,
+        phone: value,
+        countryCode: eventCountryCode,
+      });
+      return;
+    }
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -411,21 +426,15 @@ const HostSignup = () => {
                     >
                       Phone Number
                     </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Phone className="w-6 h-6 text-gray-400" />
-                      </div>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="input-accessible pl-14"
-                        placeholder="07XXX XXXXXX"
-                      />
-                    </div>
+                    <PhoneInput
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      placeholder="e.g., 7700900123"
+                      accessible={true}
+                    />
                   </div>
 
                   <div>
