@@ -6,6 +6,7 @@ import { savedHostsService } from '../services/savedHostsService';
 import { facilitationService } from '../services/facilitationService';
 import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import { getRecognitionDetails } from '../services/recognitionService';
+import { supabase } from '../lib/supabaseClient';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Search,
@@ -127,15 +128,29 @@ const StudentDashboard = () => {
   // Fetch recognition data using the same service as FeedbackHistory
   useEffect(() => {
     const fetchRecognitionData = async () => {
-      if (!user?.id) return;
+      if (!user) return;
 
       try {
-        const recognitionResult = await getRecognitionDetails(user.id);
+        // Get the ACTUAL authenticated user ID from Supabase (matching FeedbackHistory pattern)
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+
+        if (!authUser) {
+          console.error('[StudentDashboard] Not authenticated');
+          return;
+        }
+
+        const actualUserId = authUser.id;
+        console.log('[StudentDashboard] Loading recognition data for authenticated user:', actualUserId);
+
+        const recognitionResult = await getRecognitionDetails(actualUserId);
         if (recognitionResult.success) {
           setRecognitionData(recognitionResult.data);
+          console.log('[StudentDashboard] Recognition data loaded:', recognitionResult.data);
+        } else {
+          console.error('[StudentDashboard] Failed to load recognition data:', recognitionResult.error);
         }
       } catch (error) {
-        console.error('Error fetching recognition data:', error);
+        console.error('[StudentDashboard] Error fetching recognition data:', error);
       }
     };
 

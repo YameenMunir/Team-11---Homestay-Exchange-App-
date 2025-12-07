@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Award, TrendingUp, Calendar, Star, ArrowLeft } from 'lucide-react';
 import { getRecognitionDetails, getRatingHistory, getTierBadgeInfo } from '../services/recognitionService';
 import { useUser } from '../context/UserContext';
+import { supabase } from '../lib/supabaseClient';
 import RecognitionBadge from '../components/RecognitionBadge';
 
 export default function RecognitionStatus() {
@@ -15,31 +16,48 @@ export default function RecognitionStatus() {
 
   useEffect(() => {
     const loadRecognitionData = async () => {
-      if (!user?.id) return;
+      if (!user) return;
 
       setLoading(true);
       try {
+        // Get the ACTUAL authenticated user ID from Supabase (matching FeedbackHistory pattern)
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+
+        if (!authUser) {
+          console.error('[RecognitionStatus] Not authenticated');
+          setLoading(false);
+          return;
+        }
+
+        const actualUserId = authUser.id;
+        console.log('[RecognitionStatus] Loading recognition data for authenticated user:', actualUserId);
+
         // Get recognition details
-        const detailsResult = await getRecognitionDetails(user.id);
+        const detailsResult = await getRecognitionDetails(actualUserId);
         if (detailsResult.success) {
           setRecognitionData(detailsResult.data);
+          console.log('[RecognitionStatus] Recognition data loaded:', detailsResult.data);
+        } else {
+          console.error('[RecognitionStatus] Failed to load recognition details:', detailsResult.error);
         }
 
         // Get rating history
-        const historyResult = await getRatingHistory(user.id);
+        const historyResult = await getRatingHistory(actualUserId);
         if (historyResult.success) {
           setRatingHistory(historyResult.data.history);
           setMilestones(historyResult.data.milestones);
+        } else {
+          console.error('[RecognitionStatus] Failed to load rating history:', historyResult.error);
         }
       } catch (error) {
-        console.error('Error loading recognition data:', error);
+        console.error('[RecognitionStatus] Error loading recognition data:', error);
       } finally {
         setLoading(false);
       }
     };
 
     loadRecognitionData();
-  }, [user?.id]);
+  }, [user]);
 
   if (loading) {
     return (
