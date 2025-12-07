@@ -20,7 +20,7 @@ export const dashboardService = {
             id,
             full_name,
             email,
-            guest_profile:guest_profiles!user_id (
+            guest_profile:guest_profiles (
               university,
               course,
               profile_picture_url
@@ -42,7 +42,7 @@ export const dashboardService = {
             id,
             full_name,
             email,
-            guest_profile:guest_profiles!user_id (
+            guest_profile:guest_profiles (
               university,
               course
             )
@@ -52,11 +52,12 @@ export const dashboardService = {
         .in('status', ['pending', 'in_review'])
         .order('created_at', { ascending: false });
 
-      // Fetch host's ratings
+      // Fetch host's ratings from monthly_feedback
       const { data: ratings, error: ratingsError } = await supabase
-        .from('ratings')
-        .select('*')
-        .eq('ratee_id', userId)
+        .from('monthly_feedback')
+        .select('rating, feedback_month, created_at')
+        .eq('recipient_id', userId)
+        .eq('recipient_role', 'host')
         .order('created_at', { ascending: false });
 
       // Calculate review count
@@ -68,21 +69,29 @@ export const dashboardService = {
         const requesterProfile = currentArrangement.requester;
         const guestProfile = requesterProfile.guest_profile;
 
-        // Fetch hours logged this month for current student
+        // Fetch hours logged this month for current student from monthly_feedback
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        const { data: monthlyReports } = await supabase
-          .from('monthly_reports')
-          .select('hours_completed')
-          .eq('facilitation_id', currentArrangement.id)
-          .gte('created_at', startOfMonth.toISOString());
+        let hoursThisMonth = 0;
+        try {
+          const { data: monthlyFeedback, error: feedbackError } = await supabase
+            .from('monthly_feedback')
+            .select('hours_contributed')
+            .eq('facilitation_id', currentArrangement.id)
+            .gte('created_at', startOfMonth.toISOString());
 
-        const hoursThisMonth = monthlyReports?.reduce(
-          (total, report) => total + (report.hours_completed || 0),
-          0
-        ) || 0;
+          if (!feedbackError && monthlyFeedback) {
+            hoursThisMonth = monthlyFeedback.reduce(
+              (total, feedback) => total + (feedback.hours_contributed || 0),
+              0
+            );
+          }
+        } catch (error) {
+          console.warn('Could not fetch hours for current month:', error);
+          hoursThisMonth = 0;
+        }
 
         currentStudent = {
           name: requesterProfile.full_name || 'Student',
@@ -137,7 +146,7 @@ export const dashboardService = {
             id,
             full_name,
             email,
-            host_profile:host_profiles!user_id (
+            host_profile:host_profiles (
               address,
               city,
               postcode,
@@ -158,41 +167,34 @@ export const dashboardService = {
         .eq('requester_id', userId)
         .order('created_at', { ascending: false });
 
-      // Fetch student's ratings to calculate recognition level
-      const { data: ratings, error: ratingsError } = await supabase
-        .from('ratings')
-        .select('*')
-        .eq('ratee_id', userId)
-        .order('created_at', { ascending: false });
+      // Fetch monthly feedback count for review count
+      const { data: monthlyFeedback, error: feedbackError } = await supabase
+        .from('monthly_feedback')
+        .select('rating')
+        .eq('recipient_id', userId)
+        .eq('recipient_role', 'guest');
 
-      // Calculate consecutive high ratings (4-5 stars)
-      let consecutiveHighRatings = 0;
-      for (const rating of ratings || []) {
-        if (rating.rating >= 4) {
-          consecutiveHighRatings++;
-        } else {
-          break;
+      const reviewCount = monthlyFeedback?.length || 0;
+
+      // Fetch total hours from all monthly feedback
+      let totalHours = 0;
+      try {
+        const { data: allFeedback, error: feedbackError } = await supabase
+          .from('monthly_feedback')
+          .select('hours_contributed')
+          .eq('submitter_id', userId)
+          .eq('submitter_role', 'guest');
+
+        if (!feedbackError && allFeedback) {
+          totalHours = allFeedback.reduce(
+            (total, feedback) => total + (feedback.hours_contributed || 0),
+            0
+          );
         }
+      } catch (error) {
+        console.warn('Could not fetch total hours:', error);
+        totalHours = 0;
       }
-
-      // Determine recognition level
-      let recognitionLevel = 'bronze';
-      if (consecutiveHighRatings >= 6) {
-        recognitionLevel = 'gold';
-      } else if (consecutiveHighRatings >= 4) {
-        recognitionLevel = 'silver';
-      }
-
-      // Fetch total hours from all completed monthly reports
-      const { data: allReports } = await supabase
-        .from('monthly_reports')
-        .select('hours_completed')
-        .eq('guest_id', userId);
-
-      const totalHours = allReports?.reduce(
-        (total, report) => total + (report.hours_completed || 0),
-        0
-      ) || 0;
 
       // Get current host details if arrangement exists
       let currentHost = null;
@@ -200,21 +202,29 @@ export const dashboardService = {
         const targetProfile = currentArrangement.target;
         const hostProfile = targetProfile.host_profile;
 
-        // Fetch hours logged this month
+        // Fetch hours logged this month from monthly_feedback
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        const { data: monthlyReports } = await supabase
-          .from('monthly_reports')
-          .select('hours_completed')
-          .eq('facilitation_id', currentArrangement.id)
-          .gte('created_at', startOfMonth.toISOString());
+        let hoursThisMonth = 0;
+        try {
+          const { data: monthlyFeedback, error: feedbackError } = await supabase
+            .from('monthly_feedback')
+            .select('hours_contributed')
+            .eq('facilitation_id', currentArrangement.id)
+            .gte('created_at', startOfMonth.toISOString());
 
-        const hoursThisMonth = monthlyReports?.reduce(
-          (total, report) => total + (report.hours_completed || 0),
-          0
-        ) || 0;
+          if (!feedbackError && monthlyFeedback) {
+            hoursThisMonth = monthlyFeedback.reduce(
+              (total, feedback) => total + (feedback.hours_contributed || 0),
+              0
+            );
+          }
+        } catch (error) {
+          console.warn('Could not fetch hours for current month:', error);
+          hoursThisMonth = 0;
+        }
 
         const location = [hostProfile?.city, hostProfile?.postcode]
           .filter(Boolean)
@@ -248,13 +258,10 @@ export const dashboardService = {
 
       return {
         currentHost,
-        recognitionLevel,
-        consecutiveRatings: consecutiveHighRatings,
-        reviewCount: ratings?.length || 0,
+        reviewCount,
         totalHours,
         savedHosts: savedHosts?.length || 0,
         connectionRequests,
-        ratings: ratings || [],
       };
     } catch (error) {
       console.error('Error fetching student dashboard data:', error);

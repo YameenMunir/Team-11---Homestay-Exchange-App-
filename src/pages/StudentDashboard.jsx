@@ -5,6 +5,7 @@ import { dashboardService } from '../services/dashboardService';
 import { savedHostsService } from '../services/savedHostsService';
 import { facilitationService } from '../services/facilitationService';
 import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
+import { getRecognitionDetails } from '../services/recognitionService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
 import {
   Search,
@@ -38,6 +39,7 @@ const StudentDashboard = () => {
   });
   const [matchedHosts, setMatchedHosts] = useState([]);
   const [feedbackEligibility, setFeedbackEligibility] = useState({});
+  const [recognitionData, setRecognitionData] = useState(null);
 
   // Fetch dashboard data
   useEffect(() => {
@@ -122,27 +124,53 @@ const StudentDashboard = () => {
     }
   }, [user, userLoading]);
 
-  // Prepare student data
+  // Fetch recognition data using the same service as FeedbackHistory
+  useEffect(() => {
+    const fetchRecognitionData = async () => {
+      if (!user?.id) return;
+
+      try {
+        const recognitionResult = await getRecognitionDetails(user.id);
+        if (recognitionResult.success) {
+          setRecognitionData(recognitionResult.data);
+        }
+      } catch (error) {
+        console.error('Error fetching recognition data:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchRecognitionData();
+    }
+  }, [user, userLoading]);
+
+  // Prepare student data - use recognitionData for recognition fields
   const studentData = user && dashboardData ? {
     name: user.fullName,
     university: user.university,
-    recognitionLevel: dashboardData.recognitionLevel || 'bronze',
-    consecutiveRatings: dashboardData.consecutiveRatings || 0,
+    recognitionLevel: recognitionData?.current_tier || 'none',
+    consecutiveRatings: recognitionData?.consecutive_high_ratings || 0,
     rating: user.rating || 0,
     reviewCount: dashboardData.reviewCount || 0,
     currentHost: dashboardData.currentHost,
     savedHosts: savedHostsCount,
     totalHours: dashboardData.totalHours || 0,
     connectionRequests: connectionRequestCounts,
+    recognitionAchievements: {
+      bronze_achieved_at: recognitionData?.bronze_achieved_at,
+      silver_achieved_at: recognitionData?.silver_achieved_at,
+      gold_achieved_at: recognitionData?.gold_achieved_at,
+    },
   } : null;
 
   const recognitionBadge = {
-    bronze: { color: 'orange', label: 'Bronze', description: '2+ consecutive 4-5⭐ ratings' },
-    silver: { color: 'gray', label: 'Silver', description: '4+ consecutive 4-5⭐ ratings' },
-    gold: { color: 'yellow', label: 'Gold', description: '6+ consecutive 4-5⭐ ratings' },
+    none: { color: 'gray', label: 'No Badge', icon: '⭐', description: 'Keep providing excellent service to earn your first badge!' },
+    bronze: { color: 'orange', label: 'Bronze', icon: '🥉', description: '2+ consecutive 4-5⭐ ratings' },
+    silver: { color: 'gray', label: 'Silver', icon: '🥈', description: '4+ consecutive 4-5⭐ ratings' },
+    gold: { color: 'yellow', label: 'Gold', icon: '🥇', description: '6+ consecutive 4-5⭐ ratings' },
   };
 
-  const currentBadge = studentData ? recognitionBadge[studentData.recognitionLevel] : recognitionBadge.bronze;
+  const currentBadge = studentData ? (recognitionBadge[studentData.recognitionLevel] || recognitionBadge.none) : recognitionBadge.none;
 
   // Show loading state
   if (userLoading || loading) {
@@ -191,18 +219,23 @@ const StudentDashboard = () => {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <Link to="/recognition-status" className="card p-6 hover:shadow-lg transition-shadow">
+            <Link to="/feedback-history" className="card p-6 hover:shadow-lg transition-shadow">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Recognition</p>
-                  <span className={`badge badge-${studentData.recognitionLevel} text-base px-3 py-1`}>
-                    {currentBadge.label}
-                  </span>
-                  <p className="text-xs text-gray-500 mt-2">
-                    {studentData.consecutiveRatings} consecutive high ratings
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 mb-2">Recognition Tier</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-3xl">{currentBadge.icon}</span>
+                    <span className="text-xl font-bold text-gray-900">{currentBadge.label}</span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    {studentData.consecutiveRatings} / {
+                      studentData.recognitionLevel === 'none' ? '2' :
+                      studentData.recognitionLevel === 'bronze' ? '4' :
+                      studentData.recognitionLevel === 'silver' ? '6' : '6+'
+                    } months
                   </p>
                 </div>
-                <Award className={`w-10 h-10 text-${currentBadge.color}-600`} />
+                <TrendingUp className="w-8 h-8 text-purple-600 flex-shrink-0" />
               </div>
             </Link>
 
@@ -419,95 +452,109 @@ const StudentDashboard = () => {
               </div>
 
               {/* Recognition Progress */}
-              <div className="card p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
-                  Recognition Progress
-                </h2>
+              <div className="card p-6 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border-2 border-purple-200">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                    <span className="text-3xl">{currentBadge.icon}</span>
+                    Recognition Progress
+                  </h2>
+                </div>
 
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Current: {currentBadge.label}
-                    </span>
-                    <span className="text-sm text-gray-600">
-                      {studentData.consecutiveRatings}/
-                      {studentData.recognitionLevel === 'bronze'
-                        ? '4'
-                        : studentData.recognitionLevel === 'silver'
-                        ? '6'
-                        : '6+'}{' '}
-                      ratings
-                    </span>
+                {/* Current Tier Display */}
+                <div className="bg-white/60 rounded-lg p-4 mb-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Current Tier</p>
+                      <p className="text-2xl font-bold text-gray-900">{currentBadge.label}</p>
+                    </div>
+                    <span className="text-5xl">{currentBadge.icon}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div
-                      className={`bg-${currentBadge.color}-600 h-3 rounded-full transition-all`}
-                      style={{
-                        width: `${
-                          studentData.recognitionLevel === 'bronze'
-                            ? (studentData.consecutiveRatings / 4) * 100
-                            : studentData.recognitionLevel === 'silver'
-                            ? (studentData.consecutiveRatings / 6) * 100
-                            : 100
-                        }%`,
-                      }}
-                    ></div>
+                  <p className="text-xs text-gray-600">{currentBadge.description}</p>
+                </div>
+
+                {/* Progress to Next Tier */}
+                {studentData.recognitionLevel !== 'gold' && (
+                  <div className="bg-white/60 rounded-lg p-4 mb-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-semibold text-gray-700">
+                        Progress to {
+                          studentData.recognitionLevel === 'none' ? 'Bronze' :
+                          studentData.recognitionLevel === 'bronze' ? 'Silver' : 'Gold'
+                        }
+                      </span>
+                      <span className="text-sm font-bold text-purple-700">
+                        {studentData.consecutiveRatings} / {
+                          studentData.recognitionLevel === 'none' ? 2 :
+                          studentData.recognitionLevel === 'bronze' ? 4 : 6
+                        } months
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min(100, (studentData.consecutiveRatings / (
+                            studentData.recognitionLevel === 'none' ? 2 :
+                            studentData.recognitionLevel === 'bronze' ? 4 : 6
+                          )) * 100)}%`
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-2">
+                      {Math.max(0, (studentData.recognitionLevel === 'none' ? 2 :
+                        studentData.recognitionLevel === 'bronze' ? 4 : 6) - studentData.consecutiveRatings)} more month{Math.max(0, (studentData.recognitionLevel === 'none' ? 2 :
+                        studentData.recognitionLevel === 'bronze' ? 4 : 6) - studentData.consecutiveRatings) !== 1 ? 's' : ''} needed
+                    </p>
+                  </div>
+                )}
+
+                {/* Achievement Badges Grid */}
+                <div className="grid grid-cols-3 gap-3 mb-5">
+                  <div className={`text-center p-3 rounded-lg ${studentData?.recognitionAchievements?.bronze_achieved_at ? 'bg-orange-100 border-2 border-orange-300' : 'bg-gray-100 border-2 border-gray-200'}`}>
+                    <div className="text-3xl mb-1">🥉</div>
+                    <p className="text-xs font-semibold text-gray-700 mb-1">Bronze</p>
+                    {studentData?.recognitionAchievements?.bronze_achieved_at ? (
+                      <p className="text-xs text-gray-600">
+                        {new Date(studentData.recognitionAchievements.bronze_achieved_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-500">Not yet</p>
+                    )}
+                  </div>
+
+                  <div className={`text-center p-3 rounded-lg ${studentData?.recognitionAchievements?.silver_achieved_at ? 'bg-gray-200 border-2 border-gray-400' : 'bg-gray-100 border-2 border-gray-200'}`}>
+                    <div className="text-3xl mb-1">🥈</div>
+                    <p className="text-xs font-semibold text-gray-700 mb-1">Silver</p>
+                    {studentData?.recognitionAchievements?.silver_achieved_at ? (
+                      <p className="text-xs text-gray-600">
+                        {new Date(studentData.recognitionAchievements.silver_achieved_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-500">Not yet</p>
+                    )}
+                  </div>
+
+                  <div className={`text-center p-3 rounded-lg ${studentData?.recognitionAchievements?.gold_achieved_at ? 'bg-yellow-100 border-2 border-yellow-400' : 'bg-gray-100 border-2 border-gray-200'}`}>
+                    <div className="text-3xl mb-1">🥇</div>
+                    <p className="text-xs font-semibold text-gray-700 mb-1">Gold</p>
+                    {studentData?.recognitionAchievements?.gold_achieved_at ? (
+                      <p className="text-xs text-gray-600">
+                        {new Date(studentData.recognitionAchievements.gold_achieved_at).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-gray-500">Not yet</p>
+                    )}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-orange-50 rounded-xl border-2 border-orange-200">
-                    <Award className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                    <p className="text-sm font-semibold text-orange-900">Bronze</p>
-                    <p className="text-xs text-orange-700 mt-1">2 ratings</p>
-                  </div>
-
-                  <div className={`text-center p-4 rounded-xl border-2 ${
-                    studentData.recognitionLevel === 'silver' || studentData.recognitionLevel === 'gold'
-                      ? 'bg-gray-50 border-gray-400'
-                      : 'bg-gray-50 border-gray-200'
-                  }`}>
-                    <Award className={`w-8 h-8 mx-auto mb-2 ${
-                      studentData.recognitionLevel === 'silver' || studentData.recognitionLevel === 'gold'
-                        ? 'text-gray-600'
-                        : 'text-gray-400'
-                    }`} />
-                    <p className={`text-sm font-semibold ${
-                      studentData.recognitionLevel === 'silver' || studentData.recognitionLevel === 'gold'
-                        ? 'text-gray-900'
-                        : 'text-gray-600'
-                    }`}>Silver</p>
-                    <p className="text-xs text-gray-600 mt-1">4 ratings</p>
-                  </div>
-
-                  <div className={`text-center p-4 rounded-xl border-2 ${
-                    studentData.recognitionLevel === 'gold'
-                      ? 'bg-yellow-50 border-yellow-400'
-                      : 'bg-gray-50 border-gray-200'
-                  }`}>
-                    <Award className={`w-8 h-8 mx-auto mb-2 ${
-                      studentData.recognitionLevel === 'gold'
-                        ? 'text-yellow-600'
-                        : 'text-gray-400'
-                    }`} />
-                    <p className={`text-sm font-semibold ${
-                      studentData.recognitionLevel === 'gold'
-                        ? 'text-yellow-900'
-                        : 'text-gray-600'
-                    }`}>Gold</p>
-                    <p className="text-xs text-gray-600 mt-1">6 ratings</p>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <Link
-                    to="/recognition-status"
-                    className="w-full btn-primary flex items-center justify-center space-x-2"
-                  >
-                    <TrendingUp className="w-4 h-4" />
-                    <span>View Full Recognition Status</span>
-                  </Link>
-                </div>
+                {/* View Full Status Button */}
+                <Link
+                  to="/feedback-history"
+                  className="w-full btn-primary flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  <span>View Full Recognition Status</span>
+                </Link>
               </div>
             </div>
 
@@ -529,14 +576,7 @@ const StudentDashboard = () => {
                     className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                   >
                     <MessageSquare className="w-5 h-5" />
-                    <span>View Feedback History</span>
-                  </Link>
-                  <Link
-                    to="/recognition-status"
-                    className="w-full btn-outline flex items-center justify-center space-x-2"
-                  >
-                    <Award className="w-5 h-5" />
-                    <span>Recognition Status</span>
+                    <span>Feedback & Recognition</span>
                   </Link>
                   <Link
                     to="/student/settings"

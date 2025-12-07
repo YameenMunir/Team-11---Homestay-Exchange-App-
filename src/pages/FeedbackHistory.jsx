@@ -380,13 +380,6 @@ export default function FeedbackHistory() {
                     </p>
                   </div>
                 </div>
-                <Link
-                  to="/recognition-status"
-                  className="btn-outline text-xs sm:text-sm px-3 sm:px-4 py-2 flex items-center justify-center gap-2 whitespace-nowrap flex-shrink-0 w-full lg:w-auto"
-                >
-                  <TrendingUp className="w-4 h-4 flex-shrink-0" />
-                  <span>View Details</span>
-                </Link>
               </div>
 
               {/* Progress to Next Tier */}

@@ -262,7 +262,7 @@ export const facilitationService = {
             full_name,
             email,
             phone_number,
-            guest_profile:guest_profiles!user_id (
+            guest_profile:guest_profiles (
               university,
               course,
               bio
@@ -348,7 +348,7 @@ export const facilitationService = {
             id,
             full_name,
             email,
-            guest_profile:guest_profiles!user_id (
+            guest_profile:guest_profiles (
               university,
               course,
               profile_picture_url,
@@ -523,7 +523,7 @@ export const facilitationService = {
             full_name,
             email,
             phone_number,
-            guest_profile:guest_profiles!user_id (
+            guest_profile:guest_profiles (
               university,
               course
             )
