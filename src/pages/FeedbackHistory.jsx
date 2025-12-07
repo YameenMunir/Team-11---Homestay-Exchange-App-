@@ -140,30 +140,30 @@ export default function FeedbackHistory() {
     const monthDate = new Date(feedback.feedback_month + '-01');
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5 pb-5 border-b border-gray-100">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-2.5">
-              <h3 className="font-bold text-gray-900 text-xl">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 pb-4 sm:pb-5 border-b border-gray-100">
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-2.5">
+              <h3 className="font-bold text-gray-900 text-lg sm:text-xl break-words">
                 {type === 'received' ? 'From' : 'To'}: {partner?.full_name || 'Unknown User'}
               </h3>
-              <span className="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-md">
+              <span className="px-2 sm:px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-md flex-shrink-0 whitespace-nowrap">
                 {partner?.role === 'host' ? 'Host' : 'Student'}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Calendar className="w-4 h-4" />
-              <span className="font-medium">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+              <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+              <span className="font-medium break-words">
                 {monthDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
               </span>
             </div>
           </div>
-          <div className="flex flex-col items-start sm:items-end gap-2.5">
-            <div className="flex items-center gap-1">
+          <div className="flex flex-col items-start lg:items-end gap-2 sm:gap-2.5 flex-shrink-0">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-5 h-5 ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ${
                     i < feedback.rating
                       ? 'fill-yellow-400 text-yellow-400'
                       : 'text-gray-300'
@@ -171,7 +171,7 @@ export default function FeedbackHistory() {
                 />
               ))}
             </div>
-            <span className="text-sm font-bold text-gray-900 bg-gray-100 px-3 py-1.5 rounded-md">
+            <span className="text-xs sm:text-sm font-bold text-gray-900 bg-gray-100 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md whitespace-nowrap">
               {feedback.rating}/5
             </span>
           </div>
@@ -179,33 +179,33 @@ export default function FeedbackHistory() {
 
         {/* Overall Feedback */}
         {feedback.feedback_text && (
-          <div className="mb-4 pb-4 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Overall Feedback</h4>
-            <p className="text-gray-700 leading-relaxed">{feedback.feedback_text}</p>
+          <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-100">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Overall Feedback</h4>
+            <p className="text-sm sm:text-base text-gray-700 leading-relaxed break-words">{feedback.feedback_text}</p>
           </div>
         )}
 
         {/* Activity Summary - Only show if data exists */}
         {(feedback.hours_contributed !== null || feedback.tasks_completed) && (
-          <div className="mb-4 pb-4 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Activity Summary</h4>
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-100">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Activity Summary</h4>
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               {feedback.hours_contributed !== null && (
-                <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Clock className="w-4 h-4 text-purple-600" />
+                <div className="bg-purple-50 rounded-lg p-3 border border-purple-100 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 flex-shrink-0" />
                     <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Hours Contributed</span>
                   </div>
-                  <p className="text-2xl font-bold text-purple-900">{feedback.hours_contributed}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-purple-900 break-words">{feedback.hours_contributed}</p>
                 </div>
               )}
               {feedback.tasks_completed && (
-                <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                  <div className="flex items-center gap-2 mb-1">
-                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                <div className="bg-blue-50 rounded-lg p-3 border border-blue-100 min-w-0 overflow-hidden">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-600 flex-shrink-0" />
                     <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Tasks Completed</span>
                   </div>
-                  <p className="text-sm text-gray-700 mt-2 line-clamp-2">{feedback.tasks_completed}</p>
+                  <p className="text-xs sm:text-sm text-gray-700 mt-2 line-clamp-3 break-words">{feedback.tasks_completed}</p>
                 </div>
               )}
             </div>
@@ -214,38 +214,38 @@ export default function FeedbackHistory() {
 
         {/* Monthly Reflection */}
         {(feedback.highlights || feedback.challenges || feedback.goals_next_month) && (
-          <div className="mb-4 pb-4 border-b border-gray-100">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Monthly Reflection</h4>
-            <div className="space-y-3">
+          <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-100">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Monthly Reflection</h4>
+            <div className="space-y-2 sm:space-y-3">
               {feedback.highlights && (
-                <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                <div className="bg-green-50 rounded-lg p-2.5 sm:p-3 border border-green-100 min-w-0 overflow-hidden">
                   <div className="flex items-start gap-2">
-                    <span className="text-lg flex-shrink-0">✨</span>
-                    <div className="flex-1 min-w-0">
+                    <span className="text-base sm:text-lg flex-shrink-0">✨</span>
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">Highlights</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">{feedback.highlights}</p>
+                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed break-words">{feedback.highlights}</p>
                     </div>
                   </div>
                 </div>
               )}
               {feedback.challenges && (
-                <div className="bg-orange-50 rounded-lg p-3 border border-orange-100">
+                <div className="bg-orange-50 rounded-lg p-2.5 sm:p-3 border border-orange-100 min-w-0 overflow-hidden">
                   <div className="flex items-start gap-2">
-                    <span className="text-lg flex-shrink-0">⚠️</span>
-                    <div className="flex-1 min-w-0">
+                    <span className="text-base sm:text-lg flex-shrink-0">⚠️</span>
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">Challenges</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">{feedback.challenges}</p>
+                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed break-words">{feedback.challenges}</p>
                     </div>
                   </div>
                 </div>
               )}
               {feedback.goals_next_month && (
-                <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                <div className="bg-blue-50 rounded-lg p-2.5 sm:p-3 border border-blue-100 min-w-0 overflow-hidden">
                   <div className="flex items-start gap-2">
-                    <span className="text-lg flex-shrink-0">🎯</span>
-                    <div className="flex-1 min-w-0">
+                    <span className="text-base sm:text-lg flex-shrink-0">🎯</span>
+                    <div className="flex-1 min-w-0 overflow-hidden">
                       <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">Goals for Next Month</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">{feedback.goals_next_month}</p>
+                      <p className="text-xs sm:text-sm text-gray-700 leading-relaxed break-words">{feedback.goals_next_month}</p>
                     </div>
                   </div>
                 </div>
@@ -256,14 +256,14 @@ export default function FeedbackHistory() {
 
         {/* Support Request */}
         {feedback.support_needed && (
-          <div className="mb-4 pb-4 border-b border-gray-100">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-red-900 mb-1">Support Requested</h4>
+          <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-gray-100">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 min-w-0 overflow-hidden">
+              <div className="flex items-start gap-2 sm:gap-3">
+                <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <h4 className="text-xs sm:text-sm font-semibold text-red-900 mb-1">Support Requested</h4>
                   {feedback.support_details && (
-                    <p className="text-sm text-red-800 leading-relaxed">{feedback.support_details}</p>
+                    <p className="text-xs sm:text-sm text-red-800 leading-relaxed break-words">{feedback.support_details}</p>
                   )}
                 </div>
               </div>
@@ -272,13 +272,13 @@ export default function FeedbackHistory() {
         )}
 
         {/* Footer */}
-        <div className="text-xs text-gray-500 flex items-center gap-2">
-          <Calendar className="w-3 h-3" />
-          Submitted on {new Date(feedback.created_at).toLocaleDateString('en-GB', {
+        <div className="text-xs text-gray-500 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+          <Calendar className="w-3 h-3 flex-shrink-0" />
+          <span className="break-words">Submitted on {new Date(feedback.created_at).toLocaleDateString('en-GB', {
             day: 'numeric',
             month: 'long',
             year: 'numeric'
-          })}
+          })}</span>
         </div>
       </div>
     );
@@ -286,11 +286,11 @@ export default function FeedbackHistory() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-lg text-gray-900 font-semibold mb-1">Loading feedback history...</p>
-          <p className="text-sm text-gray-600">Please wait while we fetch your data</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 sm:py-12 px-4">
+        <div className="text-center max-w-md">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4" />
+          <p className="text-base sm:text-lg text-gray-900 font-semibold mb-1 break-words">Loading feedback history...</p>
+          <p className="text-xs sm:text-sm text-gray-600 break-words">Please wait while we fetch your data</p>
         </div>
       </div>
     );
@@ -300,27 +300,27 @@ export default function FeedbackHistory() {
   const filteredFeedback = filterFeedback(activeFeedback);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container-custom max-w-6xl">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 lg:mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 font-medium transition-all hover:gap-3 group"
+            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 sm:mb-6 font-medium transition-all hover:gap-3 group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:transform group-hover:-translate-x-1 transition-transform" />
-            <span>Back</span>
+            <ArrowLeft className="w-5 h-5 flex-shrink-0 group-hover:transform group-hover:-translate-x-1 transition-transform" />
+            <span className="whitespace-nowrap">Back</span>
           </button>
 
-          <div className="flex items-start gap-4 mb-6">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-              <MessageSquare className="w-7 h-7 text-white" />
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+              <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-1">
+            <div className="flex-1 min-w-0 overflow-hidden">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-1 break-words">
                 Feedback History
               </h1>
-              <p className="text-base text-gray-600">
+              <p className="text-sm sm:text-base text-gray-600 break-words">
                 View and manage your monthly feedback
               </p>
             </div>
@@ -329,22 +329,22 @@ export default function FeedbackHistory() {
 
         {/* Success Banner */}
         {showSuccessBanner && successMessage && (
-          <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-6 shadow-sm animate-fade-in">
-            <div className="flex items-start gap-4">
+          <div className="mb-4 sm:mb-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-4 sm:p-6 shadow-sm animate-fade-in">
+            <div className="flex items-start gap-3 sm:gap-4">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1 sm:mb-2 break-words">
                   Feedback Submitted Successfully!
                 </h3>
-                <p className="text-gray-700 mb-3">{successMessage}</p>
+                <p className="text-sm sm:text-base text-gray-700 mb-2 sm:mb-3 break-words">{successMessage}</p>
                 {submittedRating >= 4 && (
-                  <div className="flex items-start gap-2.5 p-3.5 bg-purple-50 border border-purple-200 rounded-lg">
-                    <Award className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm text-purple-900">
+                  <div className="flex items-start gap-2 sm:gap-2.5 p-3 sm:p-3.5 bg-purple-50 border border-purple-200 rounded-lg">
+                    <Award className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs sm:text-sm text-purple-900 break-words">
                       <strong className="font-semibold">Great rating!</strong> Your student is building towards their recognition badge.
                       Consecutive months of 4-5 star ratings earn Bronze, Silver, and Gold status!
                     </p>
@@ -353,9 +353,10 @@ export default function FeedbackHistory() {
               </div>
               <button
                 onClick={() => setShowSuccessBanner(false)}
-                className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                aria-label="Close"
               >
-                <span className="text-2xl">&times;</span>
+                <span className="text-xl sm:text-2xl leading-none">&times;</span>
               </button>
             </div>
           </div>
@@ -363,27 +364,27 @@ export default function FeedbackHistory() {
 
         {/* Recognition Tier for Students */}
         {user?.userType === 'guest' && recognitionData && activeTab === 'received' && (
-          <div className="mb-6">
-            <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 rounded-lg border-2 border-purple-200 shadow-sm p-6">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-                    <span className="text-3xl">{getTierBadgeInfo(recognitionData.current_tier).icon}</span>
+          <div className="mb-4 sm:mb-6">
+            <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 rounded-lg border-2 border-purple-200 shadow-sm p-4 sm:p-6">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
+                <div className="flex items-start gap-3 sm:gap-4 min-w-0 overflow-hidden">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                    <span className="text-2xl sm:text-3xl">{getTierBadgeInfo(recognitionData.current_tier).icon}</span>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-1.5">
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-1.5 break-words">
                       {getTierBadgeInfo(recognitionData.current_tier).name} Status
                     </h3>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-xs sm:text-sm text-gray-700 break-words">
                       {getTierBadgeInfo(recognitionData.current_tier).description}
                     </p>
                   </div>
                 </div>
                 <Link
                   to="/recognition-status"
-                  className="btn-outline text-sm px-4 py-2 flex items-center justify-center gap-2 whitespace-nowrap flex-shrink-0"
+                  className="btn-outline text-xs sm:text-sm px-3 sm:px-4 py-2 flex items-center justify-center gap-2 whitespace-nowrap flex-shrink-0 w-full lg:w-auto"
                 >
-                  <TrendingUp className="w-4 h-4" />
+                  <TrendingUp className="w-4 h-4 flex-shrink-0" />
                   <span>View Details</span>
                 </Link>
               </div>
@@ -450,46 +451,46 @@ export default function FeedbackHistory() {
 
         {/* Stats Summary */}
         {stats && activeTab === 'received' && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Total Feedback</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalFeedback}</p>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 min-w-0">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 sm:mb-2 truncate">Total Feedback</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{stats.totalFeedback}</p>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Average Rating</p>
-              <div className="flex items-center gap-2">
-                <p className="text-3xl font-bold text-gray-900">{stats.averageRating}</p>
-                <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 min-w-0">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 sm:mb-2 truncate">Average Rating</p>
+              <div className="flex items-center gap-2 flex-wrap">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stats.averageRating}</p>
+                <Star className="w-5 h-5 sm:w-6 sm:h-6 fill-yellow-400 text-yellow-400 flex-shrink-0" />
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">5-Star Ratings</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.ratingCounts[5]}</p>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 min-w-0">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 sm:mb-2 truncate">5-Star Ratings</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{stats.ratingCounts[5]}</p>
             </div>
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">4-Star Ratings</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.ratingCounts[4]}</p>
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-5 min-w-0">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 sm:mb-2 truncate">4-Star Ratings</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">{stats.ratingCounts[4]}</p>
             </div>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="mb-6">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-1">
-            <nav className="flex gap-1" aria-label="Tabs">
+        <div className="mb-4 sm:mb-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-1 overflow-x-auto">
+            <nav className="flex gap-1 min-w-max sm:min-w-0" aria-label="Tabs">
               {user?.userType === 'host' && (
                 <button
                   onClick={() => setActiveTab('students')}
-                  className={`flex-1 px-4 py-3 font-medium text-sm rounded-md transition-all ${
+                  className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                     activeTab === 'students'
                       ? 'bg-purple-600 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  <div className="flex items-center justify-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>Active Students</span>
-                    <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                  <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
+                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="whitespace-nowrap">Active Students</span>
+                    <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                       activeTab === 'students'
                         ? 'bg-purple-500 text-white'
                         : 'bg-gray-200 text-gray-700'
@@ -501,15 +502,15 @@ export default function FeedbackHistory() {
               )}
               <button
                 onClick={() => setActiveTab('received')}
-                className={`flex-1 px-4 py-3 font-medium text-sm rounded-md transition-all ${
+                className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                   activeTab === 'received'
                     ? 'bg-purple-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <span>Received</span>
-                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
+                  <span className="whitespace-nowrap">Received</span>
+                  <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                     activeTab === 'received'
                       ? 'bg-purple-500 text-white'
                       : 'bg-gray-200 text-gray-700'
@@ -520,15 +521,15 @@ export default function FeedbackHistory() {
               </button>
               <button
                 onClick={() => setActiveTab('submitted')}
-                className={`flex-1 px-4 py-3 font-medium text-sm rounded-md transition-all ${
+                className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                   activeTab === 'submitted'
                     ? 'bg-purple-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
-                <div className="flex items-center justify-center gap-2">
-                  <span>Submitted</span>
-                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap">
+                  <span className="whitespace-nowrap">Submitted</span>
+                  <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                     activeTab === 'submitted'
                       ? 'bg-purple-500 text-white'
                       : 'bg-gray-200 text-gray-700'
@@ -543,15 +544,15 @@ export default function FeedbackHistory() {
 
         {/* Filter - only show for feedback tabs */}
         {activeTab !== 'students' && (
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-2.5">
-              <Filter className="w-5 h-5 text-purple-600" />
-              <label className="text-sm font-semibold text-gray-700">Filter by rating:</label>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
+              <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
+              <label className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">Filter by rating:</label>
             </div>
             <select
               value={filterRating}
               onChange={(e) => setFilterRating(e.target.value)}
-              className="flex-1 sm:flex-none sm:w-64 input-field py-2.5 px-4 font-medium border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+              className="flex-1 sm:flex-none sm:w-64 input-field py-2 sm:py-2.5 px-3 sm:px-4 text-sm font-medium border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg min-w-0"
             >
               <option value="all">All Ratings</option>
               <option value="5">⭐ 5 Stars - Excellent</option>
@@ -565,16 +566,16 @@ export default function FeedbackHistory() {
 
         {/* Active Students Tab - For Hosts */}
         {activeTab === 'students' && (
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             {matchedStudents.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 text-center py-16 px-6">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-10 h-10 text-gray-400" />
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 text-center py-12 sm:py-16 px-4 sm:px-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <Users className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 break-words">
                   No Active Students
                 </h3>
-                <p className="text-gray-600 max-w-md mx-auto">
+                <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto break-words">
                   You don't have any matched students at the moment. Check your pending requests or browse for new connections.
                 </p>
               </div>
@@ -586,11 +587,11 @@ export default function FeedbackHistory() {
                 return (
                   <div
                     key={student.facilitationId}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300"
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300"
                   >
                     {/* Student Header */}
-                    <div className="flex items-start gap-4 mb-5">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-sm">
+                    <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 shadow-sm">
                         {student.profilePicture ? (
                           <img
                             src={student.profilePicture}
@@ -599,28 +600,28 @@ export default function FeedbackHistory() {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
-                            <Users className="w-8 h-8 text-purple-600" />
+                            <Users className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
                           </div>
                         )}
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-gray-900 text-xl mb-1.5">
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <h3 className="font-bold text-gray-900 text-lg sm:text-xl mb-1 sm:mb-1.5 break-words">
                           {student.studentName}
                         </h3>
-                        <p className="text-sm text-gray-600 mb-2.5 line-clamp-1">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-2.5 line-clamp-2 break-words">
                           {student.university}
                           {student.course && ` • ${student.course}`}
                         </p>
-                        <div className="flex flex-wrap items-center gap-2.5 text-xs">
-                          <div className="flex items-center gap-1.5 text-gray-500 px-2.5 py-1 bg-gray-50 rounded-md">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>Matched {student.matchedAt ? new Date(student.matchedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Recently'}</span>
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <div className="flex items-center gap-1.5 text-gray-500 px-2 sm:px-2.5 py-1 bg-gray-50 rounded-md flex-shrink-0">
+                            <Calendar className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="whitespace-nowrap">Matched {student.matchedAt ? new Date(student.matchedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Recently'}</span>
                           </div>
                           {student.rating > 0 && (
-                            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-yellow-50 rounded-md border border-yellow-200">
-                              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
-                              <span className="font-semibold text-yellow-700">{student.rating.toFixed(1)}</span>
+                            <div className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-yellow-50 rounded-md border border-yellow-200 flex-shrink-0">
+                              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400 flex-shrink-0" />
+                              <span className="font-semibold text-yellow-700 whitespace-nowrap">{student.rating.toFixed(1)}</span>
                             </div>
                           )}
                         </div>
@@ -629,11 +630,11 @@ export default function FeedbackHistory() {
 
                     {/* Review Status Banner */}
                     {!canSubmit && (
-                      <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2.5">
+                      <div className="mb-3 sm:mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2 sm:gap-2.5">
                         <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-green-900">Review Submitted ({currentMonth})</p>
-                          <p className="text-xs text-green-700 mt-0.5">You've completed this month's feedback</p>
+                        <div className="flex-1 min-w-0 overflow-hidden">
+                          <p className="text-xs sm:text-sm font-semibold text-green-900 break-words">Review Submitted ({currentMonth})</p>
+                          <p className="text-xs text-green-700 mt-0.5 break-words">You've completed this month's feedback</p>
                         </div>
                       </div>
                     )}
@@ -647,16 +648,16 @@ export default function FeedbackHistory() {
                           partnerId: student.studentId,
                           partnerRole: 'guest'
                         }}
-                        className="btn-primary w-full text-center flex items-center justify-center gap-2 py-3 mb-4 shadow-sm hover:shadow-md font-semibold"
+                        className="btn-primary w-full text-center flex items-center justify-center gap-2 py-2.5 sm:py-3 mb-3 sm:mb-4 shadow-sm hover:shadow-md font-semibold text-sm sm:text-base"
                       >
-                        <MessageSquare className="w-4 h-4" />
-                        <span>Submit Monthly Review ({currentMonth})</span>
+                        <MessageSquare className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">Submit Monthly Review ({currentMonth})</span>
                       </Link>
                     )}
 
                     {/* Info Box */}
-                    <div className="p-3.5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                      <p className="text-xs text-blue-900 leading-relaxed">
+                    <div className="p-3 sm:p-3.5 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                      <p className="text-xs text-blue-900 leading-relaxed break-words">
                         <strong className="font-semibold">Monthly Review:</strong> Submit one review per student per month. Reviews help students earn recognition badges and track their performance.
                       </p>
                     </div>
@@ -669,16 +670,16 @@ export default function FeedbackHistory() {
 
         {/* Feedback List - Received and Submitted Tabs */}
         {activeTab !== 'students' && (
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             {filteredFeedback.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 text-center py-16 px-6">
-                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="w-10 h-10 text-gray-400" />
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 text-center py-12 sm:py-16 px-4 sm:px-6">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 break-words">
                   No feedback {filterRating !== 'all' ? 'with this rating' : 'yet'}
                 </h3>
-                <p className="text-gray-600 max-w-md mx-auto">
+                <p className="text-sm sm:text-base text-gray-600 max-w-md mx-auto break-words">
                   {activeTab === 'received'
                     ? "You haven't received any monthly feedback yet. Feedback from your partners will appear here."
                     : "You haven't submitted any monthly feedback yet. Start by reviewing your active arrangements."}
