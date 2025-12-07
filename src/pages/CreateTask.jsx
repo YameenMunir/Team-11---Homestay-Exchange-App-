@@ -217,7 +217,6 @@ export default function CreateTask() {
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
                   Task Title
                   <HelpOverlay position="right">
-                    Give your task a clear, descriptive title (e.g., "Weekly Grocery Shopping Help")
                   </HelpOverlay>
                 </label>
                 <input
@@ -237,7 +236,6 @@ export default function CreateTask() {
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
                   Description
                   <HelpOverlay position="right">
-                    Describe what the task involves and your expectations
                   </HelpOverlay>
                 </label>
                 <textarea
@@ -351,7 +349,6 @@ export default function CreateTask() {
               <label htmlFor="schedule" className="block text-sm font-medium text-gray-700 mb-2">
                 Preferred Schedule
                 <HelpOverlay position="right">
-                  Specify days and times that work best for you
                 </HelpOverlay>
               </label>
               <input
@@ -404,7 +401,6 @@ export default function CreateTask() {
               <label htmlFor="compensation" className="block text-sm font-medium text-gray-700 mb-2">
                 What You're Offering
                 <HelpOverlay position="right">
-                  Describe the accommodation and any additional benefits
                 </HelpOverlay>
               </label>
               <textarea
@@ -424,7 +420,6 @@ export default function CreateTask() {
               <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-2">
                 Requirements
                 <HelpOverlay position="right">
-                  List any specific skills, qualifications, or characteristics needed
                 </HelpOverlay>
               </label>
               <textarea
