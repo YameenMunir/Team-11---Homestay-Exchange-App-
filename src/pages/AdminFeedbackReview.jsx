@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Star,
   Search,
@@ -12,162 +13,145 @@ import {
   Home,
   GraduationCap,
   Heart,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
+import { getAllFeedbackForAdmin } from '../services/feedbackService';
+import { getRecognitionDetails } from '../services/recognitionService';
 
 const AdminFeedbackReview = () => {
   const { hasPermission } = useAdmin();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('ratings'); // ratings, monthly-reports
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRating, setFilterRating] = useState('all'); // all, 5, 4, 3, 2, 1
   const [filterType, setFilterType] = useState('all'); // all, host, student
 
-  // Mock ratings data - Replace with API call
-  const ratings = [
-    {
-      id: 1,
-      raterName: 'Sarah K.',
-      raterType: 'student',
-      raterEmail: 'sarah.k@ucl.ac.uk',
-      ratedName: 'Margaret Thompson',
-      ratedType: 'host',
-      ratedEmail: 'margaret.t@email.com',
-      overallRating: 5,
-      communication: 5,
-      reliability: 5,
-      respect: 5,
-      specificRating: 5, // livingConditions for student, taskQuality for host
-      wouldRecommend: true,
-      positiveAspects: 'Margaret is wonderful! She is very kind, understanding, and makes me feel at home. The accommodation is clean and comfortable.',
-      areasForImprovement: '',
-      additionalComments: 'I am very grateful for this arrangement. Margaret has helped me settle into London.',
-      submittedDate: '2025-01-20',
-      flagged: false,
-    },
-    {
-      id: 2,
-      raterName: 'Margaret Thompson',
-      raterType: 'host',
-      raterEmail: 'margaret.t@email.com',
-      ratedName: 'Sarah K.',
-      ratedType: 'student',
-      ratedEmail: 'sarah.k@ucl.ac.uk',
-      overallRating: 5,
-      communication: 5,
-      reliability: 5,
-      respect: 5,
-      specificRating: 5,
-      wouldRecommend: true,
-      positiveAspects: 'Sarah is polite, respectful, and very helpful. She always asks if I need anything and is great with technology help.',
-      areasForImprovement: '',
-      additionalComments: 'This arrangement has been a blessing. I highly recommend Sarah.',
-      submittedDate: '2025-01-20',
-      flagged: false,
-    },
-    {
-      id: 3,
-      raterName: 'Emma Wilson',
-      raterType: 'student',
-      raterEmail: 'emma.w@ucl.ac.uk',
-      ratedName: 'Robert Anderson',
-      ratedType: 'host',
-      ratedEmail: 'robert.a@email.com',
-      overallRating: 2,
-      communication: 3,
-      reliability: 2,
-      respect: 2,
-      specificRating: 1,
-      wouldRecommend: false,
-      positiveAspects: 'The location is convenient for my university.',
-      areasForImprovement: 'The room has mold and damp issues. I have raised this multiple times but no action has been taken. Communication is poor.',
-      additionalComments: 'I would not recommend this arrangement. The living conditions are not acceptable.',
-      submittedDate: '2025-01-22',
-      flagged: true,
-      flagReason: 'Low rating with safety concerns mentioned',
-    },
-    {
-      id: 4,
-      raterName: 'John Smith',
-      raterType: 'host',
-      raterEmail: 'john.s@gmail.com',
-      ratedName: 'Ahmed M.',
-      ratedType: 'student',
-      ratedEmail: 'ahmed.m@imperial.ac.uk',
-      overallRating: 3,
-      communication: 4,
-      reliability: 2,
-      respect: 4,
-      specificRating: 2,
-      wouldRecommend: false,
-      positiveAspects: 'Ahmed is polite and respectful when he is available.',
-      areasForImprovement: 'Agreed to help with grocery shopping twice a week but often unavailable. Not reliable with commitments.',
-      additionalComments: 'The arrangement started well but Ahmed has become less engaged.',
-      submittedDate: '2025-01-19',
-      flagged: false,
-    },
-  ];
+  // State for real data
+  const [allFeedback, setAllFeedback] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [tierCache, setTierCache] = useState({});
 
-  // Mock monthly reports data - Replace with API call
-  const monthlyReports = [
-    {
-      id: 1,
-      submittedBy: 'Sarah K.',
-      userType: 'student',
-      email: 'sarah.k@ucl.ac.uk',
-      partner: 'Margaret Thompson',
-      reportingPeriod: '2025-01',
-      hoursCompleted: 40,
-      tasksCompleted: 15,
-      relationshipQuality: 5,
-      wellbeingScore: 5,
-      highlights: 'This month has been excellent. I helped Margaret with technology setup for her new tablet, grocery shopping, and companionship. We have developed a lovely friendship.',
-      challenges: 'None. Everything is going smoothly.',
-      goalsForNextMonth: 'Continue providing the same level of support and help Margaret learn more about using her tablet.',
-      needSupport: false,
-      supportDetails: '',
-      submittedDate: '2025-01-21',
-      flagged: false,
-    },
-    {
-      id: 2,
-      submittedBy: 'Emma Wilson',
-      userType: 'student',
-      email: 'emma.w@ucl.ac.uk',
-      partner: 'Robert Anderson',
-      reportingPeriod: '2025-01',
-      hoursCompleted: 20,
-      tasksCompleted: 8,
-      relationshipQuality: 2,
-      wellbeingScore: 2,
-      highlights: 'I have been helping with light cleaning as agreed.',
-      challenges: 'The room has persistent damp and mold issues which are affecting my health. I have raised this multiple times but no repairs have been made. I feel my concerns are not being taken seriously.',
-      goalsForNextMonth: 'Hope to get the mold issue resolved.',
-      needSupport: true,
-      supportDetails: 'I need help addressing the mold issue in my room. It is affecting my respiratory health and I am worried about long-term exposure.',
-      submittedDate: '2025-01-22',
-      flagged: true,
-      flagReason: 'Low wellbeing score + support requested + health concerns',
-    },
-    {
-      id: 3,
-      submittedBy: 'Ahmed M.',
-      userType: 'student',
-      email: 'ahmed.m@imperial.ac.uk',
-      partner: 'John Smith',
-      reportingPeriod: '2025-01',
-      hoursCompleted: 12,
-      tasksCompleted: 4,
-      relationshipQuality: 3,
-      wellbeingScore: 4,
-      highlights: 'Helped with grocery shopping a few times.',
-      challenges: 'My university workload has increased significantly this month with exams approaching. I have struggled to balance my commitments.',
-      goalsForNextMonth: 'Better time management. Communicate earlier if I cannot make scheduled tasks.',
-      needSupport: false,
-      supportDetails: '',
-      submittedDate: '2025-01-20',
-      flagged: false,
-    },
-  ];
+  // Fetch all feedback data on mount
+  useEffect(() => {
+    fetchFeedbackData();
+  }, []);
+
+  const fetchFeedbackData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const result = await getAllFeedbackForAdmin();
+
+      if (result.success) {
+        setAllFeedback(result.data || []);
+      } else {
+        setError(result.error || 'Failed to fetch feedback data');
+      }
+    } catch (err) {
+      console.error('Error fetching feedback:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch tier information for a student
+  const fetchStudentTier = async (studentId) => {
+    if (tierCache[studentId]) {
+      return tierCache[studentId];
+    }
+
+    try {
+      const result = await getRecognitionDetails(studentId);
+      if (result.success) {
+        setTierCache(prev => ({
+          ...prev,
+          [studentId]: result.data.current_tier || 'none'
+        }));
+        return result.data.current_tier || 'none';
+      }
+    } catch (err) {
+      console.error('Error fetching tier:', err);
+    }
+    return 'none';
+  };
+
+  // Pre-fetch tiers for all students when reports are loaded
+  useEffect(() => {
+    const studentIds = monthlyReports
+      .filter(report => report.userType === 'student' && report.studentId)
+      .map(report => report.studentId);
+
+    const uniqueStudentIds = [...new Set(studentIds)];
+
+    uniqueStudentIds.forEach(studentId => {
+      if (!tierCache[studentId]) {
+        fetchStudentTier(studentId);
+      }
+    });
+  }, [allFeedback]);
+
+  // Transform feedback data for ratings view (experience ratings)
+  const transformToRatings = (feedbackData) => {
+    return feedbackData.map(feedback => ({
+      id: feedback.id,
+      raterName: feedback.submitter?.full_name || 'Unknown',
+      raterType: feedback.submitter_role === 'guest' ? 'student' : feedback.submitter_role,
+      raterEmail: feedback.submitter?.email || '',
+      ratedName: feedback.recipient?.full_name || 'Unknown',
+      ratedType: feedback.recipient?.role === 'guest' ? 'student' : feedback.recipient?.role,
+      ratedEmail: feedback.recipient?.email || '',
+      overallRating: feedback.rating,
+      communication: feedback.rating, // Using overall rating as proxy
+      reliability: feedback.rating,
+      respect: feedback.rating,
+      specificRating: feedback.rating,
+      wouldRecommend: feedback.rating >= 4,
+      positiveAspects: feedback.highlights || '',
+      areasForImprovement: feedback.challenges || '',
+      additionalComments: feedback.feedback_text || '',
+      submittedDate: feedback.created_at,
+      flagged: feedback.rating <= 2 || feedback.support_needed,
+      flagReason: feedback.rating <= 2 ? 'Low rating (2 or below)' : feedback.support_needed ? 'Support requested' : '',
+    }));
+  };
+
+  // Transform feedback data for monthly reports view
+  const transformToReports = (feedbackData) => {
+    return feedbackData.map(feedback => ({
+      id: feedback.id,
+      submittedBy: feedback.submitter?.full_name || 'Unknown',
+      userType: feedback.submitter_role === 'guest' ? 'student' : feedback.submitter_role,
+      email: feedback.submitter?.email || '',
+      partner: feedback.recipient?.full_name || 'Unknown',
+      reportingPeriod: feedback.feedback_month,
+      hoursCompleted: feedback.hours_contributed || 0,
+      tasksCompleted: feedback.tasks_completed ? feedback.tasks_completed.split(',').length : 0,
+      relationshipQuality: feedback.rating,
+      wellbeingScore: feedback.rating,
+      highlights: feedback.highlights || '',
+      challenges: feedback.challenges || '',
+      goalsForNextMonth: feedback.goals_next_month || '',
+      needSupport: feedback.support_needed,
+      supportDetails: feedback.support_details || '',
+      submittedDate: feedback.created_at,
+      flagged: feedback.rating <= 2 || feedback.support_needed,
+      flagReason: feedback.rating <= 2 && feedback.support_needed
+        ? 'Low rating + support requested'
+        : feedback.rating <= 2
+          ? 'Low rating'
+          : feedback.support_needed
+            ? 'Support requested'
+            : '',
+      studentId: feedback.submitter_role === 'guest' ? feedback.submitter_id : null,
+    }));
+  };
+
+  const ratings = transformToRatings(allFeedback);
+  const monthlyReports = transformToReports(allFeedback);
 
   // Filter ratings
   const filteredRatings = ratings.filter((rating) => {
@@ -201,20 +185,18 @@ const AdminFeedbackReview = () => {
     window.location.href = `mailto:${email}?subject=Regarding Your Homestay Exchange Feedback`;
   };
 
-  const getTierBadge = (hoursCompleted) => {
-    // Bronze: 2+ months, Silver: 4+ months, Gold: 6+ months (simplified for demo)
-    // In real implementation, this would be calculated from consecutive positive ratings
-    if (hoursCompleted >= 60) {
+  const getTierBadge = (tier) => {
+    if (tier === 'gold') {
       return <span className="badge bg-yellow-400 text-yellow-900 flex items-center space-x-1">
         <Award className="w-3 h-3" />
         <span>Gold Tier</span>
       </span>;
-    } else if (hoursCompleted >= 40) {
+    } else if (tier === 'silver') {
       return <span className="badge bg-gray-300 text-gray-800 flex items-center space-x-1">
         <Award className="w-3 h-3" />
         <span>Silver Tier</span>
       </span>;
-    } else if (hoursCompleted >= 20) {
+    } else if (tier === 'bronze') {
       return <span className="badge bg-orange-300 text-orange-900 flex items-center space-x-1">
         <Award className="w-3 h-3" />
         <span>Bronze Tier</span>
@@ -238,8 +220,15 @@ const AdminFeedbackReview = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container-custom">
-        {/* Header */}
+        {/* Header with Back Button */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="text-sm font-medium">Back to Dashboard</span>
+          </button>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
             Feedback & Ratings Review
           </h1>
@@ -248,7 +237,29 @@ const AdminFeedbackReview = () => {
           </p>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="card p-12 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading feedback data...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="card p-12 text-center border-red-300 bg-red-50">
+            <AlertCircle className="w-16 h-16 text-red-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Feedback</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button onClick={fetchFeedbackData} className="btn-primary">
+              Try Again
+            </button>
+          </div>
+        )}
+
         {/* Stats */}
+        {!loading && !error && (
+        <>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Total Ratings</p>
@@ -533,7 +544,7 @@ const AdminFeedbackReview = () => {
                       <span className={`badge ${report.userType === 'host' ? 'badge-purple' : 'badge-blue'} capitalize`}>
                         {report.userType}
                       </span>
-                      {getTierBadge(report.hoursCompleted)}
+                      {report.userType === 'student' && getTierBadge(tierCache[report.studentId] || 'none')}
                       {report.needSupport && (
                         <span className="badge bg-orange-100 text-orange-800 flex items-center space-x-1">
                           <AlertCircle className="w-3 h-3" />
@@ -635,13 +646,15 @@ const AdminFeedbackReview = () => {
         )}
 
         {/* No Results */}
-        {((activeTab === 'ratings' && filteredRatings.length === 0) ||
+        {!loading && !error && ((activeTab === 'ratings' && filteredRatings.length === 0) ||
           (activeTab === 'monthly-reports' && filteredReports.length === 0)) && (
           <div className="card p-12 text-center">
             <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No feedback found</h3>
             <p className="text-gray-600">Try adjusting your search or filters</p>
           </div>
+        )}
+        </>
         )}
       </div>
     </div>
