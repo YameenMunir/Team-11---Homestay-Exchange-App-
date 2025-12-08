@@ -96,6 +96,38 @@ const UserSettings = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
+  // Accessibility settings save state
+  const [accessibilitySaving, setAccessibilitySaving] = useState(false);
+  const [accessibilitySaveSuccess, setAccessibilitySaveSuccess] = useState(false);
+  const [accessibilitySaveError, setAccessibilitySaveError] = useState(null);
+
+  // Handle accessibility settings update with save feedback
+  const handleAccessibilityChange = async (updates) => {
+    setAccessibilitySaving(true);
+    setAccessibilitySaveError(null);
+    setAccessibilitySaveSuccess(false);
+
+    try {
+      await updateAccessibilitySettings(updates);
+      setAccessibilitySaveSuccess(true);
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setAccessibilitySaveSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error saving accessibility settings:', error);
+      setAccessibilitySaveError('Failed to save settings. Please try again.');
+
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setAccessibilitySaveError(null);
+      }, 5000);
+    } finally {
+      setAccessibilitySaving(false);
+    }
+  };
+
   const handleFileUpload = (documentType, file) => {
     setDocuments({
       ...documents,
@@ -605,6 +637,28 @@ const UserSettings = () => {
               </div>
             </div>
 
+            {/* Save Status Indicator */}
+            {accessibilitySaving && (
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center space-x-3">
+                <Loader className="w-5 h-5 text-blue-600 animate-spin" />
+                <span className="text-sm text-blue-800 font-medium">Saving settings...</span>
+              </div>
+            )}
+
+            {accessibilitySaveSuccess && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center space-x-3">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <span className="text-sm text-green-800 font-medium">Settings saved successfully!</span>
+              </div>
+            )}
+
+            {accessibilitySaveError && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center space-x-3">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <span className="text-sm text-red-800 font-medium">{accessibilitySaveError}</span>
+              </div>
+            )}
+
             {/* Senior-Friendly Mode */}
             <HelpOverlay helpText="Increases text size, button size, and spacing to make the interface easier to use">
               <div className="card p-6">
@@ -626,15 +680,16 @@ const UserSettings = () => {
                     <input
                       type="checkbox"
                       checked={accessibilitySettings.seniorMode}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const isEnabled = e.target.checked;
-                        updateAccessibilitySettings({ seniorMode: isEnabled });
+                        await handleAccessibilityChange({ seniorMode: isEnabled });
                         speak(isEnabled ? 'Senior-Friendly Mode enabled. Text and buttons are now larger.' : 'Senior-Friendly Mode disabled.');
                       }}
                       className="sr-only peer"
                       aria-label="Toggle Senior-Friendly Mode"
+                      disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>
@@ -661,17 +716,18 @@ const UserSettings = () => {
                     <input
                       type="checkbox"
                       checked={accessibilitySettings.voiceGuidance}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const isEnabled = e.target.checked;
-                        updateAccessibilitySettings({ voiceGuidance: isEnabled });
+                        await handleAccessibilityChange({ voiceGuidance: isEnabled });
                         if (isEnabled) {
                           speak('Voice Guidance enabled. Important information will be read aloud.');
                         }
                       }}
                       className="sr-only peer"
                       aria-label="Toggle Voice Guidance"
+                      disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>
@@ -698,15 +754,16 @@ const UserSettings = () => {
                     <input
                       type="checkbox"
                       checked={accessibilitySettings.helpOverlay}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const isEnabled = e.target.checked;
-                        updateAccessibilitySettings({ helpOverlay: isEnabled });
+                        await handleAccessibilityChange({ helpOverlay: isEnabled });
                         speak(isEnabled ? 'Help Overlay enabled. Helpful hints will appear throughout the application.' : 'Help Overlay disabled.');
                       }}
                       className="sr-only peer"
                       aria-label="Toggle Help Overlay"
+                      disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>
@@ -728,9 +785,9 @@ const UserSettings = () => {
                     </p>
                     <select
                       value={accessibilitySettings.colorBlindMode}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const value = e.target.value;
-                        updateAccessibilitySettings({ colorBlindMode: value });
+                        await handleAccessibilityChange({ colorBlindMode: value });
                         const modeNames = {
                           none: 'No color adjustment',
                           protanopia: 'Protanopia mode for red-blind users',
@@ -741,6 +798,7 @@ const UserSettings = () => {
                       }}
                       className="input-field w-full md:w-auto"
                       aria-label="Select Color Blind Mode"
+                      disabled={accessibilitySaving}
                     >
                       <option value="none">No Color Adjustment</option>
                       <option value="protanopia">Protanopia (Red-Blind)</option>

@@ -36,7 +36,7 @@ export const UserProvider = ({ children }) => {
       try {
         setLoading(true);
 
-        // Get user profile from user_profiles table
+        // Get user profile from user_profiles table (including accessibility settings)
         const { data: userProfile, error: profileError } = await supabase
           .from('user_profiles')
           .select('*')
@@ -44,6 +44,16 @@ export const UserProvider = ({ children }) => {
           .single();
 
         if (profileError) throw profileError;
+
+        // Load accessibility settings from database if they exist
+        if (userProfile) {
+          setAccessibilitySettings({
+            seniorMode: userProfile.senior_mode || false,
+            voiceGuidance: userProfile.voice_guidance || false,
+            helpOverlay: userProfile.help_overlay || false,
+            colorBlindMode: userProfile.color_blind_mode || 'none',
+          });
+        }
 
         // Determine user type and fetch role-specific profile
         const userRole = userProfile.role;
@@ -147,6 +157,16 @@ export const UserProvider = ({ children }) => {
 
         if (profileError) throw profileError;
 
+        // Load accessibility settings from database
+        if (userProfile) {
+          setAccessibilitySettings({
+            seniorMode: userProfile.senior_mode || false,
+            voiceGuidance: userProfile.voice_guidance || false,
+            helpOverlay: userProfile.help_overlay || false,
+            colorBlindMode: userProfile.color_blind_mode || 'none',
+          });
+        }
+
         const userRole = userProfile.role;
         let roleProfile = null;
 
@@ -220,11 +240,37 @@ export const UserProvider = ({ children }) => {
     }));
   };
 
-  const updateAccessibilitySettings = (updates) => {
+  const updateAccessibilitySettings = async (updates) => {
+    // Update local state immediately for instant UI feedback
     setAccessibilitySettings((prevSettings) => ({
       ...prevSettings,
       ...updates,
     }));
+
+    // Save to database if user is authenticated
+    if (authUser?.id) {
+      try {
+        // Map React state keys to database column names
+        const dbUpdates = {};
+        if ('seniorMode' in updates) dbUpdates.senior_mode = updates.seniorMode;
+        if ('voiceGuidance' in updates) dbUpdates.voice_guidance = updates.voiceGuidance;
+        if ('helpOverlay' in updates) dbUpdates.help_overlay = updates.helpOverlay;
+        if ('colorBlindMode' in updates) dbUpdates.color_blind_mode = updates.colorBlindMode;
+
+        const { error } = await supabase
+          .from('user_profiles')
+          .update(dbUpdates)
+          .eq('id', authUser.id);
+
+        if (error) {
+          console.error('Error saving accessibility settings:', error);
+        } else {
+          console.log('✅ Accessibility settings saved to database');
+        }
+      } catch (error) {
+        console.error('Error updating accessibility settings:', error);
+      }
+    }
   };
 
   const getFirstName = () => {
@@ -244,6 +290,16 @@ export const UserProvider = ({ children }) => {
         .single();
 
       if (profileError) throw profileError;
+
+      // Load accessibility settings from database
+      if (userProfile) {
+        setAccessibilitySettings({
+          seniorMode: userProfile.senior_mode || false,
+          voiceGuidance: userProfile.voice_guidance || false,
+          helpOverlay: userProfile.help_overlay || false,
+          colorBlindMode: userProfile.color_blind_mode || 'none',
+        });
+      }
 
       const userRole = userProfile.role;
       let roleProfile = null;
