@@ -164,10 +164,10 @@ const HostDashboard = () => {
       // Refresh requests
       const requests = await facilitationService.getHostRequests();
       setFacilitationRequests(requests);
-      alert('Request accepted! It has been forwarded to admin for verification.');
+      alert('Interest confirmed! The request has been forwarded to admin for verification.');
     } catch (error) {
       console.error('Error accepting request:', error);
-      alert('Failed to accept request. Please try again.');
+      alert('Failed to confirm interest. Please try again.');
     }
   };
 
@@ -633,18 +633,7 @@ const HostDashboard = () => {
                                 <span>{request.university}</span>
                               </div>
                             )}
-                            {request.studentEmail && (
-                              <div className="flex items-center space-x-2">
-                                <Mail className="w-4 h-4" />
-                                <span>{request.studentEmail}</span>
-                              </div>
-                            )}
-                            {request.studentPhone && (
-                              <div className="flex items-center space-x-2">
-                                <Phone className="w-4 h-4" />
-                                <span>{request.studentPhone}</span>
-                              </div>
-                            )}
+                            {/* Contact details hidden - will be shared by admin after approval */}
                           </div>
                         </div>
 
@@ -708,10 +697,10 @@ const HostDashboard = () => {
                         <div className="flex gap-3">
                           <button
                             onClick={() => handleAcceptRequest(request.id)}
-                            className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                            className="flex-1 bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium"
                           >
                             <CheckCircle className="w-4 h-4 inline mr-2" />
-                            Accept Request
+                            I'm Interested
                           </button>
                           <button
                             onClick={() => handleDeclineRequest(request.id)}
