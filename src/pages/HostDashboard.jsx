@@ -707,7 +707,7 @@ const HostDashboard = () => {
                             className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors font-medium"
                           >
                             <XCircle className="w-4 h-4 inline mr-2" />
-                            Decline Request
+                            Not Interested
                           </button>
                         </div>
                       )}
