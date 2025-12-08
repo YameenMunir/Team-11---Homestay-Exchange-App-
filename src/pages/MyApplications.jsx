@@ -130,8 +130,8 @@ export default function MyApplications() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="card">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-purple-600" />
+              <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-teal-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Applications</p>
@@ -183,7 +183,7 @@ export default function MyApplications() {
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'all'
-                ? 'bg-purple-600 text-white'
+                ? 'bg-teal-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -193,7 +193,7 @@ export default function MyApplications() {
             onClick={() => setFilter('pending')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'pending'
-                ? 'bg-purple-600 text-white'
+                ? 'bg-teal-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -203,7 +203,7 @@ export default function MyApplications() {
             onClick={() => setFilter('accepted')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'accepted'
-                ? 'bg-purple-600 text-white'
+                ? 'bg-teal-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >
@@ -213,7 +213,7 @@ export default function MyApplications() {
             onClick={() => setFilter('rejected')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
               filter === 'rejected'
-                ? 'bg-purple-600 text-white'
+                ? 'bg-teal-600 text-white'
                 : 'bg-white text-gray-700 hover:bg-gray-100'
             }`}
           >

@@ -43,17 +43,17 @@ const SavedHosts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 p-6">
         <div className="max-w-7xl mx-auto">
           <button
             onClick={() => navigate('/student/dashboard')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 transition-colors"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </button>
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
             <p className="text-gray-600 mt-4">Loading your saved hosts...</p>
           </div>
         </div>
@@ -63,11 +63,11 @@ const SavedHosts = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 p-6">
         <div className="max-w-7xl mx-auto">
           <button
             onClick={() => navigate('/student/dashboard')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 transition-colors"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -81,12 +81,12 @@ const SavedHosts = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <button
           onClick={() => navigate('/student/dashboard')}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 transition-colors"
+          className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
@@ -114,7 +114,7 @@ const SavedHosts = () => {
             </p>
             <button
               onClick={() => navigate('/student/browse')}
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+              className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors"
             >
               Browse Hosts
             </button>
@@ -128,7 +128,7 @@ const SavedHosts = () => {
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
               >
                 {/* Host Image */}
-                <div className="relative h-48 bg-gradient-to-br from-purple-400 to-blue-400">
+                <div className="relative h-48 bg-gradient-to-br from-teal-400 to-blue-400">
                   {host.imageUrl ? (
                     <img
                       src={host.imageUrl}
@@ -202,7 +202,7 @@ const SavedHosts = () => {
                       {host.amenities.slice(0, 3).map((amenity, index) => (
                         <span
                           key={index}
-                          className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded"
+                          className="text-xs bg-teal-50 text-teal-700 px-2 py-1 rounded"
                         >
                           {amenity}
                         </span>
@@ -227,7 +227,7 @@ const SavedHosts = () => {
                   {/* View Profile Button */}
                   <button
                     onClick={() => handleViewProfile(host.id)}
-                    className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                    className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 transition-colors font-medium"
                   >
                     View Full Profile
                   </button>

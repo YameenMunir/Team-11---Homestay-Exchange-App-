@@ -97,7 +97,7 @@ const HostLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-teal-50 py-12 px-4">
       <div className="container-custom">
         {/* Back Button */}
         <Link
@@ -111,7 +111,7 @@ const HostLogin = () => {
         <div className="max-w-md mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Home className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
@@ -198,14 +198,14 @@ const HostLogin = () => {
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-5 h-5 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                   />
                   <span className="text-base text-gray-700">Remember me</span>
                 </label>
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-base text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-base text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Forgot password?
                 </button>
@@ -214,7 +214,7 @@ const HostLogin = () => {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="btn-accessible w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white focus:ring-purple-300"
+                className="btn-accessible w-full bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white focus:ring-teal-300"
                 disabled={loading}
               >
                 {loading ? 'Signing In...' : 'Sign In'}
@@ -244,7 +244,7 @@ const HostLogin = () => {
           <div className="mt-8 text-center">
             <p className="text-lg text-gray-600">
               Need help?{' '}
-              <Link to="/help" className="text-purple-600 hover:text-purple-700 font-medium">
+              <Link to="/help" className="text-teal-600 hover:text-teal-700 font-medium">
                 Visit our Help Center
               </Link>
             </p>

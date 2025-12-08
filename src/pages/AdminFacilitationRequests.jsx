@@ -120,7 +120,7 @@ const AdminFacilitationRequests = () => {
   const getStatusBadge = (status) => {
     const styles = {
       pending: 'bg-yellow-100 text-yellow-800',
-      in_review: 'bg-purple-100 text-purple-800',
+      in_review: 'bg-teal-100 text-teal-800',
       matched: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800',
     };
@@ -149,7 +149,7 @@ const AdminFacilitationRequests = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading facilitation requests...</p>
         </div>
       </div>
@@ -196,7 +196,7 @@ const AdminFacilitationRequests = () => {
           </div>
           <div className="card p-6">
             <p className="text-sm text-gray-600 mb-1">Under Review</p>
-            <span className="text-3xl font-bold text-purple-600">
+            <span className="text-3xl font-bold text-teal-600">
               {requests.filter(r => r.status === 'in_review').length}
             </span>
           </div>
@@ -251,8 +251,8 @@ const AdminFacilitationRequests = () => {
               <div key={request.id} className="card p-6">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-start space-x-4 flex-1">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Link2 className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Link2 className="w-6 h-6 text-teal-600" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-2">
@@ -310,25 +310,25 @@ const AdminFacilitationRequests = () => {
                   </div>
 
                   {/* Host Info */}
-                  <div className="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
+                  <div className="border-l-4 border-teal-500 pl-4 bg-teal-50 p-4 rounded-r-lg">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Home className="w-5 h-5 text-purple-600" />
+                      <Home className="w-5 h-5 text-teal-600" />
                       <h4 className="font-semibold text-gray-900">Host</h4>
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="font-medium text-gray-900">{request.hostName}</p>
                       {request.hostEmail && (
                         <div className="flex items-center space-x-2 text-gray-700">
-                          <Mail className="w-4 h-4 text-purple-600" />
-                          <a href={`mailto:${request.hostEmail}`} className="hover:text-purple-600">
+                          <Mail className="w-4 h-4 text-teal-600" />
+                          <a href={`mailto:${request.hostEmail}`} className="hover:text-teal-600">
                             {request.hostEmail}
                           </a>
                         </div>
                       )}
                       {request.hostPhone && (
                         <div className="flex items-center space-x-2 text-gray-700">
-                          <Phone className="w-4 h-4 text-purple-600" />
-                          <a href={`tel:${request.hostPhone}`} className="hover:text-purple-600">
+                          <Phone className="w-4 h-4 text-teal-600" />
+                          <a href={`tel:${request.hostPhone}`} className="hover:text-teal-600">
                             {request.hostPhone}
                           </a>
                         </div>
@@ -349,7 +349,7 @@ const AdminFacilitationRequests = () => {
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Services Offered:</h4>
                     <div className="flex flex-wrap gap-2">
                       {request.servicesOffered.map((service, index) => (
-                        <span key={index} className="badge bg-purple-100 text-purple-800">
+                        <span key={index} className="badge bg-teal-100 text-teal-800">
                           {service}
                         </span>
                       ))}
@@ -485,25 +485,25 @@ const AdminFacilitationRequests = () => {
                 </div>
 
                 {/* Host Info */}
-                <div className="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
+                <div className="border-l-4 border-teal-500 pl-4 bg-teal-50 p-4 rounded-r-lg">
                   <div className="flex items-center space-x-2 mb-3">
-                    <Home className="w-5 h-5 text-purple-600" />
+                    <Home className="w-5 h-5 text-teal-600" />
                     <h4 className="font-semibold text-gray-900">Host</h4>
                   </div>
                   <div className="space-y-2 text-sm">
                     <p className="font-medium text-gray-900">{selectedRequest.hostName}</p>
                     {selectedRequest.hostEmail && (
                       <div className="flex items-center space-x-2 text-gray-700">
-                        <Mail className="w-4 h-4 text-purple-600" />
-                        <a href={`mailto:${selectedRequest.hostEmail}`} className="hover:text-purple-600">
+                        <Mail className="w-4 h-4 text-teal-600" />
+                        <a href={`mailto:${selectedRequest.hostEmail}`} className="hover:text-teal-600">
                           {selectedRequest.hostEmail}
                         </a>
                       </div>
                     )}
                     {selectedRequest.hostPhone && (
                       <div className="flex items-center space-x-2 text-gray-700">
-                        <Phone className="w-4 h-4 text-purple-600" />
-                        <a href={`tel:${selectedRequest.hostPhone}`} className="hover:text-purple-600">
+                        <Phone className="w-4 h-4 text-teal-600" />
+                        <a href={`tel:${selectedRequest.hostPhone}`} className="hover:text-teal-600">
                           {selectedRequest.hostPhone}
                         </a>
                       </div>
@@ -537,7 +537,7 @@ const AdminFacilitationRequests = () => {
                   <h4 className="text-sm font-semibold text-gray-900 mb-2">Services Offered:</h4>
                   <div className="flex flex-wrap gap-2">
                     {selectedRequest.servicesOffered.map((service, index) => (
-                      <span key={index} className="badge bg-purple-100 text-purple-800">
+                      <span key={index} className="badge bg-teal-100 text-teal-800">
                         {service}
                       </span>
                     ))}

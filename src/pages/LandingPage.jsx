@@ -110,7 +110,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-900 text-white overflow-hidden">
+      <div className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-teal-900 text-white overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative">
@@ -118,20 +118,20 @@ export default function LandingPage() {
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-6 animate-fade-in">
               Affordable Student Housing<br />Through Community Connection
             </h1>
-            <p className="text-xl md:text-2xl text-purple-100 max-w-3xl mx-auto mb-8">
+            <p className="text-xl md:text-2xl text-teal-100 max-w-3xl mx-auto mb-8">
               Connecting international students with welcoming hosts for affordable accommodation in exchange for light help and companionship
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <button
                 onClick={() => navigate('/student/signup')}
-                className="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-colors flex items-center gap-2 text-lg"
+                className="bg-white text-teal-600 px-8 py-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors flex items-center gap-2 text-lg"
               >
                 Get Started as Student
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
                 onClick={() => navigate('/host/signup')}
-                className="bg-purple-800 text-white px-8 py-4 rounded-lg font-semibold hover:bg-purple-900 transition-colors border-2 border-white/20 text-lg"
+                className="bg-teal-800 text-white px-8 py-4 rounded-lg font-semibold hover:bg-teal-900 transition-colors border-2 border-white/20 text-lg"
               >
                 Become a Host
               </button>
@@ -148,8 +148,8 @@ export default function LandingPage() {
               const Icon = stat.icon;
               return (
                 <div key={index} className="text-center">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Icon className="w-6 h-6 text-purple-600" />
+                  <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <Icon className="w-6 h-6 text-teal-600" />
                   </div>
                   <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
                   <div className="text-sm text-gray-600">{stat.label}</div>
@@ -177,7 +177,7 @@ export default function LandingPage() {
               const Icon = feature.icon;
               return (
                 <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
@@ -190,7 +190,7 @@ export default function LandingPage() {
       </div>
 
       {/* How It Works Section */}
-      <div className="bg-purple-50 py-20 px-4">
+      <div className="bg-teal-50 py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
@@ -204,8 +204,8 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {howItWorks.map((item) => (
               <div key={item.step} className="relative">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-purple-100 h-full">
-                  <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center text-xl font-bold mb-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm border border-teal-100 h-full">
+                  <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center text-xl font-bold mb-4">
                     {item.step}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">{item.title}</h3>
@@ -213,7 +213,7 @@ export default function LandingPage() {
                 </div>
                 {item.step < 4 && (
                   <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                    <ArrowRight className="w-8 h-8 text-purple-300" />
+                    <ArrowRight className="w-8 h-8 text-teal-300" />
                   </div>
                 )}
               </div>
@@ -264,7 +264,7 @@ export default function LandingPage() {
       <div className="bg-gray-50 py-20 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <BookOpen className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+            <BookOpen className="w-12 h-12 text-teal-600 mx-auto mb-4" />
             <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
               Legal Guidance & Resources
             </h2>
@@ -279,14 +279,14 @@ export default function LandingPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">{resource.title}</h3>
                 <p className="text-gray-600 mb-4 text-sm">{resource.description}</p>
                 {resource.downloadable ? (
-                  <button className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-2">
+                  <button className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-2">
                     <Download className="w-4 h-4" />
                     Download PDF
                   </button>
                 ) : (
                   <button
                     onClick={() => navigate(resource.link)}
-                    className="text-purple-600 hover:text-purple-700 font-medium text-sm flex items-center gap-2"
+                    className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-2"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Read More
@@ -309,29 +309,29 @@ export default function LandingPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-20 px-4">
+      <div className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-purple-100 mb-8">
+          <p className="text-xl text-teal-100 mb-8">
             Join our community of students and hosts creating meaningful connections
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={() => navigate('/student/signup')}
-              className="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-purple-50 transition-colors text-lg"
+              className="bg-white text-teal-600 px-8 py-4 rounded-lg font-semibold hover:bg-teal-50 transition-colors text-lg"
             >
               Sign Up as Student
             </button>
             <button
               onClick={() => navigate('/host/signup')}
-              className="bg-purple-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-purple-900 transition-colors border-2 border-white/20 text-lg"
+              className="bg-teal-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-teal-900 transition-colors border-2 border-white/20 text-lg"
             >
               Sign Up as Host
             </button>
           </div>
-          <p className="mt-6 text-purple-100">
+          <p className="mt-6 text-teal-100">
             Already have an account?{' '}
             <button onClick={() => navigate('/student/login')} className="underline hover:text-white">
               Log in here

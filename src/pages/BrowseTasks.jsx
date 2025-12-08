@@ -131,7 +131,7 @@ const BrowseTasks = () => {
           <div className="lg:col-span-1">
             <div className="card p-6 sticky top-24">
               <div className="flex items-center space-x-2 mb-4">
-                <Filter className="w-5 h-5 text-purple-600" />
+                <Filter className="w-5 h-5 text-teal-600" />
                 <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
               </div>
 
@@ -145,7 +145,7 @@ const BrowseTasks = () => {
                         type="checkbox"
                         checked={selectedServices.includes(service)}
                         onChange={() => toggleService(service)}
-                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                       />
                       <span className="text-sm text-gray-700">{service}</span>
                     </label>
@@ -176,7 +176,7 @@ const BrowseTasks = () => {
                     setSelectedServices([]);
                     setSelectedFrequency('all');
                   }}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Clear all filters
                 </button>
@@ -255,7 +255,7 @@ const BrowseTasks = () => {
                                 {task.title}
                               </h3>
                               {task.hostVerified && (
-                                <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0" />
+                                <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0" />
                               )}
                             </div>
                             <p className="text-sm text-gray-600 mb-1">
@@ -283,7 +283,7 @@ const BrowseTasks = () => {
                           {task.services.map((service) => (
                             <span
                               key={service}
-                              className="badge bg-purple-100 text-purple-800"
+                              className="badge bg-teal-100 text-teal-800"
                             >
                               {service}
                             </span>
@@ -293,11 +293,11 @@ const BrowseTasks = () => {
                         {/* Task Info */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Clock className="w-4 h-4 text-purple-600" />
+                            <Clock className="w-4 h-4 text-teal-600" />
                             <span>{task.hoursPerWeek}</span>
                           </div>
                           <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Calendar className="w-4 h-4 text-purple-600" />
+                            <Calendar className="w-4 h-4 text-teal-600" />
                             <span>{task.frequency}</span>
                           </div>
                           <div className="text-sm text-gray-600 col-span-2">

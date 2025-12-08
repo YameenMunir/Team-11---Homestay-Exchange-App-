@@ -229,7 +229,7 @@ const HostSignup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-teal-50 py-12 px-4">
       <div className="container-custom">
         {/* Back Button */}
         <Link
@@ -243,7 +243,7 @@ const HostSignup = () => {
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Home className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
@@ -263,7 +263,7 @@ const HostSignup = () => {
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
                         currentStep >= step
-                          ? 'bg-purple-600 text-white shadow-lg'
+                          ? 'bg-teal-600 text-white shadow-lg'
                           : 'bg-gray-200 text-gray-500'
                       }`}
                     >
@@ -280,7 +280,7 @@ const HostSignup = () => {
                   {step < 3 && (
                     <div
                       className={`h-1 flex-1 mx-2 transition-all ${
-                        currentStep > step ? 'bg-purple-600' : 'bg-gray-200'
+                        currentStep > step ? 'bg-teal-600' : 'bg-gray-200'
                       }`}
                     ></div>
                   )}
@@ -576,14 +576,14 @@ const HostSignup = () => {
                           onClick={() => toggleService(service)}
                           className={`p-4 rounded-xl border-2 font-medium text-left transition-all ${
                             formData.servicesNeeded.includes(service)
-                              ? 'border-purple-600 bg-purple-50 text-purple-900'
-                              : 'border-gray-300 bg-white text-gray-700 hover:border-purple-300'
+                              ? 'border-teal-600 bg-teal-50 text-teal-900'
+                              : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-lg">{service}</span>
                             {formData.servicesNeeded.includes(service) && (
-                              <CheckCircle className="w-6 h-6 text-purple-600" />
+                              <CheckCircle className="w-6 h-6 text-teal-600" />
                             )}
                           </div>
                         </button>
@@ -614,14 +614,14 @@ const HostSignup = () => {
               {/* Step 3: Document Upload */}
               {currentStep === 3 && (
                 <>
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-6">
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-6 mb-6">
                     <div className="flex items-start space-x-3">
-                      <FileText className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                      <FileText className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-purple-900 text-lg mb-2">
+                        <h4 className="font-semibold text-teal-900 text-lg mb-2">
                           Required Documents
                         </h4>
-                        <p className="text-base text-purple-800 leading-relaxed">
+                        <p className="text-base text-teal-800 leading-relaxed">
                           For safety and verification, we need the following documents.
                           All information is kept secure and confidential.
                         </p>
@@ -633,13 +633,13 @@ const HostSignup = () => {
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
                       ID Document (Passport or Driving License)
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
                       <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <label
                         htmlFor="idDocument"
                         className="cursor-pointer text-base text-gray-600"
                       >
-                        <span className="text-purple-600 font-semibold hover:text-purple-700">
+                        <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
                         </span>{' '}
                         or drag and drop
@@ -664,13 +664,13 @@ const HostSignup = () => {
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
                       Utility Bill (Proof of Address)
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
                       <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <label
                         htmlFor="utilityBill"
                         className="cursor-pointer text-base text-gray-600"
                       >
-                        <span className="text-purple-600 font-semibold hover:text-purple-700">
+                        <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
                         </span>{' '}
                         or drag and drop
@@ -707,7 +707,7 @@ const HostSignup = () => {
                 )}
                 <button
                   type="submit"
-                  className="btn-accessible flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                  className="btn-accessible flex-1 bg-teal-600 hover:bg-teal-700 text-white"
                   disabled={loading || success}
                 >
                   {loading ? (
@@ -729,7 +729,7 @@ const HostSignup = () => {
                 Already have an account?{' '}
                 <Link
                   to="/host/login"
-                  className="text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Sign in here
                 </Link>

@@ -240,7 +240,7 @@ const AdminFeedbackReview = () => {
         {/* Loading State */}
         {loading && (
           <div className="card p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading feedback data...</p>
           </div>
         )}
@@ -292,7 +292,7 @@ const AdminFeedbackReview = () => {
                 onClick={() => setActiveTab('ratings')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'ratings'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -302,7 +302,7 @@ const AdminFeedbackReview = () => {
                 onClick={() => setActiveTab('monthly-reports')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'monthly-reports'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -409,7 +409,7 @@ const AdminFeedbackReview = () => {
                         <p className="text-sm text-gray-600">Rated by:</p>
                         <div className="flex items-center space-x-2">
                           {rating.raterType === 'host' ? (
-                            <Home className="w-4 h-4 text-purple-600" />
+                            <Home className="w-4 h-4 text-teal-600" />
                           ) : (
                             <GraduationCap className="w-4 h-4 text-blue-600" />
                           )}
@@ -421,7 +421,7 @@ const AdminFeedbackReview = () => {
                         <p className="text-sm text-gray-600">Rated:</p>
                         <div className="flex items-center space-x-2">
                           {rating.ratedType === 'host' ? (
-                            <Home className="w-4 h-4 text-purple-600" />
+                            <Home className="w-4 h-4 text-teal-600" />
                           ) : (
                             <GraduationCap className="w-4 h-4 text-blue-600" />
                           )}
@@ -605,9 +605,9 @@ const AdminFeedbackReview = () => {
                   </div>
                 )}
                 {report.goalsForNextMonth && (
-                  <div className="bg-purple-50 rounded-lg p-4 mb-3">
-                    <p className="text-sm font-semibold text-purple-900 mb-1">Goals for Next Month:</p>
-                    <p className="text-sm text-purple-800">{report.goalsForNextMonth}</p>
+                  <div className="bg-teal-50 rounded-lg p-4 mb-3">
+                    <p className="text-sm font-semibold text-teal-900 mb-1">Goals for Next Month:</p>
+                    <p className="text-sm text-teal-800">{report.goalsForNextMonth}</p>
                   </div>
                 )}
                 {report.needSupport && report.supportDetails && (

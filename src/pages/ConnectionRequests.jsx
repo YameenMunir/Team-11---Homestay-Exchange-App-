@@ -57,7 +57,7 @@ const ConnectionRequests = () => {
       in_review: {
         icon: Eye,
         text: 'Under Review',
-        class: 'bg-purple-100 text-purple-800 border-purple-200',
+        class: 'bg-teal-100 text-teal-800 border-teal-200',
       },
       matched: {
         icon: CheckCircle,
@@ -86,7 +86,7 @@ const ConnectionRequests = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading your requests...</p>
         </div>
       </div>
@@ -109,7 +109,7 @@ const ConnectionRequests = () => {
       </div>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="text-center">
@@ -117,13 +117,13 @@ const ConnectionRequests = () => {
               <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
                 Connection Requests
               </h1>
-              <p className="text-xl text-purple-100 mb-6">
+              <p className="text-xl text-teal-100 mb-6">
                 Track your requests to connect with hosts
               </p>
               <button
                 onClick={handleRefresh}
                 disabled={refreshing}
-                className="btn-secondary bg-white text-purple-700 hover:bg-purple-50 border-white flex items-center space-x-2 mx-auto"
+                className="btn-secondary bg-white text-teal-700 hover:bg-teal-50 border-white flex items-center space-x-2 mx-auto"
               >
                 <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
                 <span>{refreshing ? 'Refreshing...' : 'Refresh Requests'}</span>
@@ -134,43 +134,43 @@ const ConnectionRequests = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-8 bg-purple-50 border-b border-purple-100">
+      <section className="py-8 bg-teal-50 border-b border-teal-100">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                <AlertCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     How Connection Requests Work
                   </h3>
                   <ol className="space-y-2 text-gray-700">
                     <li className="flex items-start space-x-2">
-                      <span className="font-bold text-purple-600 flex-shrink-0">1.</span>
+                      <span className="font-bold text-teal-600 flex-shrink-0">1.</span>
                       <span>
                         <strong>You submit a request</strong> to connect with a host, introducing yourself and explaining why you'd be a good match.
                       </span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="font-bold text-purple-600 flex-shrink-0">2.</span>
+                      <span className="font-bold text-teal-600 flex-shrink-0">2.</span>
                       <span>
                         <strong>Our admin team reviews</strong> your request and the host's requirements to ensure compatibility and safety.
                       </span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="font-bold text-purple-600 flex-shrink-0">3.</span>
+                      <span className="font-bold text-teal-600 flex-shrink-0">3.</span>
                       <span>
                         <strong>Once approved</strong>, we share the admin contact details so they can facilitate your introduction to the host.
                       </span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="font-bold text-purple-600 flex-shrink-0">4.</span>
+                      <span className="font-bold text-teal-600 flex-shrink-0">4.</span>
                       <span>
                         <strong>The admin arranges</strong> a meeting or call between you and the host to discuss the arrangement.
                       </span>
                     </li>
                   </ol>
-                  <p className="text-sm text-purple-800 mt-4 bg-purple-50 p-3 rounded-lg">
+                  <p className="text-sm text-teal-800 mt-4 bg-teal-50 p-3 rounded-lg">
                     <strong>Note:</strong> We do not provide direct messaging between students and hosts. All connections are facilitated by our admin team to ensure safety and proper verification.
                   </p>
                 </div>
@@ -277,14 +277,14 @@ const ConnectionRequests = () => {
                     )}
 
                     {request.status === 'in_review' && (
-                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                      <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
                         <div className="flex items-start space-x-3">
-                          <Eye className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                          <Eye className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                           <div>
-                            <h4 className="text-sm font-semibold text-purple-900 mb-1">
+                            <h4 className="text-sm font-semibold text-teal-900 mb-1">
                               Under Review
                             </h4>
-                            <p className="text-sm text-purple-800">
+                            <p className="text-sm text-teal-800">
                               Our admin team is currently reviewing your request and coordinating with the host. We'll update you soon!
                             </p>
                           </div>
@@ -311,10 +311,10 @@ const ConnectionRequests = () => {
                               </div>
                               {request.adminContact.email && (
                                 <div className="flex items-center space-x-2 text-sm text-gray-700">
-                                  <Mail className="w-4 h-4 text-purple-600" />
+                                  <Mail className="w-4 h-4 text-teal-600" />
                                   <a
                                     href={`mailto:${request.adminContact.email}`}
-                                    className="text-purple-600 hover:text-purple-700 font-medium"
+                                    className="text-teal-600 hover:text-teal-700 font-medium"
                                   >
                                     {request.adminContact.email}
                                   </a>
@@ -322,10 +322,10 @@ const ConnectionRequests = () => {
                               )}
                               {request.adminContact.phone && (
                                 <div className="flex items-center space-x-2 text-sm text-gray-700">
-                                  <Phone className="w-4 h-4 text-purple-600" />
+                                  <Phone className="w-4 h-4 text-teal-600" />
                                   <a
                                     href={`tel:${request.adminContact.phone}`}
-                                    className="text-purple-600 hover:text-purple-700 font-medium"
+                                    className="text-teal-600 hover:text-teal-700 font-medium"
                                   >
                                     {request.adminContact.phone}
                                   </a>

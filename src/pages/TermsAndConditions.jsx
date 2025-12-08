@@ -15,7 +15,7 @@ const TermsAndConditions = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white py-20 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)'
@@ -28,7 +28,7 @@ const TermsAndConditions = () => {
             <h1 className="text-5xl md:text-6xl font-display font-bold mb-4 tracking-tight">
               Terms and Conditions
             </h1>
-            <div className="flex items-center justify-center space-x-2 text-lg text-purple-100">
+            <div className="flex items-center justify-center space-x-2 text-lg text-teal-100">
               <Shield className="w-5 h-5" />
               <p>Last updated: 25th November 2025</p>
             </div>
@@ -42,10 +42,10 @@ const TermsAndConditions = () => {
           <div className="max-w-4xl mx-auto">
             <div className="space-y-6">
               {/* Introduction */}
-              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-purple-600">
+              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-teal-600">
                 <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-lg p-3 flex-shrink-0">
-                    <FileText className="w-6 h-6 text-purple-600" />
+                  <div className="bg-teal-100 rounded-lg p-3 flex-shrink-0">
+                    <FileText className="w-6 h-6 text-teal-600" />
                   </div>
                   <div className="flex-1">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -276,14 +276,14 @@ const TermsAndConditions = () => {
 
               {/* Contact */}
               <div className="relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-purple-800 opacity-5 rounded-2xl"></div>
-                <div className="card p-8 md:p-10 border-2 border-purple-200 hover:border-purple-300 transition-all hover:shadow-xl relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-600 to-teal-800 opacity-5 rounded-2xl"></div>
+                <div className="card p-8 md:p-10 border-2 border-teal-200 hover:border-teal-300 transition-all hover:shadow-xl relative">
                   <div className="flex items-start space-x-4">
-                    <div className="bg-purple-100 rounded-xl p-4 flex-shrink-0">
-                      <AlertCircle className="w-8 h-8 text-purple-600" />
+                    <div className="bg-teal-100 rounded-xl p-4 flex-shrink-0">
+                      <AlertCircle className="w-8 h-8 text-teal-600" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-purple-900 mb-3">
+                      <h3 className="text-2xl font-bold text-teal-900 mb-3">
                         Questions about our Terms?
                       </h3>
                       <p className="text-gray-700 text-lg mb-5 leading-relaxed">

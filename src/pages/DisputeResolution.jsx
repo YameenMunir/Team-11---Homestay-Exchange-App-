@@ -4,14 +4,14 @@ const DisputeResolution = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <MessageCircle className="w-16 h-16 mx-auto mb-4" />
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
               Dispute Resolution
             </h1>
-            <p className="text-xl text-purple-100">
+            <p className="text-xl text-teal-100">
               Fair and transparent conflict resolution process
             </p>
           </div>
@@ -59,7 +59,7 @@ const DisputeResolution = () => {
                       key={issue}
                       className="flex items-start space-x-2 bg-gray-50 p-3 rounded-lg"
                     >
-                      <span className="text-purple-600 text-lg flex-shrink-0">•</span>
+                      <span className="text-teal-600 text-lg flex-shrink-0">•</span>
                       <span className="text-gray-800">{issue}</span>
                     </div>
                   ))}
@@ -73,9 +73,9 @@ const DisputeResolution = () => {
                 </h2>
                 <div className="space-y-4">
                   {/* Step 1 */}
-                  <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+                  <div className="bg-white border-2 border-teal-200 rounded-xl p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                      <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
                         1
                       </div>
                       <div className="flex-1">
@@ -96,9 +96,9 @@ const DisputeResolution = () => {
                   </div>
 
                   {/* Step 2 */}
-                  <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+                  <div className="bg-white border-2 border-teal-200 rounded-xl p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                      <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
                         2
                       </div>
                       <div className="flex-1">
@@ -119,9 +119,9 @@ const DisputeResolution = () => {
                   </div>
 
                   {/* Step 3 */}
-                  <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+                  <div className="bg-white border-2 border-teal-200 rounded-xl p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                      <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
                         3
                       </div>
                       <div className="flex-1">
@@ -142,9 +142,9 @@ const DisputeResolution = () => {
                   </div>
 
                   {/* Step 4 */}
-                  <div className="bg-white border-2 border-purple-200 rounded-xl p-6">
+                  <div className="bg-white border-2 border-teal-200 rounded-xl p-6">
                     <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
+                      <div className="w-12 h-12 bg-teal-600 text-white rounded-full flex items-center justify-center flex-shrink-0 font-bold text-lg">
                         4
                       </div>
                       <div className="flex-1">
@@ -199,7 +199,7 @@ const DisputeResolution = () => {
                 </p>
                 <div className="space-y-3">
                   <div className="flex items-start space-x-3 bg-gray-50 p-4 rounded-lg">
-                    <FileText className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                    <FileText className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-1">
                         Request a Review
@@ -212,7 +212,7 @@ const DisputeResolution = () => {
                   </div>
 
                   <div className="flex items-start space-x-3 bg-gray-50 p-4 rounded-lg">
-                    <Users className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                    <Users className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-1">
                         Independent Mediation
@@ -230,22 +230,22 @@ const DisputeResolution = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">
                   Expected Timelines
                 </h2>
-                <div className="bg-purple-50 rounded-xl p-6">
+                <div className="bg-teal-50 rounded-xl p-6">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-gray-900 font-medium">Initial Response</span>
-                      <span className="badge bg-purple-100 text-purple-800">24-48 hours</span>
+                      <span className="badge bg-teal-100 text-teal-800">24-48 hours</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-900 font-medium">Investigation Complete</span>
-                      <span className="badge bg-purple-100 text-purple-800">5-7 business days</span>
+                      <span className="badge bg-teal-100 text-teal-800">5-7 business days</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-900 font-medium">Resolution Implemented</span>
-                      <span className="badge bg-purple-100 text-purple-800">7-14 business days</span>
+                      <span className="badge bg-teal-100 text-teal-800">7-14 business days</span>
                     </div>
                   </div>
-                  <p className="text-sm text-purple-800 mt-4">
+                  <p className="text-sm text-teal-800 mt-4">
                     * Urgent safety concerns are handled immediately regardless of typical timelines
                   </p>
                 </div>
@@ -269,14 +269,14 @@ const DisputeResolution = () => {
               </div>
 
               {/* Contact */}
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+              <div className="bg-teal-50 border border-teal-200 rounded-xl p-6">
                 <div className="flex items-start space-x-4">
-                  <CheckCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                  <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-lg font-semibold text-purple-900 mb-2">
+                    <h3 className="text-lg font-semibold text-teal-900 mb-2">
                       Need to Report a Dispute?
                     </h3>
-                    <p className="text-purple-800 mb-3">
+                    <p className="text-teal-800 mb-3">
                       Our team is here to help resolve conflicts fairly and efficiently. Report
                       any issues as soon as they arise.
                     </p>

@@ -87,7 +87,7 @@ const Home = () => {
   return (
     <div className="bg-white">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white overflow-hidden">
+      <section className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
@@ -100,9 +100,9 @@ const Home = () => {
             <div className="max-w-4xl mx-auto text-center animate-fade-in">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight">
                 Making UK Education Accessible Through{' '}
-                <span className="text-purple-200">Community</span>
+                <span className="text-teal-200">Community</span>
               </h1>
-              <p className="text-xl md:text-2xl text-purple-100 mb-10 leading-relaxed max-w-3xl mx-auto">
+              <p className="text-xl md:text-2xl text-teal-100 mb-10 leading-relaxed max-w-3xl mx-auto">
                 Connect students seeking affordable accommodation with hosts who
                 need support. Exchange help for housing in a safe, verified
                 community.
@@ -112,8 +112,8 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
                 <Link
                   to="/host/signup"
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-purple-700 font-semibold rounded-xl
-                           hover:bg-purple-50 active:bg-purple-100
+                  className="w-full sm:w-auto px-8 py-4 bg-white text-teal-700 font-semibold rounded-xl
+                           hover:bg-teal-50 active:bg-teal-100
                            shadow-xl hover:shadow-2xl
                            transform hover:-translate-y-1
                            transition-all duration-200
@@ -125,9 +125,9 @@ const Home = () => {
                 </Link>
                 <Link
                   to="/student/signup"
-                  className="w-full sm:w-auto px-8 py-4 bg-purple-500 text-white font-semibold rounded-xl
+                  className="w-full sm:w-auto px-8 py-4 bg-teal-500 text-white font-semibold rounded-xl
                            border-2 border-white/30
-                           hover:bg-purple-600 active:bg-purple-700
+                           hover:bg-teal-600 active:bg-teal-700
                            shadow-xl hover:shadow-2xl
                            transform hover:-translate-y-1
                            transition-all duration-200
@@ -140,7 +140,7 @@ const Home = () => {
               </div>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap items-center justify-center gap-8 text-purple-100">
+              <div className="flex flex-wrap items-center justify-center gap-8 text-teal-100">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="w-5 h-5" />
                   <span className="text-sm md:text-base">Fully Verified</span>
@@ -193,7 +193,7 @@ const Home = () => {
                 className="card p-8 text-center hover:shadow-xl transition-all duration-300 animate-slide-up"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -225,17 +225,17 @@ const Home = () => {
               <div key={index} className="relative">
                 {/* Connection Line */}
                 {index < howItWorks.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-purple-200 -z-10"></div>
+                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-teal-200 -z-10"></div>
                 )}
 
                 <div className="text-center">
                   {/* Step Number */}
-                  <div className="w-16 h-16 bg-purple-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <div className="w-16 h-16 bg-teal-600 text-white text-2xl font-bold rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     {step.step}
                   </div>
 
                   {/* Icon */}
-                  <div className="w-20 h-20 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-20 h-20 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     {step.icon}
                   </div>
 
@@ -252,7 +252,7 @@ const Home = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-purple-50">
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-teal-50">
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
@@ -263,7 +263,7 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Students Benefits */}
             <div className="card p-8 lg:p-10">
-              <div className="w-16 h-16 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-teal-600 text-white rounded-xl flex items-center justify-center mb-6">
                 <Users className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
@@ -272,7 +272,7 @@ const Home = () => {
               <ul className="space-y-4">
                 {benefits.students.map((benefit, index) => (
                   <li key={index} className="flex items-start space-x-3">
-                    <CheckCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700 text-lg">{benefit}</span>
                   </li>
                 ))}
@@ -287,7 +287,7 @@ const Home = () => {
 
             {/* Hosts Benefits */}
             <div className="card p-8 lg:p-10">
-              <div className="w-16 h-16 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-teal-600 text-white rounded-xl flex items-center justify-center mb-6">
                 <HomeIcon className="w-8 h-8" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
@@ -296,14 +296,14 @@ const Home = () => {
               <ul className="space-y-4">
                 {benefits.hosts.map((benefit, index) => (
                   <li key={index} className="flex items-start space-x-3">
-                    <CheckCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
                     <span className="text-gray-700 text-lg">{benefit}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 to="/host/signup"
-                className="btn-primary w-full mt-8 text-center block bg-purple-600 hover:bg-purple-700 active:bg-purple-800 focus:ring-purple-300"
+                className="btn-primary w-full mt-8 text-center block"
               >
                 Get Started as a Host
               </Link>
@@ -313,19 +313,19 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-600 to-purple-800 text-white">
+      <section className="py-20 bg-gradient-to-br from-teal-600 to-teal-800 text-white">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
+          <p className="text-xl text-teal-100 mb-10 max-w-2xl mx-auto">
             Join our community today and start building meaningful connections.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/host/signup"
-              className="w-full sm:w-auto px-8 py-4 bg-white text-purple-700 font-semibold rounded-xl
-                       hover:bg-purple-50 shadow-xl hover:shadow-2xl
+              className="w-full sm:w-auto px-8 py-4 bg-white text-teal-700 font-semibold rounded-xl
+                       hover:bg-teal-50 shadow-xl hover:shadow-2xl
                        transform hover:-translate-y-1 transition-all duration-200
                        text-lg"
             >

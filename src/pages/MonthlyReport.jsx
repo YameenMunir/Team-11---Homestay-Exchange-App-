@@ -63,7 +63,7 @@ export default function MonthlyReport() {
   const StarRating = ({ category, label, value, helpText, icon: Icon }) => (
     <div className="mb-6">
       <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-        {Icon && <Icon className="w-4 h-4 text-purple-600" />}
+        {Icon && <Icon className="w-4 h-4 text-teal-600" />}
         {label}
         <span className="text-red-500">*</span>
         {helpText && (
@@ -117,8 +117,8 @@ export default function MonthlyReport() {
             Thank you for completing your monthly check-in. Your report helps us ensure the quality of all arrangements.
           </p>
           {formData.needSupport && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-purple-900">
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6">
+              <p className="text-sm text-teal-900">
                 A member of our support team will contact you within 24 hours to discuss your concerns.
               </p>
             </div>
@@ -170,7 +170,7 @@ export default function MonthlyReport() {
               <div>
                 <label htmlFor="hoursCompleted" className="block text-sm font-medium text-gray-700 mb-2">
                   <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-purple-600" />
+                    <Clock className="w-4 h-4 text-teal-600" />
                     Hours Completed This Month
                     <span className="text-red-500">*</span>
                   </div>
@@ -290,7 +290,7 @@ export default function MonthlyReport() {
           </div>
 
           {/* Support Request */}
-          <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Need Support?
             </h2>
@@ -301,7 +301,7 @@ export default function MonthlyReport() {
                 name="needSupport"
                 checked={formData.needSupport}
                 onChange={handleChange}
-                className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
               />
               <span className="text-sm text-gray-700">
                 I would like someone from the Homestay Exchange team to contact me

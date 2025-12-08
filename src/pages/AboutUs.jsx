@@ -28,13 +28,13 @@ const AboutUs = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-20">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-20">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-6">
               About Homestay Exchange
             </h1>
-            <p className="text-xl text-purple-100 leading-relaxed">
+            <p className="text-xl text-teal-100 leading-relaxed">
               We're on a mission to make UK education more accessible while building
               meaningful intergenerational connections that combat loneliness and
               create lasting impact.
@@ -49,7 +49,7 @@ const AboutUs = () => {
           <div className="max-w-4xl mx-auto">
             <div className="card p-8 md:p-12">
               <div className="flex items-center space-x-3 mb-6">
-                <Target className="w-10 h-10 text-purple-600" />
+                <Target className="w-10 h-10 text-teal-600" />
                 <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
@@ -85,7 +85,7 @@ const AboutUs = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {values.map((value, index) => (
               <div key={index} className="card p-8">
-                <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-xl flex items-center justify-center mb-4">
                   {value.icon}
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
@@ -113,19 +113,19 @@ const AboutUs = () => {
                 </h3>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Affordable accommodation near universities
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Cultural immersion and language practice
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Recognition for community service
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Safe, verified living arrangements
                   </li>
                 </ul>
@@ -137,19 +137,19 @@ const AboutUs = () => {
                 </h3>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Companionship and social connection
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Help with daily tasks and errands
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Cultural exchange opportunities
                   </li>
                   <li className="flex items-start">
-                    <span className="text-purple-600 mr-2">✓</span>
+                    <span className="text-teal-600 mr-2">✓</span>
                     Fully vetted, background-checked students
                   </li>
                 </ul>
@@ -160,16 +160,16 @@ const AboutUs = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-purple-600 to-purple-800 text-white">
+      <section className="py-16 bg-gradient-to-br from-teal-600 to-teal-800 text-white">
         <div className="container-custom text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-teal-100 mb-8 max-w-2xl mx-auto">
             Join our community today and start building meaningful connections.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/host/signup" className="btn-primary bg-white text-purple-700 hover:bg-purple-50">
+            <Link to="/host/signup" className="btn-primary bg-white text-teal-700 hover:bg-teal-50">
               Become a Host
             </Link>
             <Link to="/student/signup" className="btn-outline border-white text-white hover:bg-white/10">
@@ -183,7 +183,7 @@ const AboutUs = () => {
       <section className="py-16 bg-white">
         <div className="container-custom">
           <div className="max-w-2xl mx-auto text-center">
-            <Mail className="w-16 h-16 text-purple-600 mx-auto mb-6" />
+            <Mail className="w-16 h-16 text-teal-600 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Questions? We're Here to Help
             </h2>

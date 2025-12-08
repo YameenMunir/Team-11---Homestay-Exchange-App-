@@ -75,7 +75,7 @@ export default function TaskApplication() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading task details...</p>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function TaskApplication() {
         <div className="mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Task
@@ -159,7 +159,7 @@ export default function TaskApplication() {
               {/* Key Details */}
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <Clock className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <Clock className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-gray-600">Time Commitment</p>
                     <p className="font-medium text-gray-900">{task.hoursPerWeek}</p>
@@ -167,7 +167,7 @@ export default function TaskApplication() {
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <Calendar className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <Calendar className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-gray-600">Frequency</p>
                     <p className="font-medium text-gray-900">{task.frequency}</p>
@@ -175,12 +175,12 @@ export default function TaskApplication() {
                 </div>
 
                 <div className="flex items-start gap-2">
-                  <Award className="w-4 h-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                  <Award className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="text-gray-600">Services Needed</p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {task.servicesNeeded.map(service => (
-                        <span key={service} className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">
+                        <span key={service} className="text-xs bg-teal-100 text-teal-700 px-2 py-1 rounded">
                           {service}
                         </span>
                       ))}
@@ -288,14 +288,14 @@ export default function TaskApplication() {
               </div>
 
               {/* Commitment Confirmation */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     name="confirmCommitment"
                     checked={formData.confirmCommitment}
                     onChange={handleChange}
-                    className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                     required
                   />
                   <span className="text-sm text-gray-700">

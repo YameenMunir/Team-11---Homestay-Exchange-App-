@@ -112,7 +112,7 @@ const MatchDetails = () => {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="container-custom">
           <div className="card p-12 text-center">
-            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <Loader2 className="w-16 h-16 text-teal-600 mx-auto mb-4 animate-spin" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Loading host details...
             </h3>
@@ -202,7 +202,7 @@ const MatchDetails = () => {
               <div className="flex flex-col sm:flex-row gap-6">
                 {/* Host Image */}
                 <div className="flex-shrink-0">
-                  <div className="w-32 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+                  <div className="w-32 h-32 rounded-xl overflow-hidden bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center">
                     {host.imageUrl || host.profilePictureUrl ? (
                       <img
                         src={host.imageUrl || host.profilePictureUrl}
@@ -210,7 +210,7 @@ const MatchDetails = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <Home className="w-16 h-16 text-purple-400" />
+                      <Home className="w-16 h-16 text-teal-400" />
                     )}
                   </div>
                 </div>
@@ -224,7 +224,7 @@ const MatchDetails = () => {
                           {host.name}
                         </h1>
                         {host.verified && (
-                          <CheckCircle className="w-6 h-6 text-purple-600" />
+                          <CheckCircle className="w-6 h-6 text-teal-600" />
                         )}
                       </div>
                       <p className="text-gray-600 mb-2">
@@ -294,7 +294,7 @@ const MatchDetails = () => {
                       {host.servicesNeeded.map((service) => (
                         <span
                           key={service}
-                          className="badge bg-purple-100 text-purple-800"
+                          className="badge bg-teal-100 text-teal-800"
                         >
                           {service}
                         </span>
@@ -312,8 +312,8 @@ const MatchDetails = () => {
                 {host.about || host.propertyDescription || 'No description provided.'}
               </p>
               {host.additionalInfo && (
-                <div className="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                  <p className="text-sm text-purple-900">{host.additionalInfo}</p>
+                <div className="mt-4 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                  <p className="text-sm text-teal-900">{host.additionalInfo}</p>
                 </div>
               )}
             </div>
@@ -335,28 +335,28 @@ const MatchDetails = () => {
                       {/* Task Details Grid */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-purple-600" />
+                          <Clock className="w-4 h-4 text-teal-600" />
                           <div>
                             <p className="text-xs text-gray-500">Hours/Week</p>
                             <p className="text-sm font-medium text-gray-900">{task.hoursPerWeek}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-purple-600" />
+                          <Calendar className="w-4 h-4 text-teal-600" />
                           <div>
                             <p className="text-xs text-gray-500">Frequency</p>
                             <p className="text-sm font-medium text-gray-900">{task.frequency}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Clock className="w-4 h-4 text-purple-600" />
+                          <Clock className="w-4 h-4 text-teal-600" />
                           <div>
                             <p className="text-xs text-gray-500">Duration</p>
                             <p className="text-sm font-medium text-gray-900">{task.duration}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-purple-600" />
+                          <Calendar className="w-4 h-4 text-teal-600" />
                           <div>
                             <p className="text-xs text-gray-500">Schedule</p>
                             <p className="text-sm font-medium text-gray-900">{task.schedule || 'Flexible'}</p>
@@ -371,7 +371,7 @@ const MatchDetails = () => {
                           {task.servicesNeeded.map((service, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-700"
                             >
                               {service}
                             </span>
@@ -440,7 +440,7 @@ const MatchDetails = () => {
                 <div className="space-y-3">
                   {host.preferredGender && (
                     <div className="flex items-center space-x-3">
-                      <AlertCircle className="w-5 h-5 text-purple-600" />
+                      <AlertCircle className="w-5 h-5 text-teal-600" />
                       <div>
                         <p className="text-xs text-gray-500">Preferred Gender</p>
                         <p className="text-sm font-medium text-gray-900">{host.preferredGender}</p>
@@ -449,7 +449,7 @@ const MatchDetails = () => {
                   )}
                   {host.preferredAgeRange && (
                     <div className="flex items-center space-x-3">
-                      <AlertCircle className="w-5 h-5 text-purple-600" />
+                      <AlertCircle className="w-5 h-5 text-teal-600" />
                       <div>
                         <p className="text-xs text-gray-500">Preferred Age Range</p>
                         <p className="text-sm font-medium text-gray-900">{host.preferredAgeRange}</p>
@@ -469,19 +469,19 @@ const MatchDetails = () => {
                 <div>
                   <div className={`rounded-xl p-4 mb-4 ${
                     existingRequest.status === 'pending' ? 'bg-yellow-50 border border-yellow-200' :
-                    existingRequest.status === 'reviewing' ? 'bg-purple-50 border border-purple-200' :
+                    existingRequest.status === 'reviewing' ? 'bg-teal-50 border border-teal-200' :
                     existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'bg-green-50 border border-green-200' :
                     'bg-red-50 border border-red-200'
                   }`}>
                     <div className="flex items-start space-x-3">
                       {existingRequest.status === 'pending' && <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />}
-                      {existingRequest.status === 'reviewing' && <Eye className="w-6 h-6 text-purple-600 flex-shrink-0" />}
+                      {existingRequest.status === 'reviewing' && <Eye className="w-6 h-6 text-teal-600 flex-shrink-0" />}
                       {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />}
                       {existingRequest.status === 'rejected' && <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
                       <div>
                         <h4 className={`font-semibold mb-1 ${
                           existingRequest.status === 'pending' ? 'text-yellow-900' :
-                          existingRequest.status === 'reviewing' ? 'text-purple-900' :
+                          existingRequest.status === 'reviewing' ? 'text-teal-900' :
                           existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-900' :
                           'text-red-900'
                         }`}>
@@ -492,7 +492,7 @@ const MatchDetails = () => {
                         </h4>
                         <p className={`text-sm ${
                           existingRequest.status === 'pending' ? 'text-yellow-800' :
-                          existingRequest.status === 'reviewing' ? 'text-purple-800' :
+                          existingRequest.status === 'reviewing' ? 'text-teal-800' :
                           existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-800' :
                           'text-red-800'
                         }`}>
@@ -528,8 +528,8 @@ const MatchDetails = () => {
                     </Link>
                   )}
 
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                    <p className="text-xs text-purple-800">
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+                    <p className="text-xs text-teal-800">
                       <strong>Note:</strong> You can only send one facilitation request per host.
                       Check your Connection Requests page to track the status of this request.
                     </p>
@@ -569,11 +569,11 @@ const MatchDetails = () => {
                     Request Facilitation
                   </button>
 
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                    <h4 className="font-semibold text-purple-900 text-sm mb-2">
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+                    <h4 className="font-semibold text-teal-900 text-sm mb-2">
                       What happens next?
                     </h4>
-                    <ol className="text-xs text-purple-800 space-y-2 list-decimal list-inside">
+                    <ol className="text-xs text-teal-800 space-y-2 list-decimal list-inside">
                       <li>You submit a facilitation request</li>
                       <li>Our team reviews your profile match</li>
                       <li>Both parties are contacted within 24-48 hours</li>
@@ -589,14 +589,14 @@ const MatchDetails = () => {
                 <div className="space-y-2 text-sm">
                   <a
                     href="#"
-                    className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+                    className="flex items-center space-x-2 text-teal-600 hover:text-teal-700"
                   >
                     <Mail className="w-4 h-4" />
                     <span>Contact support</span>
                   </a>
                   <Link
                     to="/help"
-                    className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+                    className="flex items-center space-x-2 text-teal-600 hover:text-teal-700"
                   >
                     <AlertCircle className="w-4 h-4" />
                     <span>Visit Help Center</span>
@@ -616,14 +616,14 @@ const MatchDetails = () => {
               Request Facilitation with {host.name}
             </h3>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6">
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-6">
               <div className="flex items-start space-x-3">
-                <Shield className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <Shield className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-purple-900 font-medium mb-1">
+                  <p className="text-sm text-teal-900 font-medium mb-1">
                     Admin-Facilitated Connection
                   </p>
-                  <p className="text-xs text-purple-800 leading-relaxed">
+                  <p className="text-xs text-teal-800 leading-relaxed">
                     Our admin team will review your request and coordinate with both you and {host.name} to arrange a safe first meeting. We do not provide direct messaging for safety and privacy reasons.
                   </p>
                 </div>
@@ -700,11 +700,11 @@ const MatchDetails = () => {
               Your connection request has been sent to our admin team. They will review your request and contact both you and <span className="font-semibold">{host.name}</span> within 24-48 hours to arrange a meeting.
             </p>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 mb-6 text-left">
-              <p className="text-sm text-purple-900 font-medium mb-2">
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-6 text-left">
+              <p className="text-sm text-teal-900 font-medium mb-2">
                 What happens next?
               </p>
-              <ol className="text-sm text-purple-800 space-y-1">
+              <ol className="text-sm text-teal-800 space-y-1">
                 <li>1. Admin reviews your request</li>
                 <li>2. You'll receive an email update</li>
                 <li>3. Check your Connection Requests page for status</li>

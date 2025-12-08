@@ -55,11 +55,11 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-teal-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+          <div className="w-20 h-20 bg-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Shield className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-3xl font-display font-bold text-gray-900 mb-2">
@@ -177,7 +177,7 @@ const AdminLogin = () => {
             <p className="text-sm text-gray-600 mb-3">
               Forgot your password?
             </p>
-            <a href="mailto:admin@hostfamilystay.com" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+            <a href="mailto:admin@hostfamilystay.com" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
               Contact System Administrator
             </a>
           </div>

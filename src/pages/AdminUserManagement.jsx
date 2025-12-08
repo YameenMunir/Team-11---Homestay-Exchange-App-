@@ -269,7 +269,7 @@ const AdminUserManagement = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading users...</p>
         </div>
       </div>
@@ -453,10 +453,10 @@ const AdminUserManagement = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          user.userType === 'host' ? 'bg-purple-100' : 'bg-blue-100'
+                          user.userType === 'host' ? 'bg-teal-100' : 'bg-blue-100'
                         }`}>
                           {user.userType === 'host' ? (
-                            <Home className="w-5 h-5 text-purple-600" />
+                            <Home className="w-5 h-5 text-teal-600" />
                           ) : (
                             <GraduationCap className="w-5 h-5 text-blue-600" />
                           )}
@@ -506,7 +506,7 @@ const AdminUserManagement = () => {
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => handleViewUser(user)}
-                          className="text-purple-600 hover:text-purple-900 transition-colors"
+                          className="text-teal-600 hover:text-teal-900 transition-colors"
                           title="View Details"
                           aria-label="View user details"
                         >

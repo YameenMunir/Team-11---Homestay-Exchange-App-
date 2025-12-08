@@ -175,9 +175,9 @@ export default function MonthlyFeedbackForm() {
           </p>
 
           {user?.userType === 'host' && formData.rating >= 4 && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-              <Award className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-              <p className="text-sm text-purple-900">
+            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6">
+              <Award className="w-6 h-6 text-teal-600 mx-auto mb-2" />
+              <p className="text-sm text-teal-900">
                 <strong>Great rating!</strong> Your student is building towards their recognition badge.
                 Consecutive months of 4-5 star ratings earn Bronze, Silver, and Gold status!
               </p>
@@ -209,7 +209,7 @@ export default function MonthlyFeedbackForm() {
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-6 font-medium transition-colors"
+          className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
@@ -222,16 +222,16 @@ export default function MonthlyFeedbackForm() {
           </h1>
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
             <div className="flex items-center gap-2 text-gray-600">
-              <Calendar className="w-5 h-5 text-purple-600" />
+              <Calendar className="w-5 h-5 text-teal-600" />
               <span className="font-medium">
                 Feedback for: <strong className="text-gray-900">{currentMonth}</strong>
               </span>
             </div>
             {partnerName && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 rounded-lg border border-purple-100">
+              <div className="flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-lg border border-teal-100">
                 <span className="text-sm text-gray-600">Rating:</span>
                 <span className="font-semibold text-gray-900">{partnerName}</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
+                <span className="px-2 py-0.5 text-xs font-medium bg-teal-100 text-teal-700 rounded-full">
                   {partnerRole === 'host' ? 'Host' : 'Student'}
                 </span>
               </div>
@@ -240,21 +240,21 @@ export default function MonthlyFeedbackForm() {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-5 mb-6 flex gap-4 shadow-sm">
+        <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-5 mb-6 flex gap-4 shadow-sm">
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-              <AlertCircle className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+              <AlertCircle className="w-5 h-5 text-teal-600" />
             </div>
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-purple-900 mb-2">Monthly Feedback System</p>
-            <p className="text-sm text-purple-800 mb-3 leading-relaxed">
+            <p className="font-semibold text-teal-900 mb-2">Monthly Feedback System</p>
+            <p className="text-sm text-teal-800 mb-3 leading-relaxed">
               You can submit <strong>one feedback entry per month</strong> for each arrangement.
               Your feedback helps maintain quality and trust in our community.
             </p>
             <div className="flex items-start gap-2 p-3 bg-white/60 rounded-lg">
-              <Award className="w-4 h-4 text-purple-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-purple-900 leading-relaxed">
+              <Award className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-teal-900 leading-relaxed">
                 <strong>For students:</strong> Earning 4-5 stars for consecutive months unlocks recognition badges:
                 Bronze (2 months), Silver (4 months), Gold (6 months)
               </p>
@@ -276,7 +276,7 @@ export default function MonthlyFeedbackForm() {
             {/* Rating Section */}
             <div className="pb-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <Star className="w-5 h-5 text-purple-600" />
+                <Star className="w-5 h-5 text-teal-600" />
                 Performance Rating
               </h2>
               <p className="text-sm text-gray-600 mb-6">Rate your partner's overall performance this month</p>
@@ -286,7 +286,7 @@ export default function MonthlyFeedbackForm() {
             {/* Overall Feedback */}
             <div className="pb-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-purple-600" />
+                <MessageSquare className="w-5 h-5 text-teal-600" />
                 Overall Feedback
               </h2>
               <p className="text-sm text-gray-600 mb-6">Share your thoughts about this month's arrangement</p>
@@ -315,7 +315,7 @@ export default function MonthlyFeedbackForm() {
             {user?.userType === 'host' && (
               <div className="pb-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-purple-600" />
+                  <Clock className="w-5 h-5 text-teal-600" />
                   Student Activity Summary
                 </h2>
                 <p className="text-sm text-gray-600 mb-6">Optional: Track hours and tasks completed</p>
@@ -323,7 +323,7 @@ export default function MonthlyFeedbackForm() {
                   <div>
                     <label htmlFor="hours_contributed" className="block text-sm font-medium text-gray-700 mb-2">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-purple-600" />
+                        <Clock className="w-4 h-4 text-teal-600" />
                         Hours Contributed This Month
                       </div>
                     </label>
@@ -360,7 +360,7 @@ export default function MonthlyFeedbackForm() {
             {/* Monthly Reflection */}
             <div className="pb-6 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-purple-600" />
+                <Calendar className="w-5 h-5 text-teal-600" />
                 Monthly Reflection
               </h2>
               <p className="text-sm text-gray-600 mb-6">Optional: Reflect on highlights, challenges, and goals</p>
@@ -412,9 +412,9 @@ export default function MonthlyFeedbackForm() {
             </div>
 
             {/* Support Request */}
-            <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-purple-600" />
+                <AlertCircle className="w-5 h-5 text-teal-600" />
                 Need Support?
               </h2>
               <p className="text-sm text-gray-600 mb-4">Request assistance from the Homestay Exchange team</p>
@@ -425,7 +425,7 @@ export default function MonthlyFeedbackForm() {
                   name="support_needed"
                   checked={formData.support_needed}
                   onChange={handleChange}
-                  className="mt-1 w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                  className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                 />
                 <span className="text-sm text-gray-700">
                   I would like the Homestay Exchange team to contact me

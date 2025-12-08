@@ -135,8 +135,8 @@ export default function RateExperience() {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-8">
-          <p className="text-sm text-purple-900">
+        <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-8">
+          <p className="text-sm text-teal-900">
             <strong>Your feedback matters!</strong> Honest ratings help maintain quality and trust in the Homestay Exchange community. All ratings are confidential and help both parties improve.
           </p>
         </div>

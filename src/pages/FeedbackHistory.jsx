@@ -140,7 +140,7 @@ export default function FeedbackHistory() {
     const monthDate = new Date(feedback.feedback_month + '-01');
 
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-teal-300">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-5 pb-4 sm:pb-5 border-b border-gray-100">
           <div className="flex-1 min-w-0 overflow-hidden">
             <div className="flex flex-wrap items-center gap-2 mb-2 sm:mb-2.5">
@@ -191,12 +191,12 @@ export default function FeedbackHistory() {
             <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Activity Summary</h4>
             <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
               {feedback.hours_contributed !== null && (
-                <div className="bg-purple-50 rounded-lg p-3 border border-purple-100 min-w-0">
+                <div className="bg-teal-50 rounded-lg p-3 border border-teal-100 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 flex-shrink-0" />
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-600 flex-shrink-0" />
                     <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Hours Contributed</span>
                   </div>
-                  <p className="text-xl sm:text-2xl font-bold text-purple-900 break-words">{feedback.hours_contributed}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-teal-900 break-words">{feedback.hours_contributed}</p>
                 </div>
               )}
               {feedback.tasks_completed && (
@@ -288,7 +288,7 @@ export default function FeedbackHistory() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8 sm:py-12 px-4">
         <div className="text-center max-w-md">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4" />
+          <div className="w-12 h-12 sm:w-16 sm:h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-3 sm:mb-4" />
           <p className="text-base sm:text-lg text-gray-900 font-semibold mb-1 break-words">Loading feedback history...</p>
           <p className="text-xs sm:text-sm text-gray-600 break-words">Please wait while we fetch your data</p>
         </div>
@@ -306,14 +306,14 @@ export default function FeedbackHistory() {
         <div className="mb-6 lg:mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 sm:mb-6 font-medium transition-all hover:gap-3 group"
+            className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 sm:mb-6 font-medium transition-all hover:gap-3 group"
           >
             <ArrowLeft className="w-5 h-5 flex-shrink-0 group-hover:transform group-hover:-translate-x-1 transition-transform" />
             <span className="whitespace-nowrap">Back</span>
           </button>
 
           <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-teal-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
               <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
             <div className="flex-1 min-w-0 overflow-hidden">
@@ -342,9 +342,9 @@ export default function FeedbackHistory() {
                 </h3>
                 <p className="text-sm sm:text-base text-gray-700 mb-2 sm:mb-3 break-words">{successMessage}</p>
                 {submittedRating >= 4 && (
-                  <div className="flex items-start gap-2 sm:gap-2.5 p-3 sm:p-3.5 bg-purple-50 border border-purple-200 rounded-lg">
-                    <Award className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs sm:text-sm text-purple-900 break-words">
+                  <div className="flex items-start gap-2 sm:gap-2.5 p-3 sm:p-3.5 bg-teal-50 border border-teal-200 rounded-lg">
+                    <Award className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-xs sm:text-sm text-teal-900 break-words">
                       <strong className="font-semibold">Great rating!</strong> Your student is building towards their recognition badge.
                       Consecutive months of 4-5 star ratings earn Bronze, Silver, and Gold status!
                     </p>
@@ -365,10 +365,10 @@ export default function FeedbackHistory() {
         {/* Recognition Tier for Students */}
         {user?.userType === 'guest' && recognitionData && activeTab === 'received' && (
           <div className="mb-4 sm:mb-6">
-            <div className="bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 rounded-lg border-2 border-purple-200 shadow-sm p-4 sm:p-6">
+            <div className="bg-gradient-to-br from-teal-50 via-blue-50 to-indigo-50 rounded-lg border-2 border-teal-200 shadow-sm p-4 sm:p-6">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
                 <div className="flex items-start gap-3 sm:gap-4 min-w-0 overflow-hidden">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-teal-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
                     <span className="text-2xl sm:text-3xl">{getTierBadgeInfo(recognitionData.current_tier).icon}</span>
                   </div>
                   <div className="flex-1 min-w-0 overflow-hidden">
@@ -389,7 +389,7 @@ export default function FeedbackHistory() {
                     <span className="text-sm font-semibold text-gray-700">
                       Progress to {getTierBadgeInfo(calculateTierProgress(recognitionData.consecutive_high_ratings, recognitionData.current_tier).nextTier).name}
                     </span>
-                    <span className="text-sm font-bold text-purple-700">
+                    <span className="text-sm font-bold text-teal-700">
                       {recognitionData.consecutive_high_ratings} / {
                         recognitionData.current_tier === 'none' ? 2 :
                         recognitionData.current_tier === 'bronze' ? 4 : 6
@@ -398,7 +398,7 @@ export default function FeedbackHistory() {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-teal-600 to-blue-600 rounded-full transition-all duration-500"
                       style={{ width: `${calculateTierProgress(recognitionData.consecutive_high_ratings, recognitionData.current_tier).progress}%` }}
                     />
                   </div>
@@ -476,7 +476,7 @@ export default function FeedbackHistory() {
                   onClick={() => setActiveTab('students')}
                   className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                     activeTab === 'students'
-                      ? 'bg-purple-600 text-white shadow-sm'
+                      ? 'bg-teal-600 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
@@ -485,7 +485,7 @@ export default function FeedbackHistory() {
                     <span className="whitespace-nowrap">Active Students</span>
                     <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                       activeTab === 'students'
-                        ? 'bg-purple-500 text-white'
+                        ? 'bg-teal-500 text-white'
                         : 'bg-gray-200 text-gray-700'
                     }`}>
                       {matchedStudents.length}
@@ -497,7 +497,7 @@ export default function FeedbackHistory() {
                 onClick={() => setActiveTab('received')}
                 className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                   activeTab === 'received'
-                    ? 'bg-purple-600 text-white shadow-sm'
+                    ? 'bg-teal-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
@@ -505,7 +505,7 @@ export default function FeedbackHistory() {
                   <span className="whitespace-nowrap">Received</span>
                   <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                     activeTab === 'received'
-                      ? 'bg-purple-500 text-white'
+                      ? 'bg-teal-500 text-white'
                       : 'bg-gray-200 text-gray-700'
                   }`}>
                     {receivedFeedback.length}
@@ -516,7 +516,7 @@ export default function FeedbackHistory() {
                 onClick={() => setActiveTab('submitted')}
                 className={`flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 font-medium text-xs sm:text-sm rounded-md transition-all ${
                   activeTab === 'submitted'
-                    ? 'bg-purple-600 text-white shadow-sm'
+                    ? 'bg-teal-600 text-white shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               >
@@ -524,7 +524,7 @@ export default function FeedbackHistory() {
                   <span className="whitespace-nowrap">Submitted</span>
                   <span className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold rounded-full flex-shrink-0 ${
                     activeTab === 'submitted'
-                      ? 'bg-purple-500 text-white'
+                      ? 'bg-teal-500 text-white'
                       : 'bg-gray-200 text-gray-700'
                   }`}>
                     {submittedFeedback.length}
@@ -539,13 +539,13 @@ export default function FeedbackHistory() {
         {activeTab !== 'students' && (
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 sm:mb-6 p-3 sm:p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
-              <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600 flex-shrink-0" />
+              <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 flex-shrink-0" />
               <label className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">Filter by rating:</label>
             </div>
             <select
               value={filterRating}
               onChange={(e) => setFilterRating(e.target.value)}
-              className="flex-1 sm:flex-none sm:w-64 input-field py-2 sm:py-2.5 px-3 sm:px-4 text-sm font-medium border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg min-w-0"
+              className="flex-1 sm:flex-none sm:w-64 input-field py-2 sm:py-2.5 px-3 sm:px-4 text-sm font-medium border-gray-300 focus:border-teal-500 focus:ring-teal-500 rounded-lg min-w-0"
             >
               <option value="all">All Ratings</option>
               <option value="5">⭐ 5 Stars - Excellent</option>
@@ -580,7 +580,7 @@ export default function FeedbackHistory() {
                 return (
                   <div
                     key={student.facilitationId}
-                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-purple-300"
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all duration-200 hover:border-teal-300"
                   >
                     {/* Student Header */}
                     <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-5">
@@ -592,8 +592,8 @@ export default function FeedbackHistory() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-blue-100">
-                            <Users className="w-7 h-7 sm:w-8 sm:h-8 text-purple-600" />
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-teal-100 to-blue-100">
+                            <Users className="w-7 h-7 sm:w-8 sm:h-8 text-teal-600" />
                           </div>
                         )}
                       </div>

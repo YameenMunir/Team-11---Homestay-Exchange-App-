@@ -523,8 +523,8 @@ const AdminReportsManagement = () => {
                 {selectedReport.adminNotes && (
                   <div>
                     <h4 className="text-sm font-semibold text-gray-900 mb-2">Admin Notes</h4>
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                      <p className="text-sm text-purple-900">{selectedReport.adminNotes}</p>
+                    <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+                      <p className="text-sm text-teal-900">{selectedReport.adminNotes}</p>
                     </div>
                   </div>
                 )}

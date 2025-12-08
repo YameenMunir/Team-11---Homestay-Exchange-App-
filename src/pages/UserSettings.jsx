@@ -240,8 +240,8 @@ const UserSettings = () => {
       <div className="card p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Icon className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Icon className="w-5 h-5 text-teal-600" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -307,10 +307,10 @@ const UserSettings = () => {
         )}
 
         {/* Upload Button */}
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-purple-400 transition-colors">
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
           <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
           <label htmlFor={documentType} className="cursor-pointer">
-            <span className="text-purple-600 font-semibold hover:text-purple-700">
+            <span className="text-teal-600 font-semibold hover:text-teal-700">
               {doc.status === 'not_uploaded' ? 'Upload Document' : 'Replace Document'}
             </span>
             <p className="text-xs text-gray-600 mt-1">
@@ -344,7 +344,7 @@ const UserSettings = () => {
             navigate(-1);
           }}
           onFocus={() => speak('Back button')}
-          className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors mb-6 group"
+          className="flex items-center space-x-2 text-gray-600 hover:text-teal-600 transition-colors mb-6 group"
           aria-label="Go back to previous page"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -362,11 +362,11 @@ const UserSettings = () => {
         </div>
 
         {/* Verification Status Banner */}
-        <div className="card p-6 mb-8 bg-gradient-to-r from-purple-50 to-purple-100 border-2 border-purple-200">
+        <div className="card p-6 mb-8 bg-gradient-to-r from-teal-50 to-teal-100 border-2 border-teal-200">
           <div className="flex items-start space-x-4">
-            <Shield className="w-12 h-12 text-purple-600 flex-shrink-0" />
+            <Shield className="w-12 h-12 text-teal-600 flex-shrink-0" />
             <div className="flex-1">
-              <h3 className="text-xl font-bold text-purple-900 mb-2">
+              <h3 className="text-xl font-bold text-teal-900 mb-2">
                 Verification Status
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -409,7 +409,7 @@ const UserSettings = () => {
                 onFocus={() => speak('Profile Information tab')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'profile'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
                 aria-label="Profile Information"
@@ -424,7 +424,7 @@ const UserSettings = () => {
                 onFocus={() => speak('Verification Documents tab')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'verification'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
                 aria-label="Verification Documents"
@@ -439,7 +439,7 @@ const UserSettings = () => {
                 onFocus={() => speak('Accessibility Settings tab')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'accessibility'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
                 aria-label="Accessibility Settings"
@@ -565,14 +565,14 @@ const UserSettings = () => {
         {/* Verification Tab */}
         {activeTab === 'verification' && (
           <div className="space-y-6">
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-6">
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-6 mb-6">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                <AlertCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-lg font-semibold text-purple-900 mb-2">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">
                     Why Verification Matters
                   </h3>
-                  <p className="text-sm text-purple-800 leading-relaxed">
+                  <p className="text-sm text-teal-800 leading-relaxed">
                     All documents are reviewed by our admin team to ensure safety and trust in our community. Your information is kept secure and confidential. Verification typically takes 24-48 hours.
                   </p>
                 </div>
@@ -623,14 +623,14 @@ const UserSettings = () => {
         {activeTab === 'accessibility' && (
           <div className="space-y-6">
             {/* Header Info */}
-            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-6">
               <div className="flex items-start space-x-3">
-                <Eye className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                <Eye className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-lg font-semibold text-purple-900 mb-2">
+                  <h3 className="text-lg font-semibold text-teal-900 mb-2">
                     Make the website easier to use
                   </h3>
-                  <p className="text-sm text-purple-800 leading-relaxed">
+                  <p className="text-sm text-teal-800 leading-relaxed">
                     Customize your experience with accessibility features designed to make navigation and interaction more comfortable for everyone.
                   </p>
                 </div>
@@ -664,8 +664,8 @@ const UserSettings = () => {
               <div className="card p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-start space-x-3 flex-1">
-                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-5 h-5 text-purple-600" />
+                    <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-5 h-5 text-teal-600" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -689,7 +689,7 @@ const UserSettings = () => {
                       aria-label="Toggle Senior-Friendly Mode"
                       disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>
@@ -727,7 +727,7 @@ const UserSettings = () => {
                       aria-label="Toggle Voice Guidance"
                       disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>
@@ -763,7 +763,7 @@ const UserSettings = () => {
                       aria-label="Toggle Help Overlay"
                       disabled={accessibilitySaving}
                     />
-                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-teal-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-teal-600 peer-disabled:opacity-50 peer-disabled:cursor-not-allowed"></div>
                   </label>
                 </div>
               </div>

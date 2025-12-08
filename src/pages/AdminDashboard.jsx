@@ -76,7 +76,7 @@ const AdminDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -132,8 +132,8 @@ const AdminDashboard = () => {
                 </span>
                 <p className="text-xs text-gray-500 mt-2">Facilitation requests</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Link2 className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
+                <Link2 className="w-6 h-6 text-teal-600" />
               </div>
             </div>
           </div>
@@ -177,7 +177,7 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Link
               to="/admin/users"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -193,13 +193,13 @@ const AdminDashboard = () => {
                     </span>
                   )}
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
             <Link
               to="/admin/facilitation-requests"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -210,18 +210,18 @@ const AdminDashboard = () => {
                     Approve host-student pairings
                   </p>
                   {stats?.pendingFacilitations > 0 && (
-                    <span className="badge bg-purple-100 text-purple-800">
+                    <span className="badge bg-teal-100 text-teal-800">
                       {stats.pendingFacilitations} pending
                     </span>
                   )}
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
             <Link
               to="/admin/reports"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -232,13 +232,13 @@ const AdminDashboard = () => {
                     Review submitted reports
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
             <Link
               to="/admin/disputes"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -249,13 +249,13 @@ const AdminDashboard = () => {
                     Handle user disputes
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
             <Link
               to="/admin/feedback"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -266,13 +266,13 @@ const AdminDashboard = () => {
                     View platform feedback
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
             <Link
               to="/admin/create-profile"
-              className="card p-6 hover:shadow-lg transition-all hover:border-purple-200 group"
+              className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -283,7 +283,7 @@ const AdminDashboard = () => {
                     Add new admin user
                   </p>
                 </div>
-                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
           </div>
@@ -293,13 +293,13 @@ const AdminDashboard = () => {
         <div className="card p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
-              <Activity className="w-6 h-6 text-purple-600" />
+              <Activity className="w-6 h-6 text-teal-600" />
               <h2 className="text-2xl font-bold text-gray-900">Recent Activity</h2>
             </div>
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="text-sm text-teal-600 hover:text-teal-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {refreshing ? 'Refreshing...' : 'Refresh'}
             </button>
@@ -323,8 +323,8 @@ const AdminDashboard = () => {
                         <Users className="w-5 h-5 text-blue-600" />
                       </div>
                     ) : activity.type === 'facilitation_request' ? (
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <Link2 className="w-5 h-5 text-purple-600" />
+                      <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                        <Link2 className="w-5 h-5 text-teal-600" />
                       </div>
                     ) : (
                       <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">

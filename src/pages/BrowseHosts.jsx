@@ -117,7 +117,7 @@ const BrowseHosts = () => {
         <div className="mb-8">
           <button
             onClick={() => navigate('/student/dashboard')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 transition-colors"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -151,7 +151,7 @@ const BrowseHosts = () => {
                         type="checkbox"
                         checked={selectedServices.includes(service)}
                         onChange={() => toggleService(service)}
-                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                       />
                       <span className="text-sm text-gray-700 group-hover:text-gray-900">
                         {service}
@@ -165,7 +165,7 @@ const BrowseHosts = () => {
               {selectedServices.length > 0 && (
                 <button
                   onClick={() => setSelectedServices([])}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Clear all filters
                 </button>
@@ -221,7 +221,7 @@ const BrowseHosts = () => {
                         type="checkbox"
                         checked={selectedServices.includes(service)}
                         onChange={() => toggleService(service)}
-                        className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                       />
                       <span className="text-sm text-gray-700">{service}</span>
                     </label>
@@ -234,7 +234,7 @@ const BrowseHosts = () => {
                       setSelectedServices([]);
                       setShowFilters(false);
                     }}
-                    className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                    className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                   >
                     Clear all filters
                   </button>
@@ -252,7 +252,7 @@ const BrowseHosts = () => {
             {/* Loading State */}
             {loading && (
               <div className="card p-12 text-center">
-                <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+                <Loader2 className="w-16 h-16 text-teal-600 mx-auto mb-4 animate-spin" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   Loading hosts...
                 </h3>
@@ -287,7 +287,7 @@ const BrowseHosts = () => {
                   <div className="flex flex-col lg:flex-row">
                     {/* Host Image Section */}
                     <div className="lg:w-64 flex-shrink-0 relative">
-                      <div className="h-64 lg:h-full w-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center relative">
+                      <div className="h-64 lg:h-full w-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center relative">
                         {host.imageUrl ? (
                           <img
                             src={host.imageUrl}
@@ -295,7 +295,7 @@ const BrowseHosts = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <Users className="w-24 h-24 text-purple-400" />
+                          <Users className="w-24 h-24 text-teal-400" />
                         )}
                         <button
                           onClick={() => toggleSaveHost(host.id)}
@@ -323,20 +323,20 @@ const BrowseHosts = () => {
                               {host.name}
                             </h3>
                             {host.verified && (
-                              <CheckCircle className="w-6 h-6 text-purple-600" />
+                              <CheckCircle className="w-6 h-6 text-teal-600" />
                             )}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-4 flex-wrap text-sm text-gray-600">
                           <div className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4 text-purple-600" />
+                            <MapPin className="w-4 h-4 text-teal-600" />
                             <span className="font-medium">{host.location}</span>
                           </div>
 
                           {host.numberOfRooms && (
                             <div className="flex items-center gap-1">
-                              <Bed className="w-4 h-4 text-purple-600" />
+                              <Bed className="w-4 h-4 text-teal-600" />
                               <span>{host.numberOfRooms} {host.numberOfRooms === 1 ? 'room' : 'rooms'}</span>
                             </div>
                           )}
@@ -367,7 +367,7 @@ const BrowseHosts = () => {
                       {host.amenities && host.amenities.length > 0 && (
                         <div className="mb-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <Sparkles className="w-4 h-4 text-purple-600" />
+                            <Sparkles className="w-4 h-4 text-teal-600" />
                             <span className="text-sm font-semibold text-gray-900">Amenities:</span>
                           </div>
                           <div className="flex flex-wrap gap-2">
@@ -391,7 +391,7 @@ const BrowseHosts = () => {
                       {/* Available Tasks */}
                       <div className="mb-4">
                         <div className="flex items-center gap-2 mb-3">
-                          <Briefcase className="w-4 h-4 text-purple-600" />
+                          <Briefcase className="w-4 h-4 text-teal-600" />
                           <span className="text-sm font-semibold text-gray-900">
                             Available Opportunities ({host.tasks?.length || 0})
                           </span>
@@ -423,7 +423,7 @@ const BrowseHosts = () => {
                                 {task.servicesNeeded.slice(0, 3).map((service, idx) => (
                                   <span
                                     key={idx}
-                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-700"
                                   >
                                     {service}
                                   </span>
@@ -454,7 +454,7 @@ const BrowseHosts = () => {
                           {host.allServicesNeeded?.map((service, idx) => (
                             <span
                               key={idx}
-                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-800 border border-purple-200"
+                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-800 border border-teal-200"
                             >
                               {service}
                             </span>

@@ -194,7 +194,7 @@ const HostDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -227,7 +227,7 @@ const HostDashboard = () => {
                   Welcome back, {getFirstName()}!
                 </h1>
                 {user.isVerified && (
-                  <CheckCircle className="w-8 h-8 text-purple-600" />
+                  <CheckCircle className="w-8 h-8 text-teal-600" />
                 )}
               </div>
               <p className="text-lg text-gray-600">
@@ -275,8 +275,8 @@ const HostDashboard = () => {
                   </span>
                   <p className="text-xs text-gray-500 mt-1">Awaiting review</p>
                 </div>
-                <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <MessageCircle className="w-7 h-7 text-purple-600" />
+                <div className="w-14 h-14 bg-teal-100 rounded-xl flex items-center justify-center">
+                  <MessageCircle className="w-7 h-7 text-teal-600" />
                 </div>
               </div>
             </button>
@@ -306,7 +306,7 @@ const HostDashboard = () => {
                 onClick={() => setActiveTab('overview')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'overview'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -316,13 +316,13 @@ const HostDashboard = () => {
                 onClick={() => setActiveTab('requests')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
                   activeTab === 'requests'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
                 Requests
                 {hostData && hostData.pendingRequests > 0 && (
-                  <span className="absolute -top-1 -right-2 w-5 h-5 bg-purple-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-2 w-5 h-5 bg-teal-500 text-white text-xs rounded-full flex items-center justify-center">
                     {hostData.pendingRequests}
                   </span>
                 )}
@@ -331,7 +331,7 @@ const HostDashboard = () => {
                 onClick={() => setActiveTab('profile')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'profile'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -341,7 +341,7 @@ const HostDashboard = () => {
                 onClick={() => setActiveTab('notifications')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors relative ${
                   activeTab === 'notifications'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -381,7 +381,7 @@ const HostDashboard = () => {
                       return (
                         <div
                           key={student.facilitationId}
-                          className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors"
+                          className="border border-gray-200 rounded-xl p-4 hover:border-teal-300 transition-colors"
                         >
                           <div className="flex items-start space-x-4 mb-4">
                             <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0">
@@ -392,8 +392,8 @@ const HostDashboard = () => {
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-purple-100">
-                                  <Users className="w-8 h-8 text-purple-600" />
+                                <div className="w-full h-full flex items-center justify-center bg-teal-100">
+                                  <Users className="w-8 h-8 text-teal-600" />
                                 </div>
                               )}
                             </div>
@@ -482,7 +482,7 @@ const HostDashboard = () => {
                     {dashboardData.pendingRequests.map((request) => (
                       <div
                         key={request.id}
-                        className="border border-gray-200 rounded-xl p-4 hover:border-purple-300 transition-colors"
+                        className="border border-gray-200 rounded-xl p-4 hover:border-teal-300 transition-colors"
                       >
                         <div className="flex items-center justify-between mb-3">
                           <div>
@@ -497,7 +497,7 @@ const HostDashboard = () => {
                           <span className={`badge ${
                             request.status === 'under_review'
                               ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-purple-100 text-purple-800'
+                              : 'bg-teal-100 text-teal-800'
                           }`}>
                             {request.status === 'under_review' ? 'Under Review' : 'New'}
                           </span>
@@ -542,7 +542,7 @@ const HostDashboard = () => {
                   </Link>
                   <Link
                     to="/feedback-history"
-                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700"
                   >
                     <MessageSquare className="w-5 h-5" />
                     <span>Submit Monthly Reviews</span>
@@ -579,11 +579,11 @@ const HostDashboard = () => {
               </div>
 
               {/* Help & Resources */}
-              <div className="card p-6 bg-purple-50 border-purple-200">
-                <h3 className="font-semibold text-purple-900 mb-3">
+              <div className="card p-6 bg-teal-50 border-teal-200">
+                <h3 className="font-semibold text-teal-900 mb-3">
                   Need Assistance?
                 </h3>
-                <p className="text-sm text-purple-800 mb-4">
+                <p className="text-sm text-teal-800 mb-4">
                   Our team is here to help with any questions or concerns.
                 </p>
                 <Link to="/help" className="btn-primary w-full text-center block">
@@ -603,7 +603,7 @@ const HostDashboard = () => {
 
               {requestsLoading ? (
                 <div className="text-center py-12">
-                  <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+                  <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
                   <p className="text-gray-600">Loading requests...</p>
                 </div>
               ) : facilitationRequests.length === 0 ? (
@@ -651,7 +651,7 @@ const HostDashboard = () => {
                         {/* Status Badge */}
                         <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
                           request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          request.status === 'in_review' ? 'bg-purple-100 text-purple-800' :
+                          request.status === 'in_review' ? 'bg-teal-100 text-teal-800' :
                           request.status === 'matched' ? 'bg-green-100 text-green-800' :
                           'bg-red-100 text-red-800'
                         }`}>
@@ -724,8 +724,8 @@ const HostDashboard = () => {
                       )}
 
                       {request.status === 'in_review' && (
-                        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                          <p className="text-sm text-purple-900">
+                        <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
+                          <p className="text-sm text-teal-900">
                             <strong>Status:</strong> This request has been forwarded to the admin team for verification and final approval.
                           </p>
                         </div>
@@ -834,17 +834,17 @@ const HostDashboard = () => {
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="bg-teal-50 border border-teal-200 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
-                    <Settings className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <Settings className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-semibold text-purple-900 mb-1">
+                      <h4 className="text-sm font-semibold text-teal-900 mb-1">
                         Manage Your Profile & Documents
                       </h4>
-                      <p className="text-sm text-purple-800 mb-3">
+                      <p className="text-sm text-teal-800 mb-3">
                         Update your personal information, upload verification documents, and manage your account settings.
                       </p>
-                      <Link to="/host/settings" className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                      <Link to="/host/settings" className="text-sm text-teal-600 hover:text-teal-700 font-medium">
                         Go to Settings →
                       </Link>
                     </div>
@@ -862,7 +862,7 @@ const HostDashboard = () => {
               {notifications.filter(n => !n.is_read).length > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Mark all as read
                 </button>
@@ -886,7 +886,7 @@ const HostDashboard = () => {
                     key={notification.id}
                     className={`border-l-4 rounded-r-lg p-4 transition-all ${
                       !notification.is_read
-                        ? 'border-purple-600 bg-purple-50'
+                        ? 'border-teal-600 bg-teal-50'
                         : 'border-gray-300 bg-white'
                     }`}
                   >
@@ -904,12 +904,12 @@ const HostDashboard = () => {
                           <>
                             <button
                               onClick={() => markAsRead(notification.id)}
-                              className="text-sm text-purple-600 hover:text-purple-700 font-medium whitespace-nowrap"
+                              className="text-sm text-teal-600 hover:text-teal-700 font-medium whitespace-nowrap"
                               title="Mark as read"
                             >
                               Mark read
                             </button>
-                            <span className="w-2 h-2 bg-purple-600 rounded-full"></span>
+                            <span className="w-2 h-2 bg-teal-600 rounded-full"></span>
                           </>
                         )}
                         <button
@@ -927,7 +927,7 @@ const HostDashboard = () => {
                       <div className="mt-3 pt-3 border-t border-gray-200">
                         <button
                           onClick={() => setActiveTab('overview')}
-                          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                          className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                         >
                           View Request →
                         </button>
@@ -937,7 +937,7 @@ const HostDashboard = () => {
                       <div className="mt-3 pt-3 border-t border-gray-200">
                         <Link
                           to="/rate-experience"
-                          className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+                          className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                         >
                           Rate Now →
                         </Link>

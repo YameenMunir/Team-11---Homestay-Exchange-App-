@@ -4,14 +4,14 @@ const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <Lock className="w-16 h-16 mx-auto mb-4" />
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
               Privacy Policy
             </h1>
-            <p className="text-xl text-purple-100">
+            <p className="text-xl text-teal-100">
               Last updated: January 2025
             </p>
           </div>
@@ -108,7 +108,7 @@ const PrivacyPolicy = () => {
                 </h2>
                 <div className="bg-gray-50 rounded-xl p-6 mb-4">
                   <div className="flex items-start space-x-3">
-                    <Shield className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                    <Shield className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                     <div>
                       <p className="text-gray-700 leading-relaxed">
                         We implement industry-standard security measures to protect your data,
@@ -162,14 +162,14 @@ const PrivacyPolicy = () => {
               </div>
 
               {/* Contact */}
-              <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+              <div className="bg-teal-50 border border-teal-200 rounded-xl p-6">
                 <div className="flex items-start space-x-4">
-                  <AlertCircle className="w-6 h-6 text-purple-600 flex-shrink-0 mt-1" />
+                  <AlertCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-lg font-semibold text-purple-900 mb-2">
+                    <h3 className="text-lg font-semibold text-teal-900 mb-2">
                       Questions about your privacy?
                     </h3>
-                    <p className="text-purple-800 mb-3">
+                    <p className="text-teal-800 mb-3">
                       If you have any questions about this Privacy Policy or wish to exercise your
                       data rights, please contact our Data Protection Officer.
                     </p>

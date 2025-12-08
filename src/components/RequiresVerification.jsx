@@ -18,7 +18,7 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -112,7 +112,7 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
             <div className="mt-8 pt-6 border-t border-gray-200 text-center">
               <p className="text-sm text-gray-600">
                 Need more information?{' '}
-                <Link to={settingsPath} className="text-purple-600 hover:text-purple-700 font-medium">
+                <Link to={settingsPath} className="text-teal-600 hover:text-teal-700 font-medium">
                   View Your Account Details
                 </Link>
               </p>
@@ -168,7 +168,7 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
             </h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-                <FileText className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <FileText className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-900">Check Your Documents</p>
                   <p className="text-sm text-gray-600">
@@ -177,7 +177,7 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
                 </div>
               </div>
               <div className="flex items-start space-x-3 p-4 bg-gray-50 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="font-medium text-gray-900">Complete Your Profile</p>
                   <p className="text-sm text-gray-600">
@@ -208,7 +208,7 @@ const RequiresVerification = ({ children, feature = "this feature" }) => {
           <div className="mt-8 pt-6 border-t border-gray-200 text-center">
             <p className="text-sm text-gray-600">
               Having issues with verification?{' '}
-              <Link to="/help" className="text-purple-600 hover:text-purple-700 font-medium">
+              <Link to="/help" className="text-teal-600 hover:text-teal-700 font-medium">
                 Contact Support
               </Link>
             </p>

@@ -38,13 +38,13 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
               Contact Us
             </h1>
-            <p className="text-xl text-purple-100">
+            <p className="text-xl text-teal-100">
               We're here to help. Get in touch with our team.
             </p>
           </div>
@@ -58,8 +58,8 @@ const ContactUs = () => {
             {/* Contact Information */}
             <div className="space-y-6">
               <div className="card p-6">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <Mail className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                  <Mail className="w-6 h-6 text-teal-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Us</h3>
                 <p className="text-gray-600 text-sm mb-2">
@@ -67,15 +67,15 @@ const ContactUs = () => {
                 </p>
                 <a
                   href="mailto:support@hostfamilystay.co.uk"
-                  className="text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-teal-600 hover:text-teal-700 font-medium"
                 >
                   support@hostfamilystay.co.uk
                 </a>
               </div>
 
               <div className="card p-6">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <Phone className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                  <Phone className="w-6 h-6 text-teal-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Call Us</h3>
                 <p className="text-gray-600 text-sm mb-2">
@@ -83,15 +83,15 @@ const ContactUs = () => {
                 </p>
                 <a
                   href="tel:+442012345678"
-                  className="text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-teal-600 hover:text-teal-700 font-medium"
                 >
                   +44 20 1234 5678
                 </a>
               </div>
 
               <div className="card p-6">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                  <MapPin className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                  <MapPin className="w-6 h-6 text-teal-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Visit Us</h3>
                 <p className="text-gray-600 text-sm">

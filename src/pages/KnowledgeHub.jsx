@@ -28,7 +28,7 @@ export default function KnowledgeHub() {
       description: 'Know your housing rights as an international student',
       icon: Shield,
       link: 'https://www.gov.uk/private-renting',
-      color: 'from-purple-500 to-purple-600'
+      color: 'from-teal-500 to-teal-600'
     },
     {
       title: 'UKCISA Student Support',
@@ -49,13 +49,13 @@ export default function KnowledgeHub() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16 px-4">
+      <div className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <BookOpen className="w-16 h-16 mx-auto mb-6" />
           <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
             Knowledge Hub
           </h1>
-          <p className="text-xl text-purple-100 max-w-2xl mx-auto">
+          <p className="text-xl text-teal-100 max-w-2xl mx-auto">
             Your comprehensive resource center for rights, safety, housing information, and well-being support
           </p>
         </div>
@@ -63,9 +63,9 @@ export default function KnowledgeHub() {
 
       {/* Featured Community & Integration Resources */}
       <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 border border-purple-200 shadow-sm">
+        <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-xl p-8 border border-teal-200 shadow-sm">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-purple-600 rounded-lg p-2">
+            <div className="bg-teal-600 rounded-lg p-2">
               <Globe className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -87,19 +87,19 @@ export default function KnowledgeHub() {
                   href={resource.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-purple-300"
+                  className="group bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 hover:border-teal-300"
                   aria-label={`${resource.title} - Opens in new window`}
                 >
                   <div className={`bg-gradient-to-br ${resource.color} w-12 h-12 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                  <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
                     {resource.title}
                   </h3>
                   <p className="text-sm text-gray-600 mb-3">
                     {resource.description}
                   </p>
-                  <div className="flex items-center gap-2 text-purple-600 text-sm font-medium">
+                  <div className="flex items-center gap-2 text-teal-600 text-sm font-medium">
                     <span>Visit Resource</span>
                     <ExternalLink className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </div>
@@ -114,8 +114,8 @@ export default function KnowledgeHub() {
       <div className="max-w-6xl mx-auto px-4 pb-12">
         <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200">
           <div className="flex items-center gap-3 mb-8">
-            <div className="bg-purple-100 rounded-lg p-2">
-              <Users className="w-6 h-6 text-purple-600" />
+            <div className="bg-teal-100 rounded-lg p-2">
+              <Users className="w-6 h-6 text-teal-600" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">
               Additional Resources & Support
@@ -220,9 +220,9 @@ export default function KnowledgeHub() {
             </div>
 
             {/* Student Support Section */}
-            <div className="bg-purple-50 rounded-lg p-5 border border-purple-200 hover:border-purple-300 transition-colors">
+            <div className="bg-teal-50 rounded-lg p-5 border border-teal-200 hover:border-teal-300 transition-colors">
               <div className="flex items-center gap-2 mb-4">
-                <div className="bg-purple-600 rounded-md p-1.5">
+                <div className="bg-teal-600 rounded-md p-1.5">
                   <Globe className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900">International Student Support</h3>
@@ -233,7 +233,7 @@ export default function KnowledgeHub() {
                     href="https://www.ukcisa.org.uk/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline group"
+                    className="flex items-center gap-2 text-sm text-teal-600 hover:text-teal-800 hover:underline group"
                     aria-label="UKCISA - International Student Support - Opens in new window"
                   >
                     <ExternalLink className="w-4 h-4 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -245,7 +245,7 @@ export default function KnowledgeHub() {
                     href="https://www.englishuk.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline group"
+                    className="flex items-center gap-2 text-sm text-teal-600 hover:text-teal-800 hover:underline group"
                     aria-label="English UK - Language Learning - Opens in new window"
                   >
                     <ExternalLink className="w-4 h-4 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -257,7 +257,7 @@ export default function KnowledgeHub() {
                     href="https://www.meetup.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline group"
+                    className="flex items-center gap-2 text-sm text-teal-600 hover:text-teal-800 hover:underline group"
                     aria-label="Meetup - Local Community Groups - Opens in new window"
                   >
                     <ExternalLink className="w-4 h-4 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
@@ -308,7 +308,7 @@ export default function KnowledgeHub() {
 
 
       {/* Bottom CTA */}
-      <div className="bg-purple-50 border-t border-purple-100 py-12 px-4">
+      <div className="bg-teal-50 border-t border-teal-100 py-12 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Can't Find What You're Looking For?

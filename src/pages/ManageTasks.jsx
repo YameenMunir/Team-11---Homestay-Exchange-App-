@@ -102,7 +102,7 @@ export default function ManageTasks() {
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="card p-12 text-center">
-            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <Loader2 className="w-16 h-16 text-teal-600 mx-auto mb-4 animate-spin" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Loading your tasks...
             </h3>
@@ -146,7 +146,7 @@ export default function ManageTasks() {
           <div className="mb-8">
             <button
               onClick={() => setShowApplicants(false)}
-              className="text-purple-600 hover:text-purple-700 mb-4"
+              className="text-teal-600 hover:text-teal-700 mb-4"
             >
               ← Back to My Tasks
             </button>
@@ -262,7 +262,7 @@ export default function ManageTasks() {
         <div className="mb-8">
           <button
             onClick={() => navigate('/host/dashboard')}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 transition-colors"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -290,8 +290,8 @@ export default function ManageTasks() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="card p-5">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <Briefcase className="w-6 h-6 text-purple-600" />
+              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Briefcase className="w-6 h-6 text-teal-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Active Tasks</p>
@@ -366,7 +366,7 @@ export default function ManageTasks() {
                     {task.services_needed.map((service) => (
                       <span
                         key={service}
-                        className="inline-flex items-center text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-medium"
+                        className="inline-flex items-center text-xs bg-teal-100 text-teal-700 px-2.5 py-1 rounded-full font-medium"
                       >
                         {service}
                       </span>

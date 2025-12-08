@@ -273,7 +273,7 @@ const StudentSignup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-teal-50 py-12 px-4">
       <div className="container-custom">
         {/* Back Button */}
         <Link
@@ -287,7 +287,7 @@ const StudentSignup = () => {
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-20 h-20 bg-gradient-to-br from-teal-600 to-teal-700 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <GraduationCap className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
@@ -307,7 +307,7 @@ const StudentSignup = () => {
                     <div
                       className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
                         currentStep >= step
-                          ? 'bg-purple-600 text-white shadow-lg'
+                          ? 'bg-teal-600 text-white shadow-lg'
                           : 'bg-gray-200 text-gray-500'
                       }`}
                     >
@@ -324,7 +324,7 @@ const StudentSignup = () => {
                   {step < 3 && (
                     <div
                       className={`h-1 flex-1 mx-2 transition-all ${
-                        currentStep > step ? 'bg-purple-600' : 'bg-gray-200'
+                        currentStep > step ? 'bg-teal-600' : 'bg-gray-200'
                       }`}
                     ></div>
                   )}
@@ -699,14 +699,14 @@ const StudentSignup = () => {
                           onClick={() => toggleService(service)}
                           className={`p-3 rounded-lg border-2 font-medium text-sm text-center transition-all ${
                             formData.servicesOffered.includes(service)
-                              ? 'border-purple-600 bg-purple-50 text-purple-900'
-                              : 'border-gray-300 bg-white text-gray-700 hover:border-purple-300'
+                              ? 'border-teal-600 bg-teal-50 text-teal-900'
+                              : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
                           }`}
                         >
                           <div className="flex flex-col items-center space-y-1">
                             <span>{service}</span>
                             {formData.servicesOffered.includes(service) && (
-                              <CheckCircle className="w-4 h-4 text-purple-600" />
+                              <CheckCircle className="w-4 h-4 text-teal-600" />
                             )}
                           </div>
                         </button>
@@ -760,14 +760,14 @@ const StudentSignup = () => {
               {/* Step 3: Verification Documents */}
               {currentStep === 3 && (
                 <>
-                  <div className="bg-purple-50 border border-purple-200 rounded-xl p-5 mb-5">
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-5 mb-5">
                     <div className="flex items-start space-x-3">
-                      <FileText className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                      <FileText className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="font-semibold text-purple-900 mb-1">
+                        <h4 className="font-semibold text-teal-900 mb-1">
                           Verification Required
                         </h4>
-                        <p className="text-sm text-purple-800 leading-relaxed">
+                        <p className="text-sm text-teal-800 leading-relaxed">
                           To ensure safety for all users, we need to verify your identity
                           and student status. All documents are kept secure.
                         </p>
@@ -779,13 +779,13 @@ const StudentSignup = () => {
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
                       ID Document (Passport or Driving License)
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-purple-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-teal-400 transition-colors">
                       <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                       <label
                         htmlFor="idDocument"
                         className="cursor-pointer text-sm text-gray-600"
                       >
-                        <span className="text-purple-600 font-semibold hover:text-purple-700">
+                        <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
                         </span>{' '}
                         or drag and drop
@@ -810,13 +810,13 @@ const StudentSignup = () => {
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
                       University Admission Letter
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-purple-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-teal-400 transition-colors">
                       <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                       <label
                         htmlFor="admissionLetter"
                         className="cursor-pointer text-sm text-gray-600"
                       >
-                        <span className="text-purple-600 font-semibold hover:text-purple-700">
+                        <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
                         </span>{' '}
                         or drag and drop
@@ -893,7 +893,7 @@ const StudentSignup = () => {
                 Already have an account?{' '}
                 <Link
                   to="/student/login"
-                  className="text-purple-600 hover:text-purple-700 font-medium"
+                  className="text-teal-600 hover:text-teal-700 font-medium"
                 >
                   Sign in here
                 </Link>

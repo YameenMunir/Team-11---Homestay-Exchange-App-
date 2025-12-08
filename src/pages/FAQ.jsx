@@ -175,14 +175,14 @@ const FAQ = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-purple-800 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-600 to-teal-800 text-white py-16">
         <div className="container-custom">
           <div className="max-w-4xl mx-auto text-center">
             <HelpCircle className="w-16 h-16 mx-auto mb-4" />
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
               Frequently Asked Questions
             </h1>
-            <p className="text-xl text-purple-100">
+            <p className="text-xl text-teal-100">
               Find answers to common questions about our homestay platform
             </p>
           </div>
@@ -200,7 +200,7 @@ const FAQ = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search for answers..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
             </div>
             {searchTerm && (
@@ -232,7 +232,7 @@ const FAQ = () => {
                         className="w-full px-6 py-4 flex items-start justify-between text-left hover:bg-gray-50 transition-colors"
                       >
                         <div className="flex-1">
-                          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1 block">
+                          <span className="text-xs font-semibold text-teal-600 uppercase tracking-wide mb-1 block">
                             {item.category}
                           </span>
                           <h3 className="text-lg font-semibold text-gray-900">

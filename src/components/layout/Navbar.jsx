@@ -74,7 +74,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-6">
             <Link
               to="/"
-              className="text-gray-700 hover:text-purple-600 font-medium transition-colors flex items-center space-x-2"
+              className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
             >
               <Home className="w-5 h-5" />
               <span>Home</span>
@@ -83,14 +83,14 @@ const Navbar = () => {
               <>
                 <Link
                   to="/student/browse"
-                  className="text-gray-700 hover:text-purple-600 font-medium transition-colors flex items-center space-x-2"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
                 >
                   <Users className="w-5 h-5" />
                   <span>Browse</span>
                 </Link>
                 <Link
                   to="/connection-requests"
-                  className="text-gray-700 hover:text-purple-600 font-medium transition-colors flex items-center space-x-2"
+                  className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
                 >
                   <Link2 className="w-5 h-5" />
                   <span>Requests</span>
@@ -99,14 +99,14 @@ const Navbar = () => {
             )}
             <Link
               to="/knowledge-hub"
-              className="text-gray-700 hover:text-purple-600 font-medium transition-colors flex items-center space-x-2"
+              className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
             >
               <BookOpen className="w-5 h-5" />
               <span>Resources</span>
             </Link>
             <Link
               to="/help"
-              className="text-gray-700 hover:text-purple-600 font-medium transition-colors flex items-center space-x-2"
+              className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
             >
               <HelpCircle className="w-5 h-5" />
               <span>Help</span>
@@ -121,7 +121,7 @@ const Navbar = () => {
                     className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
                     aria-label="User menu"
                   >
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-white font-bold text-sm shadow-md hover:shadow-lg transition-shadow">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold text-sm shadow-md hover:shadow-lg transition-shadow">
                       {getInitials(user.fullName)}
                     </div>
                     <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${isProfileDropdownOpen ? 'rotate-180' : ''}`} />
@@ -133,7 +133,7 @@ const Navbar = () => {
                       <div className="px-4 py-3 border-b border-gray-200">
                         <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                        <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700 capitalize">
+                        <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-teal-100 text-teal-700 capitalize">
                           {user.userType}
                         </span>
                       </div>
@@ -248,15 +248,15 @@ const Navbar = () => {
                 {user ? (
                   <>
                     {/* User Info Section */}
-                    <div className="px-4 py-3 bg-purple-50 rounded-lg">
+                    <div className="px-4 py-3 bg-teal-50 rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-white font-bold shadow-md">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-md">
                           {getInitials(user.fullName)}
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
                           <p className="text-xs text-gray-600 truncate">{user.email}</p>
-                          <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-purple-100 text-purple-700 capitalize">
+                          <span className="inline-block mt-1 px-2 py-0.5 text-xs rounded-full bg-teal-100 text-teal-700 capitalize">
                             {user.userType}
                           </span>
                         </div>

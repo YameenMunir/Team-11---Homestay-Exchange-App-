@@ -49,8 +49,8 @@ export default function HomePage() {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-              <Users className="w-8 h-8 text-purple-600" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-100 rounded-full mb-4">
+              <Users className="w-8 h-8 text-teal-600" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Community Support
@@ -150,7 +150,7 @@ export default function HomePage() {
               <div className="text-gray-600">Verified Users</div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-purple-600 mb-2">Safe</div>
+              <div className="text-4xl font-bold text-teal-600 mb-2">Safe</div>
               <div className="text-gray-600">Secure Platform</div>
             </div>
             <div>

@@ -426,31 +426,31 @@ const AdminCreateProfile = () => {
         {/* Progress Steps */}
         <div className="card p-6 mb-8">
           <div className="flex items-center justify-between">
-            <div className={`flex items-center ${currentStep >= 1 ? 'text-purple-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center ${currentStep >= 1 ? 'text-teal-600' : 'text-gray-400'}`}>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                currentStep >= 1 ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 1
               </div>
               <span className="ml-2 font-medium hidden sm:inline">User Type & Basic Info</span>
             </div>
             <div className="flex-1 h-1 mx-4 bg-gray-200">
-              <div className={`h-full ${currentStep >= 2 ? 'bg-purple-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 2 ? '100%' : '0%' }}></div>
+              <div className={`h-full ${currentStep >= 2 ? 'bg-teal-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 2 ? '100%' : '0%' }}></div>
             </div>
-            <div className={`flex items-center ${currentStep >= 2 ? 'text-purple-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center ${currentStep >= 2 ? 'text-teal-600' : 'text-gray-400'}`}>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 2 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                currentStep >= 2 ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 2
               </div>
               <span className="ml-2 font-medium hidden sm:inline">Details & Services</span>
             </div>
             <div className="flex-1 h-1 mx-4 bg-gray-200">
-              <div className={`h-full ${currentStep >= 3 ? 'bg-purple-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 3 ? '100%' : '0%' }}></div>
+              <div className={`h-full ${currentStep >= 3 ? 'bg-teal-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 3 ? '100%' : '0%' }}></div>
             </div>
-            <div className={`flex items-center ${currentStep >= 3 ? 'text-purple-600' : 'text-gray-400'}`}>
+            <div className={`flex items-center ${currentStep >= 3 ? 'text-teal-600' : 'text-gray-400'}`}>
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                currentStep >= 3 ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+                currentStep >= 3 ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 3
               </div>
@@ -479,15 +479,15 @@ const AdminCreateProfile = () => {
                     onClick={() => setProfileData({ ...profileData, userType: 'host' })}
                     className={`p-6 rounded-lg border-2 transition-all ${
                       profileData.userType === 'host'
-                        ? 'border-purple-600 bg-purple-50'
-                        : 'border-gray-200 hover:border-purple-300'
+                        ? 'border-teal-600 bg-teal-50'
+                        : 'border-gray-200 hover:border-teal-300'
                     }`}
                   >
                     <Home className={`w-8 h-8 mx-auto mb-2 ${
-                      profileData.userType === 'host' ? 'text-purple-600' : 'text-gray-400'
+                      profileData.userType === 'host' ? 'text-teal-600' : 'text-gray-400'
                     }`} />
                     <span className={`font-medium ${
-                      profileData.userType === 'host' ? 'text-purple-600' : 'text-gray-700'
+                      profileData.userType === 'host' ? 'text-teal-600' : 'text-gray-700'
                     }`}>
                       Host
                     </span>
@@ -863,7 +863,7 @@ const AdminCreateProfile = () => {
                             type="checkbox"
                             checked={profileData.servicesNeeded.includes(service)}
                             onChange={() => handleServiceToggle(service)}
-                            className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                            className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                           />
                           <span className="text-sm text-gray-700">{service}</span>
                         </label>
@@ -970,7 +970,7 @@ const AdminCreateProfile = () => {
                 </h3>
                 <div className="space-y-4">
                   {/* ID Document */}
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-medium text-gray-900">
@@ -1000,7 +1000,7 @@ const AdminCreateProfile = () => {
                   {/* Host-specific documents */}
                   {profileData.userType === 'host' && (
                     <>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-gray-900">
@@ -1027,7 +1027,7 @@ const AdminCreateProfile = () => {
                         )}
                       </div>
 
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-gray-900">DBS Check</p>
@@ -1056,7 +1056,7 @@ const AdminCreateProfile = () => {
 
                   {/* Student-specific documents */}
                   {profileData.userType === 'student' && (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium text-gray-900">

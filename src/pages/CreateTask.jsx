@@ -156,7 +156,7 @@ export default function CreateTask() {
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="card p-12 text-center">
-            <Loader2 className="w-16 h-16 text-purple-600 mx-auto mb-4 animate-spin" />
+            <Loader2 className="w-16 h-16 text-teal-600 mx-auto mb-4 animate-spin" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               Loading task...
             </h3>
@@ -176,7 +176,7 @@ export default function CreateTask() {
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4 transition-colors"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -203,8 +203,8 @@ export default function CreateTask() {
           {/* Task Details Section */}
           <div className="pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-6">
-              <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-                <Briefcase className="w-5 h-5 text-purple-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-teal-100 rounded-lg">
+                <Briefcase className="w-5 h-5 text-teal-600" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
                 Task Details
@@ -255,8 +255,8 @@ export default function CreateTask() {
           {/* Services Needed */}
           <div className="pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-purple-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-teal-100 rounded-lg">
+                <CheckCircle className="w-5 h-5 text-teal-600" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
                 Services Needed
@@ -273,14 +273,14 @@ export default function CreateTask() {
                   onClick={() => toggleService(service)}
                   className={`p-3.5 rounded-lg border-2 transition-all text-left ${
                     formData.servicesNeeded.includes(service)
-                      ? 'border-purple-600 bg-purple-50 text-purple-700 shadow-sm'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-purple-300 hover:bg-gray-50'
+                      ? 'border-teal-600 bg-teal-50 text-teal-700 shadow-sm'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium">{service}</span>
                     {formData.servicesNeeded.includes(service) && (
-                      <CheckCircle className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0" />
                     )}
                   </div>
                 </button>
@@ -291,8 +291,8 @@ export default function CreateTask() {
           {/* Time Commitment */}
           <div className="pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-6">
-              <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-                <Clock className="w-5 h-5 text-purple-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-teal-100 rounded-lg">
+                <Clock className="w-5 h-5 text-teal-600" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
                 Time Commitment
@@ -388,8 +388,8 @@ export default function CreateTask() {
           {/* Compensation & Requirements */}
           <div className="pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2 mb-6">
-              <div className="flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg">
-                <Home className="w-5 h-5 text-purple-600" />
+              <div className="flex items-center justify-center w-10 h-10 bg-teal-100 rounded-lg">
+                <Home className="w-5 h-5 text-teal-600" />
               </div>
               <h2 className="text-xl font-semibold text-gray-900">
                 Compensation & Requirements

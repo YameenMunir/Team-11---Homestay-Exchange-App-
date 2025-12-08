@@ -143,7 +143,7 @@ export default function ManageRequests() {
                       <div className="flex items-center space-x-2">
                         <span className="font-medium text-gray-700">Target:</span>
                         <span className="text-gray-900">{request.target.full_name}</span>
-                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded capitalize">
+                        <span className="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded capitalize">
                           {request.target.role}
                         </span>
                       </div>

@@ -192,7 +192,7 @@ const StudentDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-purple-600 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-teal-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading dashboard...</p>
         </div>
       </div>
@@ -250,7 +250,7 @@ const StudentDashboard = () => {
                     } months
                   </p>
                 </div>
-                <TrendingUp className="w-8 h-8 text-purple-600 flex-shrink-0" />
+                <TrendingUp className="w-8 h-8 text-teal-600 flex-shrink-0" />
               </div>
             </Link>
 
@@ -280,7 +280,7 @@ const StudentDashboard = () => {
                   </span>
                   <p className="text-xs text-gray-500 mt-1">Community service</p>
                 </div>
-                <Clock className="w-10 h-10 text-purple-600" />
+                <Clock className="w-10 h-10 text-teal-600" />
               </div>
             </div>
 
@@ -310,7 +310,7 @@ const StudentDashboard = () => {
                     {studentData.connectionRequests.pending === 0 && studentData.connectionRequests.approved === 0 && 'No active requests'}
                   </p>
                 </div>
-                <Link2 className="w-10 h-10 text-purple-600" />
+                <Link2 className="w-10 h-10 text-teal-600" />
               </div>
             </Link>
           </div>
@@ -324,7 +324,7 @@ const StudentDashboard = () => {
                 onClick={() => setActiveTab('overview')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'overview'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -334,7 +334,7 @@ const StudentDashboard = () => {
                 onClick={() => setActiveTab('browse')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'browse'
-                    ? 'border-purple-600 text-purple-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -371,7 +371,7 @@ const StudentDashboard = () => {
                           <h3 className="text-lg font-semibold text-gray-900">
                             {studentData.currentHost.name}
                           </h3>
-                          <CheckCircle className="w-6 h-6 text-purple-600" />
+                          <CheckCircle className="w-6 h-6 text-teal-600" />
                         </div>
                         <p className="text-sm text-gray-600 mb-2">
                           {studentData.currentHost.location}
@@ -392,7 +392,7 @@ const StudentDashboard = () => {
                           {studentData.currentHost.servicesProvided.map((service) => (
                             <span
                               key={service}
-                              className="badge bg-purple-100 text-purple-800"
+                              className="badge bg-teal-100 text-teal-800"
                             >
                               {service}
                             </span>
@@ -401,17 +401,17 @@ const StudentDashboard = () => {
                       </div>
                     )}
 
-                    <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-purple-900 font-medium">
+                          <p className="text-sm text-teal-900 font-medium">
                             Hours this month
                           </p>
-                          <p className="text-2xl font-bold text-purple-900">
+                          <p className="text-2xl font-bold text-teal-900">
                             {studentData.currentHost.hoursThisMonth || 0}
                           </p>
                         </div>
-                        <Clock className="w-10 h-10 text-purple-600" />
+                        <Clock className="w-10 h-10 text-teal-600" />
                       </div>
                     </div>
 
@@ -434,7 +434,7 @@ const StudentDashboard = () => {
                                 partnerId: matchedHosts[0].hostId,
                                 partnerRole: 'host'
                               }}
-                              className="btn-primary w-full text-center flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                              className="btn-primary w-full text-center flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700"
                             >
                               <MessageSquare className="w-4 h-4" />
                               <span>Submit Monthly Review ({getCurrentMonth()})</span>
@@ -467,7 +467,7 @@ const StudentDashboard = () => {
               </div>
 
               {/* Recognition Progress */}
-              <div className="card p-6 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 border-2 border-purple-200">
+              <div className="card p-6 bg-gradient-to-br from-teal-50 via-blue-50 to-indigo-50 border-2 border-teal-200">
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                     <span className="text-3xl">{currentBadge.icon}</span>
@@ -497,7 +497,7 @@ const StudentDashboard = () => {
                           studentData.recognitionLevel === 'bronze' ? 'Silver' : 'Gold'
                         }
                       </span>
-                      <span className="text-sm font-bold text-purple-700">
+                      <span className="text-sm font-bold text-teal-700">
                         {studentData.consecutiveRatings} / {
                           studentData.recognitionLevel === 'none' ? 2 :
                           studentData.recognitionLevel === 'bronze' ? 4 : 6
@@ -506,7 +506,7 @@ const StudentDashboard = () => {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-teal-600 to-blue-600 rounded-full transition-all duration-500"
                         style={{
                           width: `${Math.min(100, (studentData.consecutiveRatings / (
                             studentData.recognitionLevel === 'none' ? 2 :
@@ -565,7 +565,7 @@ const StudentDashboard = () => {
                 {/* View Full Status Button */}
                 <Link
                   to="/feedback-history"
-                  className="w-full btn-primary flex items-center justify-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  className="w-full btn-primary flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700"
                 >
                   <TrendingUp className="w-4 h-4" />
                   <span>View Full Recognition Status</span>
@@ -588,7 +588,7 @@ const StudentDashboard = () => {
                   </Link>
                   <Link
                     to="/feedback-history"
-                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    className="w-full btn-primary flex items-center justify-center space-x-2 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700"
                   >
                     <MessageSquare className="w-5 h-5" />
                     <span>Feedback & Recognition</span>
@@ -611,9 +611,9 @@ const StudentDashboard = () => {
               </div>
 
               {/* Tips */}
-              <div className="card p-6 bg-purple-50 border-purple-200">
-                <h3 className="font-semibold text-purple-900 mb-3">💡 Tip</h3>
-                <p className="text-sm text-purple-800 mb-4">
+              <div className="card p-6 bg-teal-50 border-teal-200">
+                <h3 className="font-semibold text-teal-900 mb-3">💡 Tip</h3>
+                <p className="text-sm text-teal-800 mb-4">
                   Maintain consistent 4-5 star ratings to reach Gold status and stand
                   out to hosts!
                 </p>

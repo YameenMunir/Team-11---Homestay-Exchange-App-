@@ -184,7 +184,7 @@ const Help = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="w-20 h-20 bg-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
             <HelpCircle className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl font-display font-bold text-gray-900 mb-4">
@@ -225,7 +225,7 @@ const Help = () => {
           </button>
 
           <a href="mailto:zm@hostfamilystay.com" className="card p-6 hover:shadow-lg transition-all text-left group">
-            <Mail className="w-12 h-12 text-purple-600 mb-4 group-hover:scale-110 transition-transform" />
+            <Mail className="w-12 h-12 text-teal-600 mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
             <p className="text-sm text-gray-600">
               Get help via email within 24 hours
@@ -251,7 +251,7 @@ const Help = () => {
             {filteredFaqs.map((category) => (
               <div key={category.category}>
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                  <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center text-teal-600">
                     {category.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">
@@ -310,9 +310,9 @@ const Help = () => {
 
         {/* Contact Section */}
         <div className="max-w-4xl mx-auto mt-12">
-          <div className="card p-8 bg-gradient-to-br from-purple-50 to-purple-50 border-purple-200">
+          <div className="card p-8 bg-gradient-to-br from-teal-50 to-teal-50 border-teal-200">
             <div className="text-center">
-              <MessageCircle className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+              <MessageCircle className="w-12 h-12 text-teal-600 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-gray-900 mb-3">
                 Still need help?
               </h3>

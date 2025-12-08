@@ -63,7 +63,7 @@ export default function RecognitionStatus() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-16 h-16 border-4 border-teal-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading your recognition status...</p>
         </div>
       </div>
@@ -83,13 +83,13 @@ export default function RecognitionStatus() {
         <div className="mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-purple-600 hover:text-purple-700 mb-4"
+            className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
           </button>
           <h1 className="text-3xl font-display font-bold text-gray-900 flex items-center gap-3">
-            <Award className="w-8 h-8 text-purple-600" />
+            <Award className="w-8 h-8 text-teal-600" />
             Recognition Status
           </h1>
           <p className="mt-2 text-gray-600">
@@ -123,7 +123,7 @@ export default function RecognitionStatus() {
                     key={tier}
                     className={`p-4 rounded-lg border-2 ${
                       isAchieved
-                        ? 'border-purple-600 bg-purple-50'
+                        ? 'border-teal-600 bg-teal-50'
                         : 'border-gray-200 bg-white'
                     }`}
                   >
@@ -134,7 +134,7 @@ export default function RecognitionStatus() {
                       Requires: {requirement} consecutive months
                     </p>
                     {isAchieved && milestones[`${tier}_achieved_at`] && (
-                      <p className="text-xs text-purple-600 font-medium mt-2">
+                      <p className="text-xs text-teal-600 font-medium mt-2">
                         ✓ Achieved {new Date(milestones[`${tier}_achieved_at`]).toLocaleDateString('en-GB', {
                           month: 'short',
                           year: 'numeric'
@@ -151,7 +151,7 @@ export default function RecognitionStatus() {
         {/* Rating History */}
         <div className="card">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-purple-600" />
+            <Calendar className="w-5 h-5 text-teal-600" />
             Monthly Rating History
           </h2>
 

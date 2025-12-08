@@ -40,7 +40,7 @@ export default function RecognitionBadge({ recognitionData, showProgress = true,
   const classes = sizeClasses[size];
 
   return (
-    <div className={`bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg ${classes.container} border-2 border-purple-200`}>
+    <div className={`bg-gradient-to-br from-teal-50 to-blue-50 rounded-lg ${classes.container} border-2 border-teal-200`}>
       <div className="flex items-center gap-4">
         {/* Badge Icon */}
         <div
@@ -57,14 +57,14 @@ export default function RecognitionBadge({ recognitionData, showProgress = true,
               {badgeInfo.name} Status
             </h3>
             {current_tier !== 'none' && (
-              <Award className="w-4 h-4 text-purple-600" />
+              <Award className="w-4 h-4 text-teal-600" />
             )}
           </div>
           <p className={`text-gray-600 ${classes.badge}`}>
             {badgeInfo.description}
           </p>
           {consecutive_high_ratings > 0 && (
-            <p className={`text-purple-600 font-medium mt-1 ${classes.badge}`}>
+            <p className={`text-teal-600 font-medium mt-1 ${classes.badge}`}>
               {consecutive_high_ratings} consecutive month{consecutive_high_ratings !== 1 ? 's' : ''} of excellence
             </p>
           )}
@@ -79,13 +79,13 @@ export default function RecognitionBadge({ recognitionData, showProgress = true,
               <TrendingUp className="w-3 h-3" />
               Progress to {getTierBadgeInfo(progress.nextTier).name}
             </span>
-            <span className="text-xs font-medium text-purple-600">
+            <span className="text-xs font-medium text-teal-600">
               {progress.progress}%
             </span>
           </div>
           <div className="bg-gray-200 rounded-full overflow-hidden">
             <div
-              className={`bg-gradient-to-r from-purple-600 to-blue-600 ${classes.progress} transition-all duration-500`}
+              className={`bg-gradient-to-r from-teal-600 to-blue-600 ${classes.progress} transition-all duration-500`}
               style={{ width: `${progress.progress}%` }}
             />
           </div>
@@ -97,7 +97,7 @@ export default function RecognitionBadge({ recognitionData, showProgress = true,
 
       {/* Achievement Date */}
       {current_tier !== 'none' && recognitionData[`${current_tier}_achieved_at`] && (
-        <div className="mt-3 pt-3 border-t border-purple-200">
+        <div className="mt-3 pt-3 border-t border-teal-200">
           <p className="text-xs text-gray-500">
             Achieved on {new Date(recognitionData[`${current_tier}_achieved_at`]).toLocaleDateString('en-GB', {
               day: 'numeric',
