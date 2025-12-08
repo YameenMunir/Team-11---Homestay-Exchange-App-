@@ -108,7 +108,7 @@ export default function SignupForm() {
             Create your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Join Host Family Stay
+            Join Homestay Exchange
           </p>
         </div>
 

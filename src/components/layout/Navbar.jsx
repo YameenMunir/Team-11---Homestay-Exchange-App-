@@ -62,11 +62,11 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-3 group">
             <img
               src="/homestay-logo.jpg"
-              alt="Host Family Stay Logo"
+              alt="Homestay Exchange Logo"
               className="h-12 md:h-16 w-auto object-contain group-hover:scale-105 transition-transform"
             />
             <span className="text-xl md:text-2xl font-display font-bold text-gray-900 hidden sm:inline">
-              Host Family Stay
+              Homestay Exchange
             </span>
           </Link>
 

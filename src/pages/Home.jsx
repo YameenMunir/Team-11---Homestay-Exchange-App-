@@ -179,7 +179,7 @@ const Home = () => {
         <div className="container-custom">
           <div className="text-center mb-16 animate-fade-in">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
-              Why Choose Host Family Stay?
+              Why Choose Homestay Exchange?
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               A trusted platform designed for safety, accessibility, and meaningful connections.

@@ -32,7 +32,7 @@ const AboutUs = () => {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-display font-bold mb-6">
-              About Host Family Stay
+              About Homestay Exchange
             </h1>
             <p className="text-xl text-purple-100 leading-relaxed">
               We're on a mission to make UK education more accessible while building
@@ -53,7 +53,7 @@ const AboutUs = () => {
                 <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                Host Family Stay connects students seeking affordable accommodation with
+                Homestay Exchange connects students seeking affordable accommodation with
                 hosts who need support with daily tasks. Through our innovative "barter"
                 system, students provide services such as companionship, light cleaning,
                 grocery shopping, or technology help in exchange for free or low-cost
@@ -188,7 +188,7 @@ const AboutUs = () => {
               Questions? We're Here to Help
             </h2>
             <p className="text-lg text-gray-600 mb-8">
-              Get in touch with our team for more information about Host Family Stay.
+              Get in touch with our team for more information about Homestay Exchange.
             </p>
             <Link to="/contact" className="btn-primary">
               Contact Us

@@ -95,7 +95,7 @@ const ContactUs = () => {
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Visit Us</h3>
                 <p className="text-gray-600 text-sm">
-                  Host Family Stay<br />
+                  Homestay Exchange<br />
                   123 University Street<br />
                   London, UK<br />
                   SW1A 1AA

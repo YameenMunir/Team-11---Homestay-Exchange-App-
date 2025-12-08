@@ -12,11 +12,11 @@ const Footer = () => {
             <div className="mb-4">
               <img
                 src="/homestay-logo.jpg"
-                alt="Host Family Stay Logo"
+                alt="Homestay Exchange Logo"
                 className="h-16 w-auto object-contain mb-2"
               />
               <h3 className="text-white font-display font-bold text-lg">
-                Host Family Stay
+                Homestay Exchange
               </h3>
             </div>
             <p className="text-sm leading-relaxed mb-4">
@@ -150,7 +150,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
             <p className="text-sm text-center md:text-left">
-              &copy; {new Date().getFullYear()} Host Family Stay. All rights reserved.
+              &copy; {new Date().getFullYear()} Homestay Exchange. All rights reserved.
             </p>
             <p className="text-sm text-center md:text-right">
               Making UK education accessible for everyone

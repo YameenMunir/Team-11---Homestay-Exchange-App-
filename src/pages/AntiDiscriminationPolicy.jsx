@@ -29,7 +29,7 @@ const AntiDiscriminationPolicy = () => {
                   Our Commitment to Equality
                 </h2>
                 <p className="text-gray-700 leading-relaxed">
-                  Host Family Stay is committed to creating an inclusive, welcoming platform where
+                  Homestay Exchange is committed to creating an inclusive, welcoming platform where
                   all users are treated with dignity and respect. We have zero tolerance for
                   discrimination of any kind and work actively to ensure equal opportunities for
                   everyone in our community.

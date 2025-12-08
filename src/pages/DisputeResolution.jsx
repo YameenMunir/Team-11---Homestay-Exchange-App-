@@ -29,7 +29,7 @@ const DisputeResolution = () => {
                   Our Commitment to Fair Resolution
                 </h2>
                 <p className="text-gray-700 leading-relaxed">
-                  At Host Family Stay, we understand that conflicts can arise even in the best
+                  At Homestay Exchange, we understand that conflicts can arise even in the best
                   relationships. Our dispute resolution process is designed to address issues
                   fairly, transparently, and efficiently, protecting the rights and wellbeing of
                   all parties involved.

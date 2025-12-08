@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
                   1. Introduction
                 </h2>
                 <p className="text-gray-700 leading-relaxed">
-                  At Host Family Stay, we are committed to protecting your privacy and personal
+                  At Homestay Exchange, we are committed to protecting your privacy and personal
                   data. This Privacy Policy explains how we collect, use, store, and protect your
                   information in accordance with UK GDPR and Data Protection Act 2018.
                 </p>

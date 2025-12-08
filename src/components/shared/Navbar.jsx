@@ -29,7 +29,7 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link to={getDashboardLink()} className="flex items-center space-x-2">
               <Home className="w-6 h-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Host Family Stay</span>
+              <span className="text-xl font-bold text-gray-900">Homestay Exchange</span>
             </Link>
           </div>
 
