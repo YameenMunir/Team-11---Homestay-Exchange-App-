@@ -24,12 +24,14 @@ const AdminCreateProfile = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdUserEmail, setCreatedUserEmail] = useState('');
+  const [passwordSetByAdmin, setPasswordSetByAdmin] = useState(false);
 
   const [profileData, setProfileData] = useState({
     // Basic Info
     userType: 'host',
     fullName: '',
     email: '',
+    password: '',
     countryCode: '+44',
     phone: '',
     dateOfBirth: '',
@@ -144,8 +146,14 @@ const AdminCreateProfile = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!profileData.fullName || !profileData.email || !profileData.phone || !profileData.dateOfBirth) {
-      toast.error('Please fill in all required fields (including date of birth)');
+    if (!profileData.fullName || !profileData.email || !profileData.password || !profileData.phone || !profileData.dateOfBirth) {
+      toast.error('Please fill in all required fields (including password and date of birth)');
+      return;
+    }
+
+    // Validate password
+    if (profileData.password.length < 8) {
+      toast.error('Password must be at least 8 characters long');
       return;
     }
 
@@ -223,6 +231,7 @@ const AdminCreateProfile = () => {
       // Success!
       console.log('✅ User profile created successfully:', result);
       setCreatedUserEmail(profileData.email);
+      setPasswordSetByAdmin(result.user?.password_set_by_admin || false);
       setShowSuccess(true);
       toast.success('User profile created successfully!');
 
@@ -266,7 +275,15 @@ const AdminCreateProfile = () => {
           </h2>
           <p className="text-gray-600 mb-6">
             The {profileData.userType === 'student' ? 'student' : profileData.userType} profile for <strong>{profileData.fullName}</strong> has been created.
-            A welcome email with password reset instructions has been sent to <strong>{createdUserEmail || profileData.email}</strong>.
+            {passwordSetByAdmin ? (
+              <>
+                {' '}The user can now log in with the password you set at <strong>{createdUserEmail || profileData.email}</strong>.
+              </>
+            ) : (
+              <>
+                {' '}A welcome email with password reset instructions has been sent to <strong>{createdUserEmail || profileData.email}</strong>.
+              </>
+            )}
           </p>
           <div className="space-y-3">
             <button
@@ -279,10 +296,12 @@ const AdminCreateProfile = () => {
               onClick={() => {
                 setShowSuccess(false);
                 setCurrentStep(1);
+                setPasswordSetByAdmin(false);
                 setProfileData({
                   userType: 'host',
                   fullName: '',
                   email: '',
+                  password: '',
                   countryCode: '+44',
                   phone: '',
                   dateOfBirth: '',
@@ -474,6 +493,27 @@ const AdminCreateProfile = () => {
                 </div>
                 <p className="text-xs text-gray-600 mt-1">
                   User will receive login instructions at this email
+                </p>
+              </div>
+
+              {/* Password */}
+              <div>
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Password <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={profileData.password}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="Set a secure password"
+                  required
+                  minLength={8}
+                />
+                <p className="text-xs text-gray-600 mt-1">
+                  Minimum 8 characters. User will use this to log in.
                 </p>
               </div>
 

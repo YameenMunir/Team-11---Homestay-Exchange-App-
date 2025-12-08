@@ -947,13 +947,13 @@ export const adminService = {
       // ====================================================================
       // STEP 3: CREATE AUTH USER
       // ====================================================================
-      // Generate a random temporary password (user will reset via email)
-      const tempPassword = `TempPass${Math.random().toString(36).slice(-8)}!${Date.now().toString(36)}`;
+      // Use admin-provided password, or generate a random temporary password if not provided
+      const password = profileData.password || `TempPass${Math.random().toString(36).slice(-8)}!${Date.now().toString(36)}`;
 
       console.log('Creating auth user...');
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: profileData.email.toLowerCase(),
-        password: tempPassword,
+        password: password,
         options: {
           data: {
             full_name: profileData.fullName,
@@ -1186,33 +1186,57 @@ export const adminService = {
       }
 
       // ====================================================================
-      // STEP 7: SEND PASSWORD RESET EMAIL
+      // STEP 7: SEND PASSWORD RESET EMAIL (only if password wasn't set)
       // ====================================================================
-      console.log('Sending password reset email...');
+      let passwordSetByAdmin = false;
 
-      try {
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-          profileData.email.toLowerCase(),
-          {
-            redirectTo: `${window.location.origin}/reset-password`,
+      if (profileData.password) {
+        // Admin set a password, no need to send reset email
+        console.log('✅ Password set by admin, skipping password reset email');
+        passwordSetByAdmin = true;
+      } else {
+        // No password provided, send reset email
+        console.log('Sending password reset email...');
+
+        try {
+          const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+            profileData.email.toLowerCase(),
+            {
+              redirectTo: `${window.location.origin}/reset-password`,
+            }
+          );
+
+          if (resetError) {
+            console.error('⚠️ Warning: Could not send password reset email:', resetError);
+            // Don't fail the entire operation if email fails
+          } else {
+            console.log('✅ Password reset email sent');
           }
-        );
-
-        if (resetError) {
-          console.error('⚠️ Warning: Could not send password reset email:', resetError);
+        } catch (emailErr) {
+          console.error('⚠️ Warning: Exception sending password reset email:', emailErr);
           // Don't fail the entire operation if email fails
-        } else {
-          console.log('✅ Password reset email sent');
         }
-      } catch (emailErr) {
-        console.error('⚠️ Warning: Exception sending password reset email:', emailErr);
-        // Don't fail the entire operation if email fails
       }
 
       // ====================================================================
       // STEP 8: RETURN SUCCESS RESPONSE
       // ====================================================================
       console.log('=== COMPLETED createUserProfileOnBehalf() ===');
+
+      // Create next steps based on whether password was set
+      const nextSteps = passwordSetByAdmin
+        ? [
+            'Password has been set by admin',
+            'User can now log in with the provided password',
+            'User can complete additional profile details after login',
+            'Admin should review and verify the user account',
+          ]
+        : [
+            'Password reset email sent to user',
+            'User should check email and set a permanent password',
+            'User can then log in and complete additional profile details',
+            'Admin should review and verify the user account',
+          ];
 
       return {
         status: 'success',
@@ -1224,18 +1248,14 @@ export const adminService = {
           full_name: profileData.fullName,
           role: userType,
           created_by_admin: true,
+          password_set_by_admin: passwordSetByAdmin,
         },
         created_profiles: {
           user_profile: profileRecord,
           [userType === 'host' ? 'host_profile' : 'guest_profile']: roleSpecificProfile,
         },
         uploaded_documents: uploadedDocuments,
-        next_steps: [
-          'Password reset email sent to user',
-          'User should check email and set a permanent password',
-          'User can then log in and complete additional profile details',
-          'Admin should review and verify the user account',
-        ],
+        next_steps: nextSteps,
       };
 
     } catch (error) {
