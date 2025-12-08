@@ -14,6 +14,7 @@ import {
   Loader2,
   Eye,
   EyeOff,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { adminService } from '../services/adminService';
@@ -403,6 +404,13 @@ const AdminCreateProfile = () => {
       <div className="container-custom max-w-4xl">
         {/* Header */}
         <div className="mb-8">
+          <button
+            onClick={() => navigate('/admin/dashboard')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-teal-600 transition-colors mb-4 group"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to Admin Dashboard</span>
+          </button>
           <h1 className="text-3xl font-display font-bold text-gray-900 mb-3">
             Create User Profile
           </h1>
