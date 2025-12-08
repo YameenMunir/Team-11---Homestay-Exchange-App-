@@ -139,29 +139,6 @@ const AdminLogin = () => {
               </div>
             </div>
 
-            {/* Role Selection (Development Only - Remove in Production) */}
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <label htmlFor="role" className="block text-sm font-semibold text-gray-900 mb-2">
-                Admin Role (Dev Only)
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="input-field"
-                aria-label="Admin Role"
-              >
-                <option value="super_admin">Super Admin (All Permissions)</option>
-                <option value="admin">Admin</option>
-                <option value="moderator">Moderator</option>
-                <option value="support">Support</option>
-              </select>
-              <p className="text-xs text-yellow-800 mt-2">
-                In production, role is determined by your account
-              </p>
-            </div>
-
             {/* Submit Button */}
             <button
               type="submit"
