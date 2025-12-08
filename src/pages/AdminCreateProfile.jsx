@@ -30,12 +30,14 @@ const AdminCreateProfile = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [emailsMatch, setEmailsMatch] = useState(true);
 
   const [profileData, setProfileData] = useState({
     // Basic Info
     userType: 'host',
     fullName: '',
     email: '',
+    confirmEmail: '',
     password: '',
     confirmPassword: '',
     countryCode: '+44',
@@ -122,6 +124,13 @@ const AdminCreateProfile = () => {
       [name]: newValue,
     });
 
+    // Check email match in real-time
+    if (name === 'email') {
+      setEmailsMatch(profileData.confirmEmail === '' || profileData.confirmEmail === newValue);
+    } else if (name === 'confirmEmail') {
+      setEmailsMatch(value === '' || value === profileData.email);
+    }
+
     // Check password match in real-time
     if (name === 'password') {
       setPasswordsMatch(profileData.confirmPassword === '' || profileData.confirmPassword === newValue);
@@ -161,8 +170,14 @@ const AdminCreateProfile = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!profileData.fullName || !profileData.email || !profileData.password || !profileData.confirmPassword || !profileData.phone || !profileData.dateOfBirth) {
-      toast.error('Please fill in all required fields (including password and date of birth)');
+    if (!profileData.fullName || !profileData.email || !profileData.confirmEmail || !profileData.password || !profileData.confirmPassword || !profileData.phone || !profileData.dateOfBirth) {
+      toast.error('Please fill in all required fields (including email confirmation, password and date of birth)');
+      return;
+    }
+
+    // Validate email match
+    if (profileData.email !== profileData.confirmEmail) {
+      toast.error('Email addresses do not match');
       return;
     }
 
@@ -541,6 +556,46 @@ const AdminCreateProfile = () => {
                 <p className="text-xs text-gray-600 mt-1">
                   User will receive login instructions at this email
                 </p>
+              </div>
+
+              {/* Confirm Email */}
+              <div>
+                <label htmlFor="confirmEmail" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Confirm Email Address <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    id="confirmEmail"
+                    name="confirmEmail"
+                    value={profileData.confirmEmail}
+                    onChange={handleChange}
+                    className={`input-field pl-10 ${
+                      profileData.confirmEmail && !emailsMatch
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : profileData.confirmEmail && emailsMatch
+                        ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                        : ''
+                    }`}
+                    placeholder="Re-enter email address"
+                    required
+                  />
+                </div>
+                {profileData.confirmEmail && !emailsMatch && (
+                  <p className="text-xs text-red-600 mt-1 flex items-center">
+                    <AlertCircle className="w-3 h-3 mr-1" />
+                    Email addresses do not match
+                  </p>
+                )}
+                {profileData.confirmEmail && emailsMatch && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Email addresses match
+                  </p>
+                )}
               </div>
 
               {/* Password */}
