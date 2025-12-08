@@ -29,6 +29,7 @@ const AdminCreateProfile = () => {
   const [passwordSetByAdmin, setPasswordSetByAdmin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
   const [profileData, setProfileData] = useState({
     // Basic Info
@@ -114,10 +115,19 @@ const AdminCreateProfile = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    const newValue = type === 'checkbox' ? checked : value;
+
     setProfileData({
       ...profileData,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: newValue,
     });
+
+    // Check password match in real-time
+    if (name === 'password') {
+      setPasswordsMatch(profileData.confirmPassword === '' || profileData.confirmPassword === newValue);
+    } else if (name === 'confirmPassword') {
+      setPasswordsMatch(value === '' || value === profileData.password);
+    }
   };
 
   const handleServiceToggle = (service) => {
@@ -332,6 +342,7 @@ const AdminCreateProfile = () => {
                 setPasswordSetByAdmin(false);
                 setShowPassword(false);
                 setShowConfirmPassword(false);
+                setPasswordsMatch(true);
                 setProfileData({
                   userType: 'host',
                   fullName: '',
@@ -578,7 +589,13 @@ const AdminCreateProfile = () => {
                     name="confirmPassword"
                     value={profileData.confirmPassword}
                     onChange={handleChange}
-                    className="input-field pr-10"
+                    className={`input-field pr-10 ${
+                      profileData.confirmPassword && !passwordsMatch
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                        : profileData.confirmPassword && passwordsMatch
+                        ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                        : ''
+                    }`}
                     placeholder="Re-enter the password"
                     required
                     minLength={8}
@@ -595,9 +612,23 @@ const AdminCreateProfile = () => {
                     )}
                   </button>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">
-                  Must match the password above
-                </p>
+                {profileData.confirmPassword && !passwordsMatch && (
+                  <p className="text-xs text-red-600 mt-1 flex items-center">
+                    <AlertCircle className="w-3 h-3 mr-1" />
+                    Passwords do not match
+                  </p>
+                )}
+                {profileData.confirmPassword && passwordsMatch && (
+                  <p className="text-xs text-green-600 mt-1 flex items-center">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Passwords match
+                  </p>
+                )}
+                {!profileData.confirmPassword && (
+                  <p className="text-xs text-gray-600 mt-1">
+                    Must match the password above
+                  </p>
+                )}
               </div>
 
               {/* Phone */}
