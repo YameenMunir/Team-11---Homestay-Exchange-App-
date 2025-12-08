@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Save,
   Loader2,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { adminService } from '../services/adminService';
@@ -25,6 +27,8 @@ const AdminCreateProfile = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdUserEmail, setCreatedUserEmail] = useState('');
   const [passwordSetByAdmin, setPasswordSetByAdmin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [profileData, setProfileData] = useState({
     // Basic Info
@@ -32,6 +36,7 @@ const AdminCreateProfile = () => {
     fullName: '',
     email: '',
     password: '',
+    confirmPassword: '',
     countryCode: '+44',
     phone: '',
     dateOfBirth: '',
@@ -146,7 +151,7 @@ const AdminCreateProfile = () => {
     e.preventDefault();
 
     // Basic validation
-    if (!profileData.fullName || !profileData.email || !profileData.password || !profileData.phone || !profileData.dateOfBirth) {
+    if (!profileData.fullName || !profileData.email || !profileData.password || !profileData.confirmPassword || !profileData.phone || !profileData.dateOfBirth) {
       toast.error('Please fill in all required fields (including password and date of birth)');
       return;
     }
@@ -154,6 +159,12 @@ const AdminCreateProfile = () => {
     // Validate password
     if (profileData.password.length < 8) {
       toast.error('Password must be at least 8 characters long');
+      return;
+    }
+
+    // Validate password match
+    if (profileData.password !== profileData.confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
@@ -192,6 +203,28 @@ const AdminCreateProfile = () => {
       }
       if (!profileData.servicesOffered || profileData.servicesOffered.length === 0) {
         toast.error('Please select at least one service offered');
+        return;
+      }
+    }
+
+    // Document validation - ID Document is required for all users
+    if (!profileData.documents.idDocument) {
+      toast.error('Please upload an ID Document (Passport or Driving License)');
+      return;
+    }
+
+    // Host-specific document validation
+    if (profileData.userType === 'host') {
+      if (!profileData.documents.addressProof) {
+        toast.error('Please upload Proof of Address for host profile');
+        return;
+      }
+    }
+
+    // Student-specific document validation
+    if (profileData.userType === 'student') {
+      if (!profileData.documents.admissionLetter) {
+        toast.error('Please upload Admission Letter for student profile');
         return;
       }
     }
@@ -297,11 +330,14 @@ const AdminCreateProfile = () => {
                 setShowSuccess(false);
                 setCurrentStep(1);
                 setPasswordSetByAdmin(false);
+                setShowPassword(false);
+                setShowConfirmPassword(false);
                 setProfileData({
                   userType: 'host',
                   fullName: '',
                   email: '',
                   password: '',
+                  confirmPassword: '',
                   countryCode: '+44',
                   phone: '',
                   dateOfBirth: '',
@@ -501,19 +537,66 @@ const AdminCreateProfile = () => {
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
                   Password <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={profileData.password}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="Set a secure password"
-                  required
-                  minLength={8}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    value={profileData.password}
+                    onChange={handleChange}
+                    className="input-field pr-10"
+                    placeholder="Set a secure password"
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <p className="text-xs text-gray-600 mt-1">
                   Minimum 8 characters. User will use this to log in.
+                </p>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Confirm Password <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={profileData.confirmPassword}
+                    onChange={handleChange}
+                    className="input-field pr-10"
+                    placeholder="Re-enter the password"
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  Must match the password above
                 </p>
               </div>
 
@@ -804,7 +887,9 @@ const AdminCreateProfile = () => {
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium text-gray-900">ID Document</p>
+                        <p className="font-medium text-gray-900">
+                          ID Document <span className="text-red-500">*</span>
+                        </p>
                         <p className="text-sm text-gray-600">Passport or Driving License</p>
                       </div>
                       <label className="btn-outline cursor-pointer">
@@ -832,7 +917,9 @@ const AdminCreateProfile = () => {
                       <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-medium text-gray-900">Proof of Address</p>
+                            <p className="font-medium text-gray-900">
+                              Proof of Address <span className="text-red-500">*</span>
+                            </p>
                             <p className="text-sm text-gray-600">Utility bill or council tax statement</p>
                           </div>
                           <label className="btn-outline cursor-pointer">
@@ -886,7 +973,9 @@ const AdminCreateProfile = () => {
                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-purple-400 transition-colors">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-gray-900">Admission Letter</p>
+                          <p className="font-medium text-gray-900">
+                            Admission Letter <span className="text-red-500">*</span>
+                          </p>
                           <p className="text-sm text-gray-600">University admission or enrollment letter</p>
                         </div>
                         <label className="btn-outline cursor-pointer">
