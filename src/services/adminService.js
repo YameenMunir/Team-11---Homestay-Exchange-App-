@@ -615,6 +615,7 @@ export const adminService = {
 
   /**
    * Get all facilitation requests
+   * Note: facilitation_requests table uses requester_id and target_id, not guest_id/host_id
    */
   async getFacilitationRequests(status = null) {
     try {
@@ -622,19 +623,19 @@ export const adminService = {
         .from('facilitation_requests')
         .select(`
           *,
-          host:host_id (
+          requester:requester_id (
             id,
-            user_id,
-            address,
-            postcode,
-            user_profiles!inner (id, full_name, email, phone_number)
+            full_name,
+            email,
+            phone_number,
+            role
           ),
-          guest:guest_id (
+          target:target_id (
             id,
-            user_id,
-            university,
-            course,
-            user_profiles!inner (id, full_name, email, phone_number)
+            full_name,
+            email,
+            phone_number,
+            role
           )
         `)
         .order('created_at', { ascending: false });
@@ -650,22 +651,21 @@ export const adminService = {
       // Format the data
       return data.map(req => ({
         id: req.id,
-        hostId: req.host_id,
-        guestId: req.guest_id,
-        hostName: req.host?.user_profiles?.full_name || 'Unknown Host',
-        hostEmail: req.host?.user_profiles?.email || '',
-        hostAddress: req.host?.address || '',
-        guestName: req.guest?.user_profiles?.full_name || 'Unknown Student',
-        guestEmail: req.guest?.user_profiles?.email || '',
-        guestUniversity: req.guest?.university || '',
-        guestCourse: req.guest?.course || '',
+        requesterId: req.requester_id,
+        targetId: req.target_id,
+        requesterRole: req.requester_role,
+        requesterName: req.requester?.full_name || 'Unknown',
+        requesterEmail: req.requester?.email || '',
+        targetName: req.target?.full_name || 'Unknown',
+        targetEmail: req.target?.email || '',
+        targetRole: req.target?.role || '',
         status: req.status,
-        servicesOffered: req.services_offered || [],
+        message: req.message || '',
         requestDate: req.created_at,
-        approvedDate: req.approved_at,
-        rejectedDate: req.rejected_at,
+        reviewedAt: req.reviewed_at,
+        matchedAt: req.matched_at,
+        completedAt: req.completed_at,
         adminNotes: req.admin_notes,
-        duration: req.duration_months,
       }));
     } catch (error) {
       console.error('Error fetching facilitation requests:', error);
@@ -748,27 +748,30 @@ export const adminService = {
       }
 
       // Get recent facilitation requests
-      const { data: recentRequests } = await supabase
+      const { data: recentRequests, error: requestsError } = await supabase
         .from('facilitation_requests')
         .select(`
           id,
           created_at,
           status,
-          guest:guest_id (
-            user_profiles!inner (full_name)
+          requester:requester_id (
+            full_name
           ),
-          host:host_id (
-            user_profiles!inner (full_name)
+          target:target_id (
+            full_name
           )
         `)
         .order('created_at', { ascending: false })
         .limit(5);
 
-      if (recentRequests) {
+      if (requestsError) {
+        console.warn('Error fetching recent facilitation requests:', requestsError);
+        // Continue without facilitation requests - don't fail the entire function
+      } else if (recentRequests) {
         recentRequests.forEach(req => {
           activities.push({
             type: 'facilitation_request',
-            message: `Facilitation request: ${req.guest?.user_profiles?.full_name} → ${req.host?.user_profiles?.full_name}`,
+            message: `Facilitation request: ${req.requester?.full_name || 'Unknown'} → ${req.target?.full_name || 'Unknown'}`,
             timestamp: req.created_at,
             status: req.status,
           });
@@ -782,6 +785,466 @@ export const adminService = {
     } catch (error) {
       console.error('Error fetching recent activity:', error);
       throw error;
+    }
+  },
+
+  /**
+   * Create a user profile on behalf of a less tech-savvy user
+   * This function handles the complete flow:
+   * 1. Validate input data
+   * 2. Create auth.users record
+   * 3. Create user_profiles record
+   * 4. Create role-specific profile (host_profiles or guest_profiles)
+   * 5. Upload documents if provided
+   * 6. Send welcome email with password reset link
+   *
+   * @param {Object} profileData - Complete profile data from admin form
+   * @param {string} adminUserId - ID of the admin creating the profile
+   * @returns {Object} - Result with status, user data, and next steps
+   */
+  async createUserProfileOnBehalf(profileData, adminUserId) {
+    try {
+      console.log('=== STARTING createUserProfileOnBehalf() ===');
+      console.log('Profile data:', profileData);
+
+      // ====================================================================
+      // STEP 1: VALIDATE INPUT DATA
+      // ====================================================================
+      const validationErrors = [];
+
+      // Required fields for all users
+      if (!profileData.email || !profileData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        validationErrors.push('Valid email address is required');
+      }
+      if (!profileData.fullName || profileData.fullName.trim().length < 2) {
+        validationErrors.push('Full name is required (minimum 2 characters)');
+      }
+
+      // Extract country code and clean phone number
+      let countryCode = profileData.countryCode || '+44'; // Use provided country code or default to UK
+      let phoneNumber = '';
+
+      if (profileData.phone) {
+        // Remove all spaces, dashes, and parentheses
+        const cleanedPhone = profileData.phone.replace(/[\s\-()]/g, '');
+
+        // Check if phone starts with + (user might have included country code)
+        if (cleanedPhone.startsWith('+')) {
+          // Extract country code (1-3 digits after +)
+          const match = cleanedPhone.match(/^(\+\d{1,3})(\d+)$/);
+          if (match) {
+            countryCode = match[1]; // Override with user-provided country code
+            phoneNumber = match[2];
+          } else {
+            validationErrors.push('Invalid phone number format. Expected format: +44 1234567890');
+          }
+        } else {
+          // No country code in phone number, use cleaned number
+          phoneNumber = cleanedPhone;
+        }
+
+        // Validate phone number: must be 10-15 digits
+        if (phoneNumber && !/^\d{10,15}$/.test(phoneNumber)) {
+          validationErrors.push('Phone number must contain 10-15 digits (numbers only)');
+        }
+      }
+
+      // Validate user type
+      const userType = profileData.userType === 'student' ? 'guest' : profileData.userType;
+      if (!['host', 'guest'].includes(userType)) {
+        validationErrors.push('Invalid user type (must be host or guest)');
+      }
+
+      // Validate age 18+ for ALL users (both host and guest)
+      if (profileData.dateOfBirth) {
+        const birthDate = new Date(profileData.dateOfBirth);
+        const today = new Date();
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        const finalAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+          ? age - 1
+          : age;
+
+        if (finalAge < 18) {
+          validationErrors.push('User must be at least 18 years old');
+        }
+      }
+
+      // Role-specific validation
+      if (userType === 'guest') {
+        // Guest (student) required fields
+        if (!profileData.university || profileData.university.trim().length < 2) {
+          validationErrors.push('University is required for student profiles');
+        }
+        if (!profileData.course || profileData.course.trim().length < 2) {
+          validationErrors.push('Course is required for student profiles');
+        }
+
+        // Validate at least one service offered
+        if (!profileData.servicesOffered || profileData.servicesOffered.length === 0) {
+          validationErrors.push('At least one service must be selected for student profiles');
+        }
+      } else if (userType === 'host') {
+        // Host required fields
+        if (!profileData.address || profileData.address.trim().length < 5) {
+          validationErrors.push('Address is required for host profiles');
+        }
+        if (!profileData.city || profileData.city.trim().length < 2) {
+          validationErrors.push('City is required for host profiles');
+        }
+        if (!profileData.postcode || profileData.postcode.trim().length < 3) {
+          validationErrors.push('Postcode is required for host profiles');
+        }
+
+        // Validate number of bedrooms if provided
+        if (profileData.bedroomsAvailable && profileData.bedroomsAvailable < 0) {
+          validationErrors.push('Number of bedrooms must be 0 or greater');
+        }
+
+        // Validate at least one service needed
+        if (!profileData.servicesNeeded || profileData.servicesNeeded.length === 0) {
+          validationErrors.push('At least one service must be selected for host profiles');
+        }
+      }
+
+      // If validation fails, return error response
+      if (validationErrors.length > 0) {
+        console.log('❌ Validation failed:', validationErrors);
+        return {
+          status: 'error',
+          message: 'Validation failed',
+          errors: validationErrors,
+        };
+      }
+
+      console.log('✅ Validation passed');
+
+      // ====================================================================
+      // STEP 2: CHECK FOR DUPLICATE EMAIL
+      // ====================================================================
+      const { data: existingProfile, error: checkError } = await supabase
+        .from('user_profiles')
+        .select('id, email')
+        .eq('email', profileData.email.toLowerCase())
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('Error checking for duplicate email:', checkError);
+        throw checkError;
+      }
+
+      if (existingProfile) {
+        console.log('❌ Email already exists:', profileData.email);
+        return {
+          status: 'error',
+          message: 'Email already exists',
+          errors: [`An account with email ${profileData.email} already exists`],
+        };
+      }
+
+      console.log('✅ Email is unique');
+
+      // ====================================================================
+      // STEP 3: CREATE AUTH USER
+      // ====================================================================
+      // Generate a random temporary password (user will reset via email)
+      const tempPassword = `TempPass${Math.random().toString(36).slice(-8)}!${Date.now().toString(36)}`;
+
+      console.log('Creating auth user...');
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: profileData.email.toLowerCase(),
+        password: tempPassword,
+        options: {
+          data: {
+            full_name: profileData.fullName,
+            role: userType,
+            created_by_admin: true,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (authError) {
+        console.error('❌ Error creating auth user:', authError);
+        return {
+          status: 'error',
+          message: 'Failed to create user account',
+          errors: [authError.message],
+        };
+      }
+
+      if (!authData.user) {
+        console.error('❌ Auth user creation failed: no user returned');
+        return {
+          status: 'error',
+          message: 'Failed to create user account',
+          errors: ['Authentication service did not return a user'],
+        };
+      }
+
+      const authUserId = authData.user.id;
+      console.log('✅ Auth user created with ID:', authUserId);
+
+      // ====================================================================
+      // STEP 4: CREATE USER_PROFILES RECORD
+      // ====================================================================
+      // Note: This might be auto-created by a database trigger, but we'll
+      // insert it explicitly to ensure all fields are set correctly
+      console.log('Creating user_profiles record...');
+
+      const userProfileData = {
+        id: authUserId,
+        email: profileData.email.toLowerCase(),
+        full_name: profileData.fullName,
+        role: userType,
+        phone_number: phoneNumber,
+        country_code: countryCode,
+        created_by: adminUserId,
+        is_verified: false, // Admin will verify after reviewing
+        is_active: true,    // Active but pending verification
+        is_suspended: false,
+        is_banned: false,
+      };
+
+      // Use upsert to handle case where trigger already created the record
+      const { data: profileRecord, error: profileError } = await supabase
+        .from('user_profiles')
+        .upsert(userProfileData, { onConflict: 'id' })
+        .select()
+        .single();
+
+      if (profileError) {
+        console.error('❌ Error creating user_profiles record:', profileError);
+        // Try to clean up auth user if profile creation fails
+        // Note: This requires admin privileges or a server function
+        return {
+          status: 'error',
+          message: 'Failed to create user profile',
+          errors: [profileError.message],
+        };
+      }
+
+      console.log('✅ User profile created');
+
+      // ====================================================================
+      // STEP 5: CREATE ROLE-SPECIFIC PROFILE
+      // ====================================================================
+      let roleSpecificProfile = null;
+
+      if (userType === 'host') {
+        console.log('Creating host_profiles record...');
+
+        const hostProfileData = {
+          user_id: authUserId,
+          date_of_birth: profileData.dateOfBirth || null,
+          address: profileData.address,
+          postcode: profileData.postcode,
+          city: profileData.city,
+          property_description: profileData.propertyType || null,
+          number_of_rooms: parseInt(profileData.bedroomsAvailable) || 1,
+          amenities: [], // Can be expanded later
+          accessibility_features: [], // Can be expanded later
+          preferred_gender: null,
+          preferred_age_range: null,
+          support_needs: profileData.servicesNeeded ? JSON.stringify(profileData.servicesNeeded) : null,
+          additional_info: profileData.adminNotes || null,
+          average_rating: 0,
+          total_ratings: 0,
+        };
+
+        const { data: hostProfile, error: hostError } = await supabase
+          .from('host_profiles')
+          .insert(hostProfileData)
+          .select()
+          .single();
+
+        if (hostError) {
+          console.error('❌ Error creating host_profiles record:', hostError);
+          return {
+            status: 'error',
+            message: 'Failed to create host profile',
+            errors: [hostError.message],
+          };
+        }
+
+        roleSpecificProfile = hostProfile;
+        console.log('✅ Host profile created');
+
+      } else if (userType === 'guest') {
+        console.log('Creating guest_profiles record...');
+
+        const guestProfileData = {
+          user_id: authUserId,
+          date_of_birth: profileData.dateOfBirth || null,
+          university: profileData.university,
+          course: profileData.course,
+          year_of_study: parseInt(profileData.yearOfStudy) || 1,
+          student_id: null, // Can be added later
+          preferred_location: null,
+          preferred_postcode: null,
+          bio: profileData.adminNotes || null,
+          skills: profileData.servicesOffered || [],
+          availability_start: null,
+          availability_end: null,
+          emergency_contact_name: null,
+          emergency_contact_phone: null,
+          average_rating: 0,
+          total_ratings: 0,
+        };
+
+        const { data: guestProfile, error: guestError } = await supabase
+          .from('guest_profiles')
+          .insert(guestProfileData)
+          .select()
+          .single();
+
+        if (guestError) {
+          console.error('❌ Error creating guest_profiles record:', guestError);
+          return {
+            status: 'error',
+            message: 'Failed to create guest profile',
+            errors: [guestError.message],
+          };
+        }
+
+        roleSpecificProfile = guestProfile;
+        console.log('✅ Guest profile created');
+      }
+
+      // ====================================================================
+      // STEP 6: UPLOAD DOCUMENTS (if provided)
+      // ====================================================================
+      const uploadedDocuments = {};
+
+      if (profileData.documents) {
+        console.log('Processing document uploads...');
+
+        for (const [docType, file] of Object.entries(profileData.documents)) {
+          if (file && file instanceof File) {
+            try {
+              const fileExt = file.name.split('.').pop();
+              const fileName = `${authUserId}_${docType}_${Date.now()}.${fileExt}`;
+              const filePath = `${authUserId}/${fileName}`;
+
+              // Upload to user-documents bucket
+              const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('user-documents')
+                .upload(filePath, file, {
+                  cacheControl: '3600',
+                  upsert: false,
+                });
+
+              if (uploadError) {
+                console.error(`❌ Error uploading ${docType}:`, uploadError);
+                continue; // Skip this document but continue with others
+              }
+
+              console.log(`✅ Uploaded ${docType}: ${filePath}`);
+
+              // Map frontend document types to database document_type enum
+              let documentType = 'government_id'; // default
+              switch (docType) {
+                case 'idDocument':
+                  documentType = 'government_id';
+                  break;
+                case 'addressProof':
+                  documentType = 'proof_of_address';
+                  break;
+                case 'dbsCheck':
+                  documentType = 'dbs_check';
+                  break;
+                case 'admissionLetter':
+                  documentType = 'admission_proof';
+                  break;
+              }
+
+              // Create user_documents record
+              const { error: docRecordError } = await supabase
+                .from('user_documents')
+                .insert({
+                  user_id: authUserId,
+                  document_type: documentType,
+                  file_url: filePath,
+                  file_name: file.name,
+                  file_size: file.size,
+                  verification_status: 'pending',
+                });
+
+              if (docRecordError) {
+                console.error(`❌ Error creating document record for ${docType}:`, docRecordError);
+              } else {
+                uploadedDocuments[docType] = filePath;
+              }
+
+            } catch (uploadErr) {
+              console.error(`❌ Exception uploading ${docType}:`, uploadErr);
+            }
+          }
+        }
+
+        console.log(`✅ Document uploads completed. Uploaded: ${Object.keys(uploadedDocuments).length}`);
+      }
+
+      // ====================================================================
+      // STEP 7: SEND PASSWORD RESET EMAIL
+      // ====================================================================
+      console.log('Sending password reset email...');
+
+      try {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+          profileData.email.toLowerCase(),
+          {
+            redirectTo: `${window.location.origin}/reset-password`,
+          }
+        );
+
+        if (resetError) {
+          console.error('⚠️ Warning: Could not send password reset email:', resetError);
+          // Don't fail the entire operation if email fails
+        } else {
+          console.log('✅ Password reset email sent');
+        }
+      } catch (emailErr) {
+        console.error('⚠️ Warning: Exception sending password reset email:', emailErr);
+        // Don't fail the entire operation if email fails
+      }
+
+      // ====================================================================
+      // STEP 8: RETURN SUCCESS RESPONSE
+      // ====================================================================
+      console.log('=== COMPLETED createUserProfileOnBehalf() ===');
+
+      return {
+        status: 'success',
+        message: 'User account created successfully.',
+        user: {
+          auth_user_id: authUserId,
+          profile_id: profileRecord.id,
+          email: profileData.email.toLowerCase(),
+          full_name: profileData.fullName,
+          role: userType,
+          created_by_admin: true,
+        },
+        created_profiles: {
+          user_profile: profileRecord,
+          [userType === 'host' ? 'host_profile' : 'guest_profile']: roleSpecificProfile,
+        },
+        uploaded_documents: uploadedDocuments,
+        next_steps: [
+          'Password reset email sent to user',
+          'User should check email and set a permanent password',
+          'User can then log in and complete additional profile details',
+          'Admin should review and verify the user account',
+        ],
+      };
+
+    } catch (error) {
+      console.error('❌ FATAL ERROR in createUserProfileOnBehalf():', error);
+      return {
+        status: 'error',
+        message: 'An unexpected error occurred while creating the user profile',
+        errors: [error.message],
+      };
     }
   },
 };

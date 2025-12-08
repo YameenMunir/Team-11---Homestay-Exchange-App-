@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   UserPlus,
@@ -11,20 +11,26 @@ import {
   CheckCircle,
   AlertCircle,
   Save,
+  Loader2,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
+import { adminService } from '../services/adminService';
+import toast from 'react-hot-toast';
 
 const AdminCreateProfile = () => {
   const navigate = useNavigate();
-  const { hasPermission } = useAdmin();
+  const { hasPermission, adminUser } = useAdmin();
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [createdUserEmail, setCreatedUserEmail] = useState('');
 
   const [profileData, setProfileData] = useState({
     // Basic Info
     userType: 'host',
     fullName: '',
     email: '',
+    countryCode: '+44',
     phone: '',
     dateOfBirth: '',
 
@@ -56,6 +62,13 @@ const AdminCreateProfile = () => {
     needsPasswordReset: true,
   });
 
+  // Debug: Log admin user when it changes
+  useEffect(() => {
+    console.log('AdminCreateProfile - Admin User State:', adminUser);
+    console.log('AdminCreateProfile - Admin User ID:', adminUser?.id);
+    console.log('AdminCreateProfile - Is Authenticated:', adminUser?.isAuthenticated);
+  }, [adminUser]);
+
   const servicesOptions = [
     'Companionship',
     'Light Cleaning',
@@ -73,6 +86,23 @@ const AdminCreateProfile = () => {
     'Terraced House',
     'Flat/Apartment',
     'Bungalow',
+  ];
+
+  const countryCodes = [
+    { code: '+44', country: 'GB', flag: '🇬🇧' },
+    { code: '+1', country: 'US', flag: '🇺🇸' },
+    { code: '+91', country: 'IN', flag: '🇮🇳' },
+    { code: '+86', country: 'CN', flag: '🇨🇳' },
+    { code: '+81', country: 'JP', flag: '🇯🇵' },
+    { code: '+49', country: 'DE', flag: '🇩🇪' },
+    { code: '+33', country: 'FR', flag: '🇫🇷' },
+    { code: '+39', country: 'IT', flag: '🇮🇹' },
+    { code: '+34', country: 'ES', flag: '🇪🇸' },
+    { code: '+61', country: 'AU', flag: '🇦🇺' },
+    { code: '+7', country: 'RU', flag: '🇷🇺' },
+    { code: '+82', country: 'KR', flag: '🇰🇷' },
+    { code: '+55', country: 'BR', flag: '🇧🇷' },
+    { code: '+27', country: 'ZA', flag: '🇿🇦' },
   ];
 
   const handleChange = (e) => {
@@ -110,18 +140,98 @@ const AdminCreateProfile = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
-    if (!profileData.fullName || !profileData.email || !profileData.phone) {
-      alert('Please fill in all required fields');
+    // Basic validation
+    if (!profileData.fullName || !profileData.email || !profileData.phone || !profileData.dateOfBirth) {
+      toast.error('Please fill in all required fields (including date of birth)');
       return;
     }
 
-    // TODO: Submit to backend API
-    console.log('Creating profile:', profileData);
-    setShowSuccess(true);
+    // Validate age 18+
+    if (profileData.dateOfBirth) {
+      const birthDate = new Date(profileData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const finalAge = monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ? age - 1
+        : age;
+
+      if (finalAge < 18) {
+        toast.error('User must be at least 18 years old');
+        return;
+      }
+    }
+
+    // Role-specific validation
+    if (profileData.userType === 'host') {
+      if (!profileData.address || !profileData.city || !profileData.postcode) {
+        toast.error('Please fill in all required host fields (address, city, postcode)');
+        return;
+      }
+      if (!profileData.servicesNeeded || profileData.servicesNeeded.length === 0) {
+        toast.error('Please select at least one service needed');
+        return;
+      }
+    }
+
+    if (profileData.userType === 'student') {
+      if (!profileData.university || !profileData.course) {
+        toast.error('Please fill in all required student fields (university, course)');
+        return;
+      }
+      if (!profileData.servicesOffered || profileData.servicesOffered.length === 0) {
+        toast.error('Please select at least one service offered');
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Get the admin user ID
+      console.log('Admin User from context:', adminUser);
+      const adminUserId = adminUser?.id || null;
+
+      if (!adminUserId) {
+        console.error('Admin user ID not found. Current admin user:', adminUser);
+        toast.error('Admin user not found. Please log in again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      console.log('Using admin user ID:', adminUserId);
+
+      // Call the backend service
+      console.log('Submitting profile data:', profileData);
+      const result = await adminService.createUserProfileOnBehalf(profileData, adminUserId);
+
+      console.log('Backend result:', result);
+
+      if (result.status === 'error') {
+        // Display validation or creation errors
+        const errorMessage = result.errors && result.errors.length > 0
+          ? result.errors.join(', ')
+          : result.message;
+        toast.error(errorMessage);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Success!
+      console.log('✅ User profile created successfully:', result);
+      setCreatedUserEmail(profileData.email);
+      setShowSuccess(true);
+      toast.success('User profile created successfully!');
+
+    } catch (error) {
+      console.error('❌ Error creating profile:', error);
+      toast.error(`Failed to create profile: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const nextStep = () => {
@@ -155,8 +265,8 @@ const AdminCreateProfile = () => {
             Profile Created Successfully!
           </h2>
           <p className="text-gray-600 mb-6">
-            The {profileData.userType} profile for <strong>{profileData.fullName}</strong> has been created.
-            A welcome email with password reset instructions has been sent to <strong>{profileData.email}</strong>.
+            The {profileData.userType === 'student' ? 'student' : profileData.userType} profile for <strong>{profileData.fullName}</strong> has been created.
+            A welcome email with password reset instructions has been sent to <strong>{createdUserEmail || profileData.email}</strong>.
           </p>
           <div className="space-y-3">
             <button
@@ -173,6 +283,7 @@ const AdminCreateProfile = () => {
                   userType: 'host',
                   fullName: '',
                   email: '',
+                  countryCode: '+44',
                   phone: '',
                   dateOfBirth: '',
                   address: '',
@@ -371,27 +482,47 @@ const AdminCreateProfile = () => {
                 <label htmlFor="phone" className="block text-sm font-semibold text-gray-900 mb-2">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="w-5 h-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={profileData.phone}
+                <div className="flex gap-2">
+                  {/* Country Code Selector */}
+                  <select
+                    name="countryCode"
+                    value={profileData.countryCode}
                     onChange={handleChange}
-                    className="input-field pl-10"
-                    placeholder="+44 7XXX XXXXXX"
-                    required
-                  />
+                    className="input-field w-28 text-sm"
+                  >
+                    {countryCodes.map((item) => (
+                      <option key={item.code} value={item.code}>
+                        {item.flag} {item.code}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Phone Number Input */}
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Phone className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={profileData.phone}
+                      onChange={handleChange}
+                      className="input-field pl-10 w-full"
+                      placeholder="e.g., 7700900123"
+                      required
+                    />
+                  </div>
                 </div>
+                <p className="text-xs text-gray-600 mt-1">
+                  Enter phone number without country code
+                </p>
               </div>
 
               {/* Date of Birth */}
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm font-semibold text-gray-900 mb-2">
-                  Date of Birth
+                  Date of Birth <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -399,8 +530,13 @@ const AdminCreateProfile = () => {
                   name="dateOfBirth"
                   value={profileData.dateOfBirth}
                   onChange={handleChange}
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
                   className="input-field"
+                  required
                 />
+                <p className="text-xs text-gray-600 mt-1">
+                  User must be 18 years or older
+                </p>
               </div>
             </div>
           )}
@@ -822,10 +958,20 @@ const AdminCreateProfile = () => {
             ) : (
               <button
                 type="submit"
-                className="btn-primary flex-1 flex items-center justify-center space-x-2"
+                disabled={isSubmitting}
+                className="btn-primary flex-1 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Save className="w-5 h-5" />
-                <span>Create Profile</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Creating Profile...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    <span>Create Profile</span>
+                  </>
+                )}
               </button>
             )}
           </div>
