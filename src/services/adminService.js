@@ -951,6 +951,10 @@ export const adminService = {
       const password = profileData.password || `TempPass${Math.random().toString(36).slice(-8)}!${Date.now().toString(36)}`;
 
       console.log('Creating auth user...');
+
+      // Store current admin session to restore it after creating the new user
+      const { data: { session: adminSession } } = await supabase.auth.getSession();
+
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: profileData.email.toLowerCase(),
         password: password,
@@ -963,6 +967,15 @@ export const adminService = {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
+
+      // Restore admin session immediately after creating the new user
+      if (adminSession) {
+        await supabase.auth.setSession({
+          access_token: adminSession.access_token,
+          refresh_token: adminSession.refresh_token,
+        });
+        console.log('✅ Admin session restored');
+      }
 
       if (authError) {
         console.error('❌ Error creating auth user:', authError);
