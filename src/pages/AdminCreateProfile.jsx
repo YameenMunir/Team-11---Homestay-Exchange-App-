@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   UserPlus,
   Home,
-  GraduationCap,
   Mail,
   Phone,
   MapPin,
@@ -53,18 +52,11 @@ const AdminCreateProfile = () => {
     bedroomsAvailable: '',
     servicesNeeded: [],
 
-    // Student-specific
-    university: '',
-    course: '',
-    yearOfStudy: '',
-    servicesOffered: [],
-
     // Documents (file uploads would be handled separately)
     documents: {
       idDocument: null,
       addressProof: null,
       dbsCheck: null,
-      admissionLetter: null,
     },
 
     // Notes
@@ -141,18 +133,17 @@ const AdminCreateProfile = () => {
   };
 
   const handleServiceToggle = (service) => {
-    const field = profileData.userType === 'host' ? 'servicesNeeded' : 'servicesOffered';
-    const currentServices = profileData[field];
+    const currentServices = profileData.servicesNeeded;
 
     if (currentServices.includes(service)) {
       setProfileData({
         ...profileData,
-        [field]: currentServices.filter((s) => s !== service),
+        servicesNeeded: currentServices.filter((s) => s !== service),
       });
     } else {
       setProfileData({
         ...profileData,
-        [field]: [...currentServices, service],
+        servicesNeeded: [...currentServices, service],
       });
     }
   };
@@ -210,49 +201,25 @@ const AdminCreateProfile = () => {
       }
     }
 
-    // Role-specific validation
-    if (profileData.userType === 'host') {
-      if (!profileData.address || !profileData.city || !profileData.postcode) {
-        toast.error('Please fill in all required host fields (address, city, postcode)');
-        return;
-      }
-      if (!profileData.servicesNeeded || profileData.servicesNeeded.length === 0) {
-        toast.error('Please select at least one service needed');
-        return;
-      }
+    // Host validation
+    if (!profileData.address || !profileData.city || !profileData.postcode) {
+      toast.error('Please fill in all required host fields (address, city, postcode)');
+      return;
+    }
+    if (!profileData.servicesNeeded || profileData.servicesNeeded.length === 0) {
+      toast.error('Please select at least one service needed');
+      return;
     }
 
-    if (profileData.userType === 'student') {
-      if (!profileData.university || !profileData.course) {
-        toast.error('Please fill in all required student fields (university, course)');
-        return;
-      }
-      if (!profileData.servicesOffered || profileData.servicesOffered.length === 0) {
-        toast.error('Please select at least one service offered');
-        return;
-      }
-    }
-
-    // Document validation - ID Document is required for all users
+    // Document validation
     if (!profileData.documents.idDocument) {
       toast.error('Please upload an ID Document (Passport or Driving License)');
       return;
     }
 
-    // Host-specific document validation
-    if (profileData.userType === 'host') {
-      if (!profileData.documents.addressProof) {
-        toast.error('Please upload Proof of Address for host profile');
-        return;
-      }
-    }
-
-    // Student-specific document validation
-    if (profileData.userType === 'student') {
-      if (!profileData.documents.admissionLetter) {
-        toast.error('Please upload Admission Letter for student profile');
-        return;
-      }
+    if (!profileData.documents.addressProof) {
+      toast.error('Please upload Proof of Address for host profile');
+      return;
     }
 
     setIsSubmitting(true);
@@ -333,16 +300,8 @@ const AdminCreateProfile = () => {
             Profile Created Successfully!
           </h2>
           <p className="text-gray-600 mb-6">
-            The {profileData.userType === 'student' ? 'student' : profileData.userType} profile for <strong>{profileData.fullName}</strong> has been created.
-            {passwordSetByAdmin ? (
-              <>
-                {' '}The user can now log in with the password you set at <strong>{createdUserEmail || profileData.email}</strong>.
-              </>
-            ) : (
-              <>
-                {' '}A welcome email with password reset instructions has been sent to <strong>{createdUserEmail || profileData.email}</strong>.
-              </>
-            )}
+            The host profile for <strong>{profileData.fullName}</strong> has been created.
+            The admin will send an email to <strong>{createdUserEmail || profileData.email}</strong> with their login details.
           </p>
           <div className="space-y-3">
             <button
@@ -363,6 +322,7 @@ const AdminCreateProfile = () => {
                   userType: 'host',
                   fullName: '',
                   email: '',
+                  confirmEmail: '',
                   password: '',
                   confirmPassword: '',
                   countryCode: '+44',
@@ -374,15 +334,10 @@ const AdminCreateProfile = () => {
                   propertyType: '',
                   bedroomsAvailable: '',
                   servicesNeeded: [],
-                  university: '',
-                  course: '',
-                  yearOfStudy: '',
-                  servicesOffered: [],
                   documents: {
                     idDocument: null,
                     addressProof: null,
                     dbsCheck: null,
-                    admissionLetter: null,
                   },
                   adminNotes: '',
                   createdOnBehalf: true,
@@ -412,10 +367,10 @@ const AdminCreateProfile = () => {
             <span className="font-medium">Back to Admin Dashboard</span>
           </button>
           <h1 className="text-3xl font-display font-bold text-gray-900 mb-3">
-            Create User Profile
+            Create Host Profile
           </h1>
           <p className="text-lg text-gray-600">
-            Create a profile on behalf of a less tech-savvy user
+            Create a host profile on behalf of a less tech-savvy user
           </p>
         </div>
 
@@ -425,8 +380,8 @@ const AdminCreateProfile = () => {
           <div className="text-sm text-blue-900">
             <p className="font-medium mb-1">Creating profiles on behalf of users</p>
             <p>
-              Use this tool to help elderly or less tech-savvy users get started. They will receive
-              an email with instructions to set their password and complete their profile.
+              Use this tool to help elderly or less tech-savvy users get started. The admin will send an email
+              to the user with their login details.
             </p>
           </div>
         </div>
@@ -440,7 +395,7 @@ const AdminCreateProfile = () => {
               }`}>
                 1
               </div>
-              <span className="ml-2 font-medium hidden sm:inline">User Type & Basic Info</span>
+              <span className="ml-2 font-medium hidden sm:inline">Basic Info</span>
             </div>
             <div className="flex-1 h-1 mx-4 bg-gray-200">
               <div className={`h-full ${currentStep >= 2 ? 'bg-teal-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 2 ? '100%' : '0%' }}></div>
@@ -451,7 +406,7 @@ const AdminCreateProfile = () => {
               }`}>
                 2
               </div>
-              <span className="ml-2 font-medium hidden sm:inline">Details & Services</span>
+              <span className="ml-2 font-medium hidden sm:inline">Property & Services</span>
             </div>
             <div className="flex-1 h-1 mx-4 bg-gray-200">
               <div className={`h-full ${currentStep >= 3 ? 'bg-teal-600' : 'bg-gray-200'}`} style={{ width: currentStep >= 3 ? '100%' : '0%' }}></div>
@@ -469,60 +424,12 @@ const AdminCreateProfile = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="card p-8">
-          {/* Step 1: User Type & Basic Info */}
+          {/* Step 1: Basic Info */}
           {currentStep === 1 && (
             <div className="space-y-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                Step 1: User Type & Basic Information
+                Step 1: Basic Information
               </h2>
-
-              {/* User Type */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-3">
-                  User Type <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setProfileData({ ...profileData, userType: 'host' })}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      profileData.userType === 'host'
-                        ? 'border-teal-600 bg-teal-50'
-                        : 'border-gray-200 hover:border-teal-300'
-                    }`}
-                  >
-                    <Home className={`w-8 h-8 mx-auto mb-2 ${
-                      profileData.userType === 'host' ? 'text-teal-600' : 'text-gray-400'
-                    }`} />
-                    <span className={`font-medium ${
-                      profileData.userType === 'host' ? 'text-teal-600' : 'text-gray-700'
-                    }`}>
-                      Host
-                    </span>
-                    <p className="text-xs text-gray-600 mt-1">Needs help with tasks</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setProfileData({ ...profileData, userType: 'student' })}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      profileData.userType === 'student'
-                        ? 'border-blue-600 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
-                    }`}
-                  >
-                    <GraduationCap className={`w-8 h-8 mx-auto mb-2 ${
-                      profileData.userType === 'student' ? 'text-blue-600' : 'text-gray-400'
-                    }`} />
-                    <span className={`font-medium ${
-                      profileData.userType === 'student' ? 'text-blue-600' : 'text-gray-700'
-                    }`}>
-                      Student
-                    </span>
-                    <p className="text-xs text-gray-600 mt-1">Offers help with tasks</p>
-                  </button>
-                </div>
-              </div>
 
               {/* Full Name */}
               <div>
@@ -758,209 +665,123 @@ const AdminCreateProfile = () => {
             </div>
           )}
 
-          {/* Step 2: Details & Services */}
+          {/* Step 2: Property & Services */}
           {currentStep === 2 && (
             <div className="space-y-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                Step 2: {profileData.userType === 'host' ? 'Property' : 'Education'} Details & Services
+                Step 2: Property Details & Services
               </h2>
 
-              {/* Host-specific fields */}
-              {profileData.userType === 'host' && (
-                <>
-                  <div>
-                    <label htmlFor="address" className="block text-sm font-semibold text-gray-900 mb-2">
-                      Address <span className="text-red-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <MapPin className="w-5 h-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        id="address"
-                        name="address"
-                        value={profileData.address}
-                        onChange={handleChange}
-                        className="input-field pl-10"
-                        placeholder="123 Main Street"
-                        required={profileData.userType === 'host'}
-                      />
-                    </div>
+              <div>
+                <label htmlFor="address" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Address <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <MapPin className="w-5 h-5 text-gray-400" />
                   </div>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={profileData.address}
+                    onChange={handleChange}
+                    className="input-field pl-10"
+                    placeholder="123 Main Street"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="city" className="block text-sm font-semibold text-gray-900 mb-2">
-                        City <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="city"
-                        name="city"
-                        value={profileData.city}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="London"
-                        required={profileData.userType === 'host'}
-                      />
-                    </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="city" className="block text-sm font-semibold text-gray-900 mb-2">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={profileData.city}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="London"
+                    required
+                  />
+                </div>
 
-                    <div>
-                      <label htmlFor="postcode" className="block text-sm font-semibold text-gray-900 mb-2">
-                        Postcode <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="postcode"
-                        name="postcode"
-                        value={profileData.postcode}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="SW1A 1AA"
-                        required={profileData.userType === 'host'}
-                      />
-                    </div>
-                  </div>
+                <div>
+                  <label htmlFor="postcode" className="block text-sm font-semibold text-gray-900 mb-2">
+                    Postcode <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="postcode"
+                    name="postcode"
+                    value={profileData.postcode}
+                    onChange={handleChange}
+                    className="input-field"
+                    placeholder="SW1A 1AA"
+                    required
+                  />
+                </div>
+              </div>
 
-                  <div>
-                    <label htmlFor="propertyType" className="block text-sm font-semibold text-gray-900 mb-2">
-                      Property Type
-                    </label>
-                    <select
-                      id="propertyType"
-                      name="propertyType"
-                      value={profileData.propertyType}
-                      onChange={handleChange}
-                      className="input-field"
+              <div>
+                <label htmlFor="propertyType" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Property Type
+                </label>
+                <select
+                  id="propertyType"
+                  name="propertyType"
+                  value={profileData.propertyType}
+                  onChange={handleChange}
+                  className="input-field"
+                >
+                  <option value="">Select property type</option>
+                  {propertyTypes.map((type) => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="bedroomsAvailable" className="block text-sm font-semibold text-gray-900 mb-2">
+                  Bedrooms Available
+                </label>
+                <input
+                  type="number"
+                  id="bedroomsAvailable"
+                  name="bedroomsAvailable"
+                  value={profileData.bedroomsAvailable}
+                  onChange={handleChange}
+                  className="input-field"
+                  placeholder="1"
+                  min="0"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-3">
+                  Services Needed <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {servicesOptions.map((service) => (
+                    <label
+                      key={service}
+                      className="flex items-center space-x-2 cursor-pointer"
                     >
-                      <option value="">Select property type</option>
-                      {propertyTypes.map((type) => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="bedroomsAvailable" className="block text-sm font-semibold text-gray-900 mb-2">
-                      Bedrooms Available
-                    </label>
-                    <input
-                      type="number"
-                      id="bedroomsAvailable"
-                      name="bedroomsAvailable"
-                      value={profileData.bedroomsAvailable}
-                      onChange={handleChange}
-                      className="input-field"
-                      placeholder="1"
-                      min="0"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-3">
-                      Services Needed <span className="text-red-500">*</span>
-                    </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {servicesOptions.map((service) => (
-                        <label
-                          key={service}
-                          className="flex items-center space-x-2 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={profileData.servicesNeeded.includes(service)}
-                            onChange={() => handleServiceToggle(service)}
-                            className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
-                          />
-                          <span className="text-sm text-gray-700">{service}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {/* Student-specific fields */}
-              {profileData.userType === 'student' && (
-                <>
-                  <div>
-                    <label htmlFor="university" className="block text-sm font-semibold text-gray-900 mb-2">
-                      University <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="university"
-                      name="university"
-                      value={profileData.university}
-                      onChange={handleChange}
-                      className="input-field"
-                      placeholder="e.g., University College London"
-                      required={profileData.userType === 'student'}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="course" className="block text-sm font-semibold text-gray-900 mb-2">
-                        Course <span className="text-red-500">*</span>
-                      </label>
                       <input
-                        type="text"
-                        id="course"
-                        name="course"
-                        value={profileData.course}
-                        onChange={handleChange}
-                        className="input-field"
-                        placeholder="e.g., Computer Science"
-                        required={profileData.userType === 'student'}
+                        type="checkbox"
+                        checked={profileData.servicesNeeded.includes(service)}
+                        onChange={() => handleServiceToggle(service)}
+                        className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
                       />
-                    </div>
-
-                    <div>
-                      <label htmlFor="yearOfStudy" className="block text-sm font-semibold text-gray-900 mb-2">
-                        Year of Study <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="yearOfStudy"
-                        name="yearOfStudy"
-                        value={profileData.yearOfStudy}
-                        onChange={handleChange}
-                        className="input-field"
-                        required={profileData.userType === 'student'}
-                      >
-                        <option value="">Select year</option>
-                        <option value="1">Year 1</option>
-                        <option value="2">Year 2</option>
-                        <option value="3">Year 3</option>
-                        <option value="4">Year 4+</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-3">
-                      Services Offered <span className="text-red-500">*</span>
+                      <span className="text-sm text-gray-700">{service}</span>
                     </label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {servicesOptions.map((service) => (
-                        <label
-                          key={service}
-                          className="flex items-center space-x-2 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={profileData.servicesOffered.includes(service)}
-                            onChange={() => handleServiceToggle(service)}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">{service}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -1005,92 +826,58 @@ const AdminCreateProfile = () => {
                     )}
                   </div>
 
-                  {/* Host-specific documents */}
-                  {profileData.userType === 'host' && (
-                    <>
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              Proof of Address <span className="text-red-500">*</span>
-                            </p>
-                            <p className="text-sm text-gray-600">Utility bill or council tax statement</p>
-                          </div>
-                          <label className="btn-outline cursor-pointer">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload
-                            <input
-                              type="file"
-                              className="hidden"
-                              accept=".pdf,.jpg,.jpeg,.png"
-                              onChange={(e) => handleFileUpload('addressProof', e.target.files[0])}
-                            />
-                          </label>
-                        </div>
-                        {profileData.documents.addressProof && (
-                          <p className="text-sm text-green-600 mt-2 flex items-center">
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            {profileData.documents.addressProof.name}
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-gray-900">DBS Check</p>
-                            <p className="text-sm text-gray-600">Background check certificate</p>
-                          </div>
-                          <label className="btn-outline cursor-pointer">
-                            <Upload className="w-4 h-4 mr-2" />
-                            Upload
-                            <input
-                              type="file"
-                              className="hidden"
-                              accept=".pdf,.jpg,.jpeg,.png"
-                              onChange={(e) => handleFileUpload('dbsCheck', e.target.files[0])}
-                            />
-                          </label>
-                        </div>
-                        {profileData.documents.dbsCheck && (
-                          <p className="text-sm text-green-600 mt-2 flex items-center">
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            {profileData.documents.dbsCheck.name}
-                          </p>
-                        )}
-                      </div>
-                    </>
-                  )}
-
-                  {/* Student-specific documents */}
-                  {profileData.userType === 'student' && (
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            Admission Letter <span className="text-red-500">*</span>
-                          </p>
-                          <p className="text-sm text-gray-600">University admission or enrollment letter</p>
-                        </div>
-                        <label className="btn-outline cursor-pointer">
-                          <Upload className="w-4 h-4 mr-2" />
-                          Upload
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) => handleFileUpload('admissionLetter', e.target.files[0])}
-                          />
-                        </label>
-                      </div>
-                      {profileData.documents.admissionLetter && (
-                        <p className="text-sm text-green-600 mt-2 flex items-center">
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          {profileData.documents.admissionLetter.name}
+                  {/* Host documents */}
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          Proof of Address <span className="text-red-500">*</span>
                         </p>
-                      )}
+                        <p className="text-sm text-gray-600">Utility bill or council tax statement</p>
+                      </div>
+                      <label className="btn-outline cursor-pointer">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileUpload('addressProof', e.target.files[0])}
+                        />
+                      </label>
                     </div>
-                  )}
+                    {profileData.documents.addressProof && (
+                      <p className="text-sm text-green-600 mt-2 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {profileData.documents.addressProof.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-teal-400 transition-colors">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">DBS Check</p>
+                        <p className="text-sm text-gray-600">Background check certificate</p>
+                      </div>
+                      <label className="btn-outline cursor-pointer">
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileUpload('dbsCheck', e.target.files[0])}
+                        />
+                      </label>
+                    </div>
+                    {profileData.documents.dbsCheck && (
+                      <p className="text-sm text-green-600 mt-2 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        {profileData.documents.dbsCheck.name}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -1116,7 +903,7 @@ const AdminCreateProfile = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">User Type:</span>
-                    <span className="font-medium capitalize">{profileData.userType}</span>
+                    <span className="font-medium">Host</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Name:</span>
@@ -1130,30 +917,14 @@ const AdminCreateProfile = () => {
                     <span className="text-gray-600">Phone:</span>
                     <span className="font-medium">{profileData.phone || 'Not set'}</span>
                   </div>
-                  {profileData.userType === 'host' && (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Address:</span>
-                        <span className="font-medium">{profileData.address || 'Not set'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Services Needed:</span>
-                        <span className="font-medium">{profileData.servicesNeeded.length} selected</span>
-                      </div>
-                    </>
-                  )}
-                  {profileData.userType === 'student' && (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">University:</span>
-                        <span className="font-medium">{profileData.university || 'Not set'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Services Offered:</span>
-                        <span className="font-medium">{profileData.servicesOffered.length} selected</span>
-                      </div>
-                    </>
-                  )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Address:</span>
+                    <span className="font-medium">{profileData.address || 'Not set'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Services Needed:</span>
+                    <span className="font-medium">{profileData.servicesNeeded.length} selected</span>
+                  </div>
                 </div>
               </div>
             </div>
