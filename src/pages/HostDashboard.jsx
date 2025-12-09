@@ -464,9 +464,20 @@ const HostDashboard = () => {
                   <div className="text-center py-8">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-600 mb-4">No active student arrangement</p>
-                    <p className="text-sm text-gray-500">
-                      Browse facilitation requests to find a student match
-                    </p>
+                    {hostData && hostData.pendingRequests > 0 ? (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4 max-w-md mx-auto">
+                        <p className="text-sm text-yellow-900 font-medium mb-1">
+                          Monthly Reviews Currently Disabled
+                        </p>
+                        <p className="text-xs text-yellow-800">
+                          Monthly reviews are disabled until you respond to the student's facilitation request. Please select either "I'm Interested" or "Not Interested" to enable the review form.
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">
+                        Browse facilitation requests to find a student match
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
