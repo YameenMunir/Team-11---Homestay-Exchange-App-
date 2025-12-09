@@ -265,7 +265,8 @@ export const facilitationService = {
             guest_profile:guest_profiles (
               university,
               course,
-              bio
+              bio,
+              hours_per_week
             )
           ),
           reviewer:user_profiles!reviewed_by (
@@ -302,6 +303,7 @@ export const facilitationService = {
         university: req.requester?.guest_profile?.university,
         fieldOfStudy: req.requester?.guest_profile?.course,
         bio: req.requester?.guest_profile?.bio,
+        hoursPerWeek: req.requester?.guest_profile?.hours_per_week,
         requestDate: req.created_at,
         status: req.status,
         message: req.message,

@@ -659,6 +659,14 @@ const HostDashboard = () => {
                         </div>
                       )}
 
+                      {/* Hours Available Per Week */}
+                      {request.hoursPerWeek && (
+                        <div className="mb-3">
+                          <span className="text-sm font-medium text-gray-700">Hours Available Per Week: </span>
+                          <span className="text-sm text-gray-600">{request.hoursPerWeek} hours</span>
+                        </div>
+                      )}
+
                       {/* Student's Message */}
                       {request.message && (
                         <div className="bg-gray-50 rounded-lg p-4 mb-4">
