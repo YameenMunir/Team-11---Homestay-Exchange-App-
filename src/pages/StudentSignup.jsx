@@ -730,10 +730,10 @@ const StudentSignup = () => {
                       className="input-field"
                     >
                       <option value="">Select hours</option>
-                      <option value="5-10">5-10 hours</option>
-                      <option value="10-15">10-15 hours</option>
-                      <option value="15-20">15-20 hours</option>
-                      <option value="20+">20+ hours</option>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
                     </select>
                   </div>
 
