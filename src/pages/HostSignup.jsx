@@ -13,6 +13,8 @@ import {
   ArrowLeft,
   CheckCircle,
   FileText,
+  AlertCircle,
+  XCircle,
 } from 'lucide-react';
 import supabase from '../utils/supabase';
 import PhoneInput from '../components/PhoneInput';
@@ -40,15 +42,68 @@ const HostSignup = () => {
     utilityBill: null,
   });
 
-  const servicesOptions = [
-    'Companionship',
-    'Light Cleaning',
-    'Grocery Shopping',
-    'Meal Preparation',
-    'Garden Help',
-    'Pet Care',
-    'Technology Help',
-    'Other',
+  const serviceCategories = {
+    'Household & Daily Assistance': [
+      'Light cleaning (dusting, wiping surfaces) and tidying',
+      'Sweeping or mopping floors',
+      'Dishwashing',
+      'Organising shelves or cupboards',
+      'Sorting recycling / taking out rubbish',
+      'Folding laundry (if agreed)',
+      'Organising storage, rooms, or study areas',
+      'Helping during small home events',
+      'Laundry and ironing',
+      'Simple home organization',
+      'Watering plants / garden maintenance',
+      'Grocery shopping help',
+      'Helping with minor house tasks (under host\'s supervision)'
+    ],
+    'Errands & Outside Assistance': [
+      'Light gardening (watering, weeding, raking)',
+      'Cleaning driveway, garage or backyard',
+      'Seasonal decoration assistance (non-hazardous)',
+      'Dog walking or pet feeding',
+      'Light cleaning after pets (litter, bowls)',
+      'Light gardening or balcony care',
+      'Accompanying to local shops, post office, or pharmacy',
+      'Helping carry shopping bags or packages',
+      'Picking up small household items',
+      'Helping with outdoor garden tasks (under host\'s supervision)'
+    ],
+    'Childcare Assistance': [
+      'Babysitting while host is at home (without DBS)',
+      'Babysitting while host is not at home (DBS mandatory)',
+      'Helping children with homework',
+      'Playing or supervising kids in shared spaces',
+      'Dropping children at or collecting from a school/nursery (DBS mandatory)'
+    ],
+    'Practical & Technical Help': [
+      'Printing or organising documents',
+      'Basic tech support (phone, laptop, apps, video calls)',
+      'Setting up a computer or workspace',
+      'Simple research tasks',
+      'Helping with schedules, reminders, or organising files',
+      'Setting up mobile phones, apps, or Wi-Fi',
+      'Helping with video calls',
+      'Troubleshooting simple tech issues',
+      'Assisting with online forms, emails, or digital tasks'
+    ],
+    'Educational & Mentoring Support': [
+      'Tutoring in another language',
+      'Tutoring in a skill or discipline',
+      'Homework support for grandchildren',
+      'Guidance with digital learning tools'
+    ]
+  };
+
+  const prohibitedActivities = [
+    'Heavy lifting or hazardous work',
+    'Professional childcare / elderly care',
+    'Professional cleaning or deep cleaning',
+    'Electrical, plumbing, or repair work',
+    'Business administration or accounting tasks',
+    'Handling money or sensitive documents',
+    'Transporting children alone'
   ];
 
   const handleSubmit = (e) => {
@@ -568,26 +623,72 @@ const HostSignup = () => {
                     <p className="text-base text-gray-600 mb-6">
                       Select all that apply. Students will see these when browsing.
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {servicesOptions.map((service) => (
-                        <button
-                          key={service}
-                          type="button"
-                          onClick={() => toggleService(service)}
-                          className={`p-4 rounded-xl border-2 font-medium text-left transition-all ${
-                            formData.servicesNeeded.includes(service)
-                              ? 'border-teal-600 bg-teal-50 text-teal-900'
-                              : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-lg">{service}</span>
-                            {formData.servicesNeeded.includes(service) && (
-                              <CheckCircle className="w-6 h-6 text-teal-600" />
-                            )}
+
+                    {/* Prohibited Activities Notice - Host Version */}
+                    <div className="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-amber-900 text-sm mb-1">Important for Hosts</h4>
+                          <p className="text-sm text-amber-800 leading-relaxed">
+                            Students can only assist with light, non-hazardous tasks. They cannot do heavy lifting, professional accounting or administrative work, electrical or plumbing tasks, deep cleaning, or anything requiring specialist training or certification.
+                          </p>
+                          <p className="text-sm text-amber-800 leading-relaxed mt-2">
+                            Please ensure future tasks respect these limits.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Service Categories */}
+                    <div className="space-y-5">
+                      {Object.entries(serviceCategories).map(([category, services]) => (
+                        <div key={category} className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-semibold text-gray-900 mb-3 text-base">{category}</h4>
+                          <div className="grid grid-cols-1 gap-2.5">
+                            {services.map((service) => (
+                              <button
+                                key={service}
+                                type="button"
+                                onClick={() => toggleService(service)}
+                                className={`p-3.5 rounded-lg border-2 font-medium text-left transition-all text-sm ${
+                                  formData.servicesNeeded.includes(service)
+                                    ? 'border-teal-600 bg-teal-50 text-teal-900'
+                                    : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <span className="leading-tight">{service}</span>
+                                  {formData.servicesNeeded.includes(service) && (
+                                    <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                                  )}
+                                </div>
+                              </button>
+                            ))}
                           </div>
-                        </button>
+                        </div>
                       ))}
+                    </div>
+
+                    {/* Prohibited Activities List */}
+                    <div className="mt-6 bg-gray-100 rounded-xl p-5 border border-gray-300">
+                      <h4 className="font-semibold text-gray-900 mb-3 text-base flex items-center gap-2">
+                        <XCircle className="w-5 h-5 text-red-600" />
+                        Prohibited Activities (Not Allowed)
+                      </h4>
+                      <div className="grid grid-cols-1 gap-2.5">
+                        {prohibitedActivities.map((activity) => (
+                          <div
+                            key={activity}
+                            className="p-3 rounded-lg border-2 border-red-200 bg-red-50 text-red-700 opacity-60 cursor-not-allowed text-sm"
+                          >
+                            <div className="flex items-start gap-2">
+                              <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                              <span className="font-medium leading-tight line-through">{activity}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

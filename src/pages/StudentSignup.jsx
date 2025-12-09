@@ -14,6 +14,8 @@ import {
   CheckCircle,
   FileText,
   Calendar,
+  AlertCircle,
+  XCircle,
 } from 'lucide-react';
 import { UK_UNIVERSITIES } from '../utils/ukUniversities';
 import supabase from '../utils/supabase';
@@ -47,16 +49,68 @@ const StudentSignup = () => {
     admissionLetter: null,
   });
 
-  const servicesOptions = [
-    'Companionship',
-    'Light Cleaning',
-    'Grocery Shopping',
-    'Meal Preparation',
-    'Garden Help',
-    'Pet Care',
-    'Technology Help',
-    'Tutoring',
-    'Language Exchange',
+  const serviceCategories = {
+    'Household & Daily Assistance': [
+      'Light cleaning (dusting, wiping surfaces) and tidying',
+      'Sweeping or mopping floors',
+      'Dishwashing',
+      'Organising shelves or cupboards',
+      'Sorting recycling / taking out rubbish',
+      'Folding laundry (if agreed)',
+      'Organising storage, rooms, or study areas',
+      'Helping during small home events',
+      'Laundry and ironing',
+      'Simple home organization',
+      'Watering plants / garden maintenance',
+      'Grocery shopping help',
+      'Helping with minor house tasks (under host\'s supervision)'
+    ],
+    'Errands & Outside Assistance': [
+      'Light gardening (watering, weeding, raking)',
+      'Cleaning driveway, garage or backyard',
+      'Seasonal decoration assistance (non-hazardous)',
+      'Dog walking or pet feeding',
+      'Light cleaning after pets (litter, bowls)',
+      'Light gardening or balcony care',
+      'Accompanying to local shops, post office, or pharmacy',
+      'Helping carry shopping bags or packages',
+      'Picking up small household items',
+      'Helping with outdoor garden tasks (under host\'s supervision)'
+    ],
+    'Childcare Assistance': [
+      'Babysitting while host is at home (without DBS)',
+      'Babysitting while host is not at home (DBS mandatory)',
+      'Helping children with homework',
+      'Playing or supervising kids in shared spaces',
+      'Dropping children at or collecting from a school/nursery (DBS mandatory)'
+    ],
+    'Practical & Technical Help': [
+      'Printing or organising documents',
+      'Basic tech support (phone, laptop, apps, video calls)',
+      'Setting up a computer or workspace',
+      'Simple research tasks',
+      'Helping with schedules, reminders, or organising files',
+      'Setting up mobile phones, apps, or Wi-Fi',
+      'Helping with video calls',
+      'Troubleshooting simple tech issues',
+      'Assisting with online forms, emails, or digital tasks'
+    ],
+    'Educational & Mentoring Support': [
+      'Tutoring in another language',
+      'Tutoring in a skill or discipline',
+      'Homework support for grandchildren',
+      'Guidance with digital learning tools'
+    ]
+  };
+
+  const prohibitedActivities = [
+    'Heavy lifting or hazardous work',
+    'Professional childcare / elderly care',
+    'Professional cleaning or deep cleaning',
+    'Electrical, plumbing, or repair work',
+    'Business administration or accounting tasks',
+    'Handling money or sensitive documents',
+    'Transporting children alone'
   ];
 
   const handleSubmit = (e) => {
@@ -293,7 +347,7 @@ const StudentSignup = () => {
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
               Join as a Student
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-xl text-gray-600">
               Find affordable accommodation and make a difference
             </p>
           </div>
@@ -317,7 +371,7 @@ const StudentSignup = () => {
                         step
                       )}
                     </div>
-                    <span className="text-xs sm:text-sm mt-2 font-medium text-gray-700">
+                    <span className="text-sm mt-2 font-medium text-gray-700">
                       {step === 1 ? 'Personal' : step === 2 ? 'Services' : 'Verification'}
                     </span>
                   </div>
@@ -334,7 +388,7 @@ const StudentSignup = () => {
           </div>
 
           {/* Form */}
-          <div className="card p-6 md:p-8 animate-slide-up">
+          <div className="card p-8 md:p-10 animate-slide-up">
             {/* Success Message */}
             {success && (
               <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-5">
@@ -370,7 +424,7 @@ const StudentSignup = () => {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Step 1: Personal & Education Information */}
               {currentStep === 1 && (
                 <>
@@ -378,13 +432,13 @@ const StudentSignup = () => {
                     <div className="md:col-span-2">
                       <label
                         htmlFor="fullName"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Full Name
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <User className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <User className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type="text"
@@ -393,7 +447,7 @@ const StudentSignup = () => {
                           value={formData.fullName}
                           onChange={handleChange}
                           required
-                          className="input-field pl-11"
+                          className="input-field pl-14"
                           placeholder="Jane Doe"
                         />
                       </div>
@@ -402,13 +456,13 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="email"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Email Address
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Mail className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type="email"
@@ -417,7 +471,7 @@ const StudentSignup = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="input-field pl-11"
+                          className="input-field pl-14"
                           placeholder="jane@university.ac.uk"
                         />
                       </div>
@@ -426,13 +480,13 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="confirmEmail"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Confirm Email Address
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Mail className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Mail className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type="email"
@@ -441,7 +495,7 @@ const StudentSignup = () => {
                           value={formData.confirmEmail}
                           onChange={handleChange}
                           required
-                          className={`input-field pl-11 ${
+                          className={`input-field pl-14 ${
                             formData.confirmEmail && formData.email !== formData.confirmEmail
                               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                               : formData.confirmEmail && formData.email === formData.confirmEmail
@@ -452,13 +506,13 @@ const StudentSignup = () => {
                         />
                       </div>
                       {formData.confirmEmail && formData.email !== formData.confirmEmail && (
-                        <p className="mt-1 text-xs text-red-600 flex items-center">
+                        <p className="mt-1 text-sm text-red-600 flex items-center">
                           <span>Email addresses do not match</span>
                         </p>
                       )}
                       {formData.confirmEmail && formData.email === formData.confirmEmail && (
-                        <p className="mt-1 text-xs text-green-600 flex items-center">
-                          <CheckCircle className="w-3 h-3 mr-1" />
+                        <p className="mt-1 text-sm text-green-600 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-1" />
                           <span>Emails match</span>
                         </p>
                       )}
@@ -467,7 +521,7 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="phone"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Phone Number
                       </label>
@@ -484,13 +538,13 @@ const StudentSignup = () => {
                     <div className="md:col-span-2">
                       <label
                         htmlFor="dateOfBirth"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Date of Birth (Must be 18+)
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Calendar className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Calendar className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type="date"
@@ -500,10 +554,10 @@ const StudentSignup = () => {
                           onChange={handleChange}
                           required
                           max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}
-                          className="input-field pl-11"
+                          className="input-field pl-14"
                         />
                       </div>
-                      <p className="text-xs text-gray-600 mt-2">
+                      <p className="text-sm text-gray-600 mt-2">
                         You must be at least 18 years old to register
                       </p>
                     </div>
@@ -511,13 +565,13 @@ const StudentSignup = () => {
                     <div className="md:col-span-2">
                       <label
                         htmlFor="university"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         University
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                          <Building2 className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+                          <Building2 className="w-6 h-6 text-gray-400" />
                         </div>
                         <select
                           id="university"
@@ -525,7 +579,7 @@ const StudentSignup = () => {
                           value={formData.university}
                           onChange={handleChange}
                           required
-                          className="input-field pl-11 appearance-none"
+                          className="input-field pl-14 appearance-none"
                         >
                           <option value="">Select your university</option>
                           {UK_UNIVERSITIES.map((uni) => (
@@ -542,7 +596,7 @@ const StudentSignup = () => {
                       <div className="md:col-span-2">
                         <label
                           htmlFor="otherUniversity"
-                          className="block text-sm font-semibold text-gray-900 mb-2"
+                          className="block text-lg font-semibold text-gray-900 mb-2"
                         >
                           Please specify your university
                         </label>
@@ -562,7 +616,7 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="courseOfStudy"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Course of Study
                       </label>
@@ -581,7 +635,7 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="yearOfStudy"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Year of Study
                       </label>
@@ -605,13 +659,13 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="password"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Password
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Lock className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Lock className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type={showPassword ? 'text' : 'password'}
@@ -620,18 +674,18 @@ const StudentSignup = () => {
                           value={formData.password}
                           onChange={handleChange}
                           required
-                          className="input-field pl-11 pr-11"
+                          className="input-field pl-14 pr-14"
                           placeholder="Create a secure password"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          className="absolute inset-y-0 right-0 pr-4 flex items-center"
                         >
                           {showPassword ? (
-                            <EyeOff className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                            <EyeOff className="w-6 h-6 text-gray-400 hover:text-gray-600" />
                           ) : (
-                            <Eye className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                            <Eye className="w-6 h-6 text-gray-400 hover:text-gray-600" />
                           )}
                         </button>
                       </div>
@@ -640,13 +694,13 @@ const StudentSignup = () => {
                     <div>
                       <label
                         htmlFor="confirmPassword"
-                        className="block text-sm font-semibold text-gray-900 mb-2"
+                        className="block text-lg font-semibold text-gray-900 mb-2"
                       >
                         Confirm Password
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Lock className="w-5 h-5 text-gray-400" />
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <Lock className="w-6 h-6 text-gray-400" />
                         </div>
                         <input
                           type="password"
@@ -655,7 +709,7 @@ const StudentSignup = () => {
                           value={formData.confirmPassword}
                           onChange={handleChange}
                           required
-                          className={`input-field pl-11 ${
+                          className={`input-field pl-14 ${
                             formData.confirmPassword && formData.password !== formData.confirmPassword
                               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                               : formData.confirmPassword && formData.password === formData.confirmPassword
@@ -666,13 +720,13 @@ const StudentSignup = () => {
                         />
                       </div>
                       {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                        <p className="mt-1 text-xs text-red-600 flex items-center">
+                        <p className="mt-1 text-sm text-red-600 flex items-center">
                           <span>Passwords do not match</span>
                         </p>
                       )}
                       {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                        <p className="mt-1 text-xs text-green-600 flex items-center">
-                          <CheckCircle className="w-3 h-3 mr-1" />
+                        <p className="mt-1 text-sm text-green-600 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-1" />
                           <span>Passwords match</span>
                         </p>
                       )}
@@ -685,39 +739,85 @@ const StudentSignup = () => {
               {currentStep === 2 && (
                 <>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">
                       What services can you offer?
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4">
+                    <p className="text-base text-gray-600 mb-6">
                       Select all that apply. Hosts will see these when browsing.
                     </p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      {servicesOptions.map((service) => (
-                        <button
-                          key={service}
-                          type="button"
-                          onClick={() => toggleService(service)}
-                          className={`p-3 rounded-lg border-2 font-medium text-sm text-center transition-all ${
-                            formData.servicesOffered.includes(service)
-                              ? 'border-teal-600 bg-teal-50 text-teal-900'
-                              : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
-                          }`}
-                        >
-                          <div className="flex flex-col items-center space-y-1">
-                            <span>{service}</span>
-                            {formData.servicesOffered.includes(service) && (
-                              <CheckCircle className="w-4 h-4 text-teal-600" />
-                            )}
+
+                    {/* Prohibited Activities Notice - Student Version */}
+                    <div className="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <h4 className="font-semibold text-green-900 text-sm mb-1">Important for Students</h4>
+                          <p className="text-sm text-green-800 leading-relaxed">
+                            You will only be matched with safe, light, non-hazardous tasks. You will not be expected to do heavy lifting, professional accounting or admin work, electrical or plumbing tasks, deep cleaning, or any work that requires licensing or certification.
+                          </p>
+                          <p className="text-sm text-green-800 leading-relaxed mt-2">
+                            These activities are prohibited for your safety and protection.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Service Categories */}
+                    <div className="space-y-5">
+                      {Object.entries(serviceCategories).map(([category, services]) => (
+                        <div key={category} className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                          <h4 className="font-semibold text-gray-900 mb-3 text-base">{category}</h4>
+                          <div className="grid grid-cols-1 gap-2.5">
+                            {services.map((service) => (
+                              <button
+                                key={service}
+                                type="button"
+                                onClick={() => toggleService(service)}
+                                className={`p-3.5 rounded-lg border-2 font-medium text-left transition-all text-sm ${
+                                  formData.servicesOffered.includes(service)
+                                    ? 'border-teal-600 bg-teal-50 text-teal-900'
+                                    : 'border-gray-300 bg-white text-gray-700 hover:border-teal-300'
+                                }`}
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <span className="leading-tight">{service}</span>
+                                  {formData.servicesOffered.includes(service) && (
+                                    <CheckCircle className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                                  )}
+                                </div>
+                              </button>
+                            ))}
                           </div>
-                        </button>
+                        </div>
                       ))}
+                    </div>
+
+                    {/* Prohibited Activities List */}
+                    <div className="mt-6 bg-gray-100 rounded-xl p-5 border border-gray-300">
+                      <h4 className="font-semibold text-gray-900 mb-3 text-base flex items-center gap-2">
+                        <XCircle className="w-5 h-5 text-red-600" />
+                        Prohibited Activities (Not Required)
+                      </h4>
+                      <div className="grid grid-cols-1 gap-2.5">
+                        {prohibitedActivities.map((activity) => (
+                          <div
+                            key={activity}
+                            className="p-3 rounded-lg border-2 border-red-200 bg-red-50 text-red-700 opacity-60 cursor-not-allowed text-sm"
+                          >
+                            <div className="flex items-start gap-2">
+                              <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                              <span className="font-medium leading-tight line-through">{activity}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
                   <div>
                     <label
                       htmlFor="availableHours"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-lg font-semibold text-gray-900 mb-2"
                     >
                       Hours Available Per Week
                     </label>
@@ -740,7 +840,7 @@ const StudentSignup = () => {
                   <div>
                     <label
                       htmlFor="aboutYou"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-lg font-semibold text-gray-900 mb-2"
                     >
                       About You
                     </label>
@@ -760,14 +860,14 @@ const StudentSignup = () => {
               {/* Step 3: Verification Documents */}
               {currentStep === 3 && (
                 <>
-                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-5 mb-5">
+                  <div className="bg-teal-50 border border-teal-200 rounded-xl p-6 mb-6">
                     <div className="flex items-start space-x-3">
-                      <FileText className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                      <FileText className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-teal-900 mb-1">
+                        <h4 className="font-semibold text-teal-900 text-lg mb-2">
                           Verification Required
                         </h4>
-                        <p className="text-sm text-teal-800 leading-relaxed">
+                        <p className="text-base text-teal-800 leading-relaxed">
                           To ensure safety for all users, we need to verify your identity
                           and student status. All documents are kept secure.
                         </p>
@@ -776,14 +876,14 @@ const StudentSignup = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    <label className="block text-lg font-semibold text-gray-900 mb-2">
                       ID Document (Passport or Driving License)
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-teal-400 transition-colors">
-                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <label
                         htmlFor="idDocument"
-                        className="cursor-pointer text-sm text-gray-600"
+                        className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
@@ -799,7 +899,7 @@ const StudentSignup = () => {
                         />
                       </label>
                       {formData.idDocument && (
-                        <p className="text-xs text-green-600 mt-2 font-medium">
+                        <p className="text-sm text-green-600 mt-2 font-medium">
                           ✓ {formData.idDocument.name}
                         </p>
                       )}
@@ -807,14 +907,14 @@ const StudentSignup = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    <label className="block text-lg font-semibold text-gray-900 mb-2">
                       University Admission Letter
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-5 text-center hover:border-teal-400 transition-colors">
-                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
+                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
                       <label
                         htmlFor="admissionLetter"
-                        className="cursor-pointer text-sm text-gray-600"
+                        className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-teal-600 font-semibold hover:text-teal-700">
                           Click to upload
@@ -830,24 +930,24 @@ const StudentSignup = () => {
                         />
                       </label>
                       {formData.admissionLetter && (
-                        <p className="text-xs text-green-600 mt-2 font-medium">
+                        <p className="text-sm text-green-600 mt-2 font-medium">
                           ✓ {formData.admissionLetter.name}
                         </p>
                       )}
                     </div>
-                    <p className="text-xs text-gray-600 mt-2">
+                    <p className="text-sm text-gray-600 mt-2">
                       Your offer letter or student ID card showing current enrollment
                     </p>
                   </div>
 
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-6">
                     <div className="flex items-start space-x-3">
-                      <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
                       <div>
-                        <h4 className="font-semibold text-green-900 mb-1">
+                        <h4 className="font-semibold text-green-900 text-lg mb-2">
                           Almost There!
                         </h4>
-                        <p className="text-sm text-green-800">
+                        <p className="text-base text-green-800">
                           Once submitted, our team will review your documents within 24-48
                           hours. You'll receive an email notification when approved.
                         </p>

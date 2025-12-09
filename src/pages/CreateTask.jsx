@@ -9,7 +9,9 @@ import {
   Home,
   CheckCircle,
   ArrowLeft,
-  Loader2
+  Loader2,
+  AlertCircle,
+  XCircle
 } from 'lucide-react';
 import HelpOverlay from '../components/HelpOverlay';
 import { hostService } from '../services/hostService';
@@ -35,14 +37,68 @@ export default function CreateTask() {
   const [isLoading, setIsLoading] = useState(isEditMode);
   const [error, setError] = useState(null);
 
-  const servicesOptions = [
-    'Companionship',
-    'Light Cleaning',
-    'Grocery Shopping',
-    'Meal Preparation',
-    'Garden Help',
-    'Pet Care',
-    'Technology Help'
+  const serviceCategories = {
+    'Household & Daily Assistance': [
+      'Light cleaning (dusting, wiping surfaces) and tidying',
+      'Sweeping or mopping floors',
+      'Dishwashing',
+      'Organising shelves or cupboards',
+      'Sorting recycling / taking out rubbish',
+      'Folding laundry (if agreed)',
+      'Organising storage, rooms, or study areas',
+      'Helping during small home events',
+      'Laundry and ironing',
+      'Simple home organization',
+      'Watering plants / garden maintenance',
+      'Grocery shopping help',
+      'Helping with minor house tasks (under host\'s supervision)'
+    ],
+    'Errands & Outside Assistance': [
+      'Light gardening (watering, weeding, raking)',
+      'Cleaning driveway, garage or backyard',
+      'Seasonal decoration assistance (non-hazardous)',
+      'Dog walking or pet feeding',
+      'Light cleaning after pets (litter, bowls)',
+      'Light gardening or balcony care',
+      'Accompanying to local shops, post office, or pharmacy',
+      'Helping carry shopping bags or packages',
+      'Picking up small household items',
+      'Helping with outdoor garden tasks (under host\'s supervision)'
+    ],
+    'Childcare Assistance': [
+      'Babysitting while host is at home (without DBS)',
+      'Babysitting while host is not at home (DBS mandatory)',
+      'Helping children with homework',
+      'Playing or supervising kids in shared spaces',
+      'Dropping children at or collecting from a school/nursery (DBS mandatory)'
+    ],
+    'Practical & Technical Help': [
+      'Printing or organising documents',
+      'Basic tech support (phone, laptop, apps, video calls)',
+      'Setting up a computer or workspace',
+      'Simple research tasks',
+      'Helping with schedules, reminders, or organising files',
+      'Setting up mobile phones, apps, or Wi-Fi',
+      'Helping with video calls',
+      'Troubleshooting simple tech issues',
+      'Assisting with online forms, emails, or digital tasks'
+    ],
+    'Educational & Mentoring Support': [
+      'Tutoring in another language',
+      'Tutoring in a skill or discipline',
+      'Homework support for grandchildren',
+      'Guidance with digital learning tools'
+    ]
+  };
+
+  const prohibitedActivities = [
+    'Heavy lifting or hazardous work',
+    'Professional childcare / elderly care',
+    'Professional cleaning or deep cleaning',
+    'Electrical, plumbing, or repair work',
+    'Business administration or accounting tasks',
+    'Handling money or sensitive documents',
+    'Transporting children alone'
   ];
 
   // Fetch task data when in edit mode
@@ -265,26 +321,72 @@ export default function CreateTask() {
             <p className="text-sm text-gray-600 mb-5">
               Select all services that apply to this task
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {servicesOptions.map((service) => (
-                <button
-                  key={service}
-                  type="button"
-                  onClick={() => toggleService(service)}
-                  className={`p-3.5 rounded-lg border-2 transition-all text-left ${
-                    formData.servicesNeeded.includes(service)
-                      ? 'border-teal-600 bg-teal-50 text-teal-700 shadow-sm'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium">{service}</span>
-                    {formData.servicesNeeded.includes(service) && (
-                      <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0" />
-                    )}
+
+            {/* Prohibited Activities Notice */}
+            <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-red-900 text-sm mb-1">Important: Prohibited Activities</h4>
+                  <p className="text-sm text-red-800 leading-relaxed">
+                    When creating a task, please remember that students cannot perform heavy lifting, professional accounting or business administration, electrical or plumbing work, deep or hazardous cleaning, or any task that requires professional licensing.
+                  </p>
+                  <p className="text-sm text-red-800 leading-relaxed mt-2">
+                    Please avoid posting tasks that involve these activities.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Service Categories */}
+            <div className="space-y-6">
+              {Object.entries(serviceCategories).map(([category, services]) => (
+                <div key={category} className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <h3 className="font-semibold text-gray-900 mb-3 text-base">{category}</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {services.map((service) => (
+                      <button
+                        key={service}
+                        type="button"
+                        onClick={() => toggleService(service)}
+                        className={`p-3 rounded-lg border-2 transition-all text-left text-sm ${
+                          formData.servicesNeeded.includes(service)
+                            ? 'border-teal-600 bg-teal-50 text-teal-700 shadow-sm'
+                            : 'border-gray-200 bg-white text-gray-700 hover:border-teal-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <span className="font-medium leading-tight">{service}</span>
+                          {formData.servicesNeeded.includes(service) && (
+                            <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
+                          )}
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                </button>
+                </div>
               ))}
+            </div>
+
+            {/* Prohibited Activities List */}
+            <div className="mt-6 bg-gray-100 rounded-xl p-5 border border-gray-300">
+              <h3 className="font-semibold text-gray-900 mb-3 text-base flex items-center gap-2">
+                <XCircle className="w-5 h-5 text-red-600" />
+                Prohibited Activities (Not Allowed)
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {prohibitedActivities.map((activity) => (
+                  <div
+                    key={activity}
+                    className="p-3 rounded-lg border-2 border-red-200 bg-red-50 text-red-700 opacity-60 cursor-not-allowed text-sm"
+                  >
+                    <div className="flex items-start gap-2">
+                      <XCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                      <span className="font-medium leading-tight line-through">{activity}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
