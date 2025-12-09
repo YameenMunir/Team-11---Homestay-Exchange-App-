@@ -299,8 +299,7 @@ const TermsAndConditions = () => {
                     </p>
                     <a
                       href="/documents/Terms_and_Conditions_Detailed.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      download="Terms_and_Conditions_Detailed.pdf"
                       className="btn-primary inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transition-shadow"
                     >
                       <span>Download Full Terms & Conditions</span>
