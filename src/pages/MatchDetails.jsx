@@ -309,7 +309,7 @@ const MatchDetails = () => {
             <div className="card p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">About {host.name}</h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                {host.about || host.propertyDescription || 'No description provided.'}
+                {host.about || host.propertyDescription || ''}
               </p>
               {host.additionalInfo && (
                 <div className="mt-4 p-4 bg-teal-50 border border-teal-200 rounded-lg">
