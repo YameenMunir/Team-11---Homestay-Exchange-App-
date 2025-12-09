@@ -8,7 +8,8 @@ import {
   GraduationCap,
   Home,
   XCircle,
-  Scale
+  Scale,
+  Download
 } from 'lucide-react';
 
 const TermsAndConditions = () => {
@@ -270,6 +271,41 @@ const TermsAndConditions = () => {
                       hosts and students. While we conduct verification checks, we cannot guarantee the
                       behaviour of users and are not liable for disputes that arise between parties.
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Terms & Conditions */}
+              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-pink-600">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-pink-100 rounded-lg p-3 flex-shrink-0">
+                    <FileText className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      8. Additional Terms & Conditions
+                    </h2>
+                    <p className="text-gray-700 leading-relaxed text-lg mb-4">
+                      For further details on terms and conditions, please{' '}
+                      <a
+                        href="/documents/Terms_and_Conditions_Detailed.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-pink-600 hover:text-pink-700 font-medium transition-colors underline"
+                      >
+                        click here
+                      </a>
+                      .
+                    </p>
+                    <a
+                      href="/documents/Terms_and_Conditions_Detailed.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transition-shadow"
+                    >
+                      <span>Download Full Terms & Conditions</span>
+                      <Download className="w-4 h-4" />
+                    </a>
                   </div>
                 </div>
               </div>
