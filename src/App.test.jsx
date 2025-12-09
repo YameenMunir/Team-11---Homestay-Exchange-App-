@@ -1,24 +1,21 @@
 import { expect, test } from "vitest";
 import { render } from "vitest-browser-react";
-import App from "./App";
+import { MemoryRouter } from "react-router-dom";
+import Home from "./pages/Home";
 
-test("renders name", async () => {
-  const { getByText, getByAltText } = render(<App />);
+test("renders home page", async () => {
+  const { getByText } = render(
+    <MemoryRouter>
+      <Home />
+    </MemoryRouter>
+  );
 
-  const headingTitle = "React + Vite + Supabase + Vercel";
-  const headingElement = getByText(headingTitle);
+  const headingText = "Making UK Education Accessible Through";
+  const headingElement = getByText(headingText, { exact: false });
 
   await expect.element(headingElement).toBeInTheDocument();
-  expect(headingElement.element().innerHTML).toBe(headingTitle);
 
-  // Check if logos are rendered correctly
-  const reactLogo = getByAltText("React logo");
-  const viteLogo = getByAltText("Vite logo");
-  const supabaseLogo = getByAltText("React Supabase");
-  const vercelLogo = getByAltText("React Vercel");
-
-  await expect.element(reactLogo).toBeInTheDocument();
-  await expect.element(viteLogo).toBeInTheDocument();
-  await expect.element(supabaseLogo).toBeInTheDocument();
-  await expect.element(vercelLogo).toBeInTheDocument();
+  // Check for key features
+  const safeVerified = getByText("Safe & Verified", { exact: false });
+  await expect.element(safeVerified).toBeInTheDocument();
 });
