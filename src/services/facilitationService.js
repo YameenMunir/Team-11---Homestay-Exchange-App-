@@ -527,7 +527,8 @@ export const facilitationService = {
             phone_number,
             guest_profile:guest_profiles (
               university,
-              course
+              course,
+              hours_per_week
             )
           ),
           target:user_profiles!target_id (
@@ -561,6 +562,7 @@ export const facilitationService = {
         studentPhone: req.requester?.phone_number,
         studentUniversity: req.requester?.guest_profile?.university,
         studentFieldOfStudy: req.requester?.guest_profile?.course,
+        studentHoursPerWeek: req.requester?.guest_profile?.hours_per_week,
         hostId: req.target_id,
         hostName: req.target?.full_name || 'Unknown Host',
         hostEmail: req.target?.email,

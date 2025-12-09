@@ -306,6 +306,9 @@ const AdminFacilitationRequests = () => {
                       {request.studentFieldOfStudy && (
                         <p className="text-xs text-gray-600">Field: {request.studentFieldOfStudy}</p>
                       )}
+                      {request.studentHoursPerWeek && (
+                        <p className="text-xs text-gray-600">Hours/Week: {request.studentHoursPerWeek} hours</p>
+                      )}
                     </div>
                   </div>
 
@@ -480,6 +483,9 @@ const AdminFacilitationRequests = () => {
                     )}
                     {selectedRequest.studentFieldOfStudy && (
                       <p className="text-xs text-gray-600">Field: {selectedRequest.studentFieldOfStudy}</p>
+                    )}
+                    {selectedRequest.studentHoursPerWeek && (
+                      <p className="text-xs text-gray-600">Hours/Week: {selectedRequest.studentHoursPerWeek} hours</p>
                     )}
                   </div>
                 </div>
