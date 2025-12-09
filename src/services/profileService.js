@@ -55,6 +55,8 @@ export const profileService = {
         skills: profileData.skills || [],
         availability_start: profileData.availabilityStart || null,
         availability_end: profileData.availabilityEnd || null,
+        available_hours: profileData.availableHours || [],
+        hours_per_week: profileData.hoursPerWeek ? parseInt(profileData.hoursPerWeek) : null,
         profile_picture_url: profileData.profilePictureUrl || null,
         emergency_contact_name: profileData.emergencyContactName?.trim() || null,
         emergency_contact_phone: profileData.emergencyContactPhone?.trim() || null,

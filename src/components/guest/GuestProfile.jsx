@@ -19,6 +19,8 @@ export default function GuestProfile() {
     preferred_postcode: '',
     emergency_contact_name: '',
     emergency_contact_phone: '',
+    available_hours: '',
+    hours_per_week: '',
   });
 
   useEffect(() => {
@@ -30,6 +32,8 @@ export default function GuestProfile() {
         preferred_postcode: roleProfile.preferred_postcode || '',
         emergency_contact_name: roleProfile.emergency_contact_name || '',
         emergency_contact_phone: roleProfile.emergency_contact_phone || '',
+        available_hours: roleProfile.available_hours?.join(', ') || '',
+        hours_per_week: roleProfile.hours_per_week || '',
       });
     }
     fetchDocuments();
@@ -61,6 +65,8 @@ export default function GuestProfile() {
       preferred_postcode: formData.preferred_postcode,
       emergency_contact_name: formData.emergency_contact_name,
       emergency_contact_phone: formData.emergency_contact_phone,
+      available_hours: formData.available_hours.split(',').map((s) => s.trim()).filter((s) => s),
+      hours_per_week: formData.hours_per_week ? parseInt(formData.hours_per_week) : null,
     };
 
     const { error } = await updateProfile(updates);
@@ -155,6 +161,40 @@ export default function GuestProfile() {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
               placeholder="e.g., cooking, gardening, tech support"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Available Hours (comma separated)
+            </label>
+            <input
+              type="text"
+              value={formData.available_hours}
+              onChange={(e) => setFormData({ ...formData, available_hours: e.target.value })}
+              disabled={!editing}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
+              placeholder="e.g., Monday 9am-5pm, Tuesday 2pm-8pm, Weekends"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Hours Available Per Week
+            </label>
+            <select
+              value={formData.hours_per_week}
+              onChange={(e) => setFormData({ ...formData, hours_per_week: e.target.value })}
+              disabled={!editing}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
+            >
+              <option value="">Select hours</option>
+              <option value="5">5 hours</option>
+              <option value="10">10 hours</option>
+              <option value="15">15 hours</option>
+              <option value="20">20 hours</option>
+              <option value="25">25 hours</option>
+              <option value="30">30 hours</option>
+            </select>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

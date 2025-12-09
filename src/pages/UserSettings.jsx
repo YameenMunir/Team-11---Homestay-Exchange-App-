@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { useVoiceGuidance } from '../hooks/useVoiceGuidance';
+import { profileService } from '../services/profileService';
 import HelpOverlay from '../components/HelpOverlay';
 import {
   User,
@@ -64,6 +65,7 @@ const UserSettings = () => {
     phone: user.phone,
     university: user.university,
     userType: user.userType,
+    hoursPerWeek: user.hoursPerWeek || '',
   });
 
   const [originalProfile, setOriginalProfile] = useState({
@@ -72,6 +74,7 @@ const UserSettings = () => {
     phone: user.phone,
     university: user.university,
     userType: user.userType,
+    hoursPerWeek: user.hoursPerWeek || '',
   });
 
   // Sync profile with user context on mount or user change
@@ -82,6 +85,7 @@ const UserSettings = () => {
       phone: user.phone,
       university: user.university,
       userType: user.userType,
+      hoursPerWeek: user.hoursPerWeek || '',
     });
     setOriginalProfile({
       fullName: user.fullName,
@@ -89,6 +93,7 @@ const UserSettings = () => {
       phone: user.phone,
       university: user.university,
       userType: user.userType,
+      hoursPerWeek: user.hoursPerWeek || '',
     });
   }, [user]);
 
@@ -144,7 +149,8 @@ const UserSettings = () => {
     return (
       profile.fullName !== originalProfile.fullName ||
       profile.email !== originalProfile.email ||
-      profile.phone !== originalProfile.phone
+      profile.phone !== originalProfile.phone ||
+      profile.hoursPerWeek !== originalProfile.hoursPerWeek
     );
   };
 
@@ -158,26 +164,41 @@ const UserSettings = () => {
     setSaveSuccess(false);
 
     try {
-      // Simulate API call - Replace with actual API call to Supabase
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // For guest/student users, update guest_profiles table with hours_per_week
+      if (user.userType === 'guest' || user.userType === 'student') {
+        // Get current guest profile to preserve all required fields
+        const currentGuestProfile = await profileService.getGuestProfile();
 
-      // TODO: Replace with actual API call
-      // const { data, error } = await supabase
-      //   .from('users')
-      //   .update({
-      //     full_name: profile.fullName,
-      //     email: profile.email,
-      //     phone: profile.phone,
-      //   })
-      //   .eq('id', userId);
-
-      console.log('Profile updated:', profile);
+        if (currentGuestProfile) {
+          // Update with new hours_per_week while preserving other fields
+          await profileService.upsertGuestProfile({
+            dateOfBirth: currentGuestProfile.date_of_birth,
+            university: currentGuestProfile.university,
+            course: currentGuestProfile.course,
+            yearOfStudy: currentGuestProfile.year_of_study,
+            hoursPerWeek: profile.hoursPerWeek,
+            // Preserve other optional fields
+            studentId: currentGuestProfile.student_id,
+            preferredLocation: currentGuestProfile.preferred_location,
+            preferredPostcode: currentGuestProfile.preferred_postcode,
+            bio: currentGuestProfile.bio,
+            skills: currentGuestProfile.skills,
+            availabilityStart: currentGuestProfile.availability_start,
+            availabilityEnd: currentGuestProfile.availability_end,
+            availableHours: currentGuestProfile.available_hours,
+            profilePictureUrl: currentGuestProfile.profile_picture_url,
+            emergencyContactName: currentGuestProfile.emergency_contact_name,
+            emergencyContactPhone: currentGuestProfile.emergency_contact_phone,
+          });
+        }
+      }
 
       // Update global user context
       updateUser({
         fullName: profile.fullName,
         email: profile.email,
         phone: profile.phone,
+        hoursPerWeek: profile.hoursPerWeek,
       });
 
       // Update originalProfile to match current profile
@@ -508,6 +529,36 @@ const UserSettings = () => {
                     />
                   </div>
                 </div>
+
+                {/* Hours Per Week - Only show for guest/student users */}
+                {(user.userType === 'guest' || user.userType === 'student') && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      Hours Available Per Week
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Clock className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <select
+                        value={profile.hoursPerWeek}
+                        onChange={(e) => setProfile({ ...profile, hoursPerWeek: e.target.value })}
+                        className="input-field pl-11"
+                      >
+                        <option value="">Select hours</option>
+                        <option value="5">5 hours</option>
+                        <option value="10">10 hours</option>
+                        <option value="15">15 hours</option>
+                        <option value="20">20 hours</option>
+                        <option value="25">25 hours</option>
+                        <option value="30">30 hours</option>
+                      </select>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-600">
+                      How many hours per week are you available to help your host family?
+                    </p>
+                  </div>
+                )}
 
                 {/* Success Message */}
                 {saveSuccess && (

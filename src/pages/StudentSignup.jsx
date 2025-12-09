@@ -44,7 +44,7 @@ const StudentSignup = () => {
     yearOfStudy: '',
     servicesOffered: [],
     aboutYou: '',
-    availableHours: '',
+    hoursPerWeek: '',
     idDocument: null,
     admissionLetter: null,
   });
@@ -256,9 +256,10 @@ const StudentSignup = () => {
         p_university: universityName,
         p_course: formData.courseOfStudy,
         p_year_of_study: parseInt(formData.yearOfStudy),
+        p_date_of_birth: formData.dateOfBirth,
         p_skills: formData.servicesOffered,
         p_bio: formData.aboutYou,
-        p_date_of_birth: formData.dateOfBirth,
+        p_hours_per_week: formData.hoursPerWeek ? parseInt(formData.hoursPerWeek) : null,
       });
 
       if (profileError) throw profileError;
@@ -816,24 +817,26 @@ const StudentSignup = () => {
 
                   <div>
                     <label
-                      htmlFor="availableHours"
+                      htmlFor="hoursPerWeek"
                       className="block text-lg font-semibold text-gray-900 mb-2"
                     >
                       Hours Available Per Week
                     </label>
                     <select
-                      id="availableHours"
-                      name="availableHours"
-                      value={formData.availableHours}
+                      id="hoursPerWeek"
+                      name="hoursPerWeek"
+                      value={formData.hoursPerWeek}
                       onChange={handleChange}
                       required
                       className="input-field"
                     >
                       <option value="">Select hours</option>
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
-                      <option value="20">20</option>
+                      <option value="5">5 hours</option>
+                      <option value="10">10 hours</option>
+                      <option value="15">15 hours</option>
+                      <option value="20">20 hours</option>
+                      <option value="25">25 hours</option>
+                      <option value="30">30 hours</option>
                     </select>
                   </div>
 
