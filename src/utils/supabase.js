@@ -31,6 +31,11 @@ if (isTestEnvironment && hasMissingCredentials) {
         download: () => Promise.resolve({ data: null, error: null }),
       }),
     },
+    channel: () => ({
+      on: () => ({ subscribe: () => ({ unsubscribe: () => {} }) }),
+      subscribe: () => ({ unsubscribe: () => {} }),
+      unsubscribe: () => {},
+    }),
   };
   console.log("Using Supabase test stub (no network calls)");
 } else {
