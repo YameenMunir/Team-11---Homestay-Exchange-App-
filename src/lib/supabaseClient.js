@@ -24,6 +24,9 @@ if (isTestEnvironment && hasMissingCredentials) {
       signIn: () => Promise.resolve({ data: null, error: null }),
       signOut: () => Promise.resolve({ error: null }),
       signUp: () => Promise.resolve({ data: null, error: null }),
+      onAuthStateChange: () => ({
+        data: { subscription: { unsubscribe: () => {} } },
+      }),
     },
     storage: {
       from: () => ({
