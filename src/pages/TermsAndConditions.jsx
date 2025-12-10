@@ -166,6 +166,10 @@ const TermsAndConditions = () => {
                           </div>
                           <div className="flex items-start space-x-3">
                             <CheckCircle2 className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700">Facilitate only one student (guest) at a time</span>
+                          </div>
+                          <div className="flex items-start space-x-3">
+                            <CheckCircle2 className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                             <span className="text-gray-700">Treat students with respect and dignity</span>
                           </div>
                         </div>

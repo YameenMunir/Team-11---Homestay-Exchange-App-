@@ -17,6 +17,22 @@ export const facilitationService = {
       throw new Error('User not authenticated');
     }
 
+    // Check if the host already has a matched student
+    const { data: existingMatches, error: checkError } = await supabase
+      .from('facilitation_requests')
+      .select('id, status')
+      .eq('target_id', targetId)
+      .eq('status', 'matched');
+
+    if (checkError) {
+      console.error('[FacilitationService] Error checking host availability:', checkError);
+      throw checkError;
+    }
+
+    if (existingMatches && existingMatches.length > 0) {
+      throw new Error('This host is currently unavailable. Hosts can only facilitate one student at a time.');
+    }
+
     const { data, error } = await supabase
       .from('facilitation_requests')
       .insert({
@@ -630,6 +646,34 @@ export const facilitationService = {
    */
   async approveRequest(requestId, adminNotes = '') {
     const { data: { user } } = await supabase.auth.getUser();
+
+    // First, get the request to find the target (host) ID
+    const { data: request, error: fetchError } = await supabase
+      .from('facilitation_requests')
+      .select('target_id')
+      .eq('id', requestId)
+      .single();
+
+    if (fetchError) {
+      console.error('[FacilitationService] Error fetching request:', fetchError);
+      throw fetchError;
+    }
+
+    // Check if the host already has a matched student
+    const { data: existingMatches, error: checkError } = await supabase
+      .from('facilitation_requests')
+      .select('id, status')
+      .eq('target_id', request.target_id)
+      .eq('status', 'matched');
+
+    if (checkError) {
+      console.error('[FacilitationService] Error checking host availability:', checkError);
+      throw checkError;
+    }
+
+    if (existingMatches && existingMatches.length > 0) {
+      throw new Error('This host is currently unavailable. They can only facilitate one student at a time.');
+    }
 
     const { data, error } = await supabase
       .from('facilitation_requests')

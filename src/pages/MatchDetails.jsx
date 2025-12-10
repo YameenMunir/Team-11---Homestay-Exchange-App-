@@ -35,6 +35,8 @@ const MatchDetails = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [connectionMessage, setConnectionMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [existingRequest, setExistingRequest] = useState(null);
 
   // Fetch host data and check saved status
@@ -102,7 +104,9 @@ const MatchDetails = () => {
       });
     } catch (err) {
       console.error('Error creating facilitation request:', err);
-      alert('Failed to submit request. Please try again.');
+      setShowFacilitateModal(false);
+      setErrorMessage(err.message || 'Failed to submit request. Please try again.');
+      setShowErrorModal(true);
     }
   };
 
@@ -723,6 +727,49 @@ const MatchDetails = () => {
                 className="btn-primary flex-1 text-center"
               >
                 View My Requests
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 animate-fade-in text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <XCircle className="w-10 h-10 text-red-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
+              Unable to Send Request
+            </h3>
+            <p className="text-gray-700 mb-6 leading-relaxed">
+              {errorMessage}
+            </p>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left">
+              <p className="text-sm text-amber-900 font-medium mb-2">
+                What you can do:
+              </p>
+              <ul className="text-sm text-amber-800 space-y-1">
+                <li>• Browse other available hosts</li>
+                <li>• Save this host to check back later</li>
+                <li>• Contact support if you need assistance</li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="btn-primary flex-1"
+              >
+                OK
+              </button>
+              <Link
+                to="/student/browse"
+                className="btn-secondary flex-1 text-center"
+              >
+                Browse Hosts
               </Link>
             </div>
           </div>
