@@ -473,37 +473,40 @@ const MatchDetails = () => {
                 <div>
                   <div className={`rounded-xl p-4 mb-4 ${
                     existingRequest.status === 'pending' ? 'bg-yellow-50 border border-yellow-200' :
-                    existingRequest.status === 'reviewing' ? 'bg-teal-50 border border-teal-200' :
+                    existingRequest.status === 'in_review' || existingRequest.status === 'reviewing' ? 'bg-teal-50 border border-teal-200' :
                     existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'bg-green-50 border border-green-200' :
                     'bg-red-50 border border-red-200'
                   }`}>
                     <div className="flex items-start space-x-3">
                       {existingRequest.status === 'pending' && <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />}
+                      {existingRequest.status === 'in_review' && <Eye className="w-6 h-6 text-teal-600 flex-shrink-0" />}
                       {existingRequest.status === 'reviewing' && <Eye className="w-6 h-6 text-teal-600 flex-shrink-0" />}
                       {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />}
-                      {existingRequest.status === 'rejected' && <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
+                      {(existingRequest.status === 'rejected' || existingRequest.status === 'cancelled') && <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />}
                       <div>
                         <h4 className={`font-semibold mb-1 ${
                           existingRequest.status === 'pending' ? 'text-yellow-900' :
-                          existingRequest.status === 'reviewing' ? 'text-teal-900' :
+                          existingRequest.status === 'in_review' || existingRequest.status === 'reviewing' ? 'text-teal-900' :
                           existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-900' :
                           'text-red-900'
                         }`}>
                           {existingRequest.status === 'pending' && 'Request Pending'}
-                          {existingRequest.status === 'reviewing' && 'Under Review'}
+                          {(existingRequest.status === 'in_review' || existingRequest.status === 'reviewing') && 'Under Review'}
                           {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && 'Request Approved!'}
                           {existingRequest.status === 'rejected' && 'Request Not Approved'}
+                          {existingRequest.status === 'cancelled' && 'Request Cancelled'}
                         </h4>
                         <p className={`text-sm ${
                           existingRequest.status === 'pending' ? 'text-yellow-800' :
-                          existingRequest.status === 'reviewing' ? 'text-teal-800' :
+                          existingRequest.status === 'in_review' || existingRequest.status === 'reviewing' ? 'text-teal-800' :
                           existingRequest.status === 'approved' || existingRequest.status === 'matched' ? 'text-green-800' :
                           'text-red-800'
                         }`}>
                           {existingRequest.status === 'pending' && 'Your facilitation request is awaiting admin review.'}
-                          {existingRequest.status === 'reviewing' && 'Our admin team is currently reviewing your request.'}
+                          {(existingRequest.status === 'in_review' || existingRequest.status === 'reviewing') && 'Our admin team is currently reviewing your request.'}
                           {(existingRequest.status === 'approved' || existingRequest.status === 'matched') && 'Your request has been approved! Check your Connection Requests page for admin contact details.'}
                           {existingRequest.status === 'rejected' && 'Unfortunately, this request was not approved. You may browse other hosts.'}
+                          {existingRequest.status === 'cancelled' && 'This request has been cancelled. You may submit a new request if you wish.'}
                         </p>
                       </div>
                     </div>
