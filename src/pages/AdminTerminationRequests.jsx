@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { terminationService } from '../services/terminationService';
 import toast from 'react-hot-toast';
-import { AlertTriangle, CheckCircle, XCircle, Clock, Eye, Loader2, User, Home as HomeIcon, ArrowLeft } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle, Clock, Eye, Loader2, User, Home as HomeIcon, ArrowLeft, RefreshCw } from 'lucide-react';
 
 const AdminTerminationRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [filterStatus, setFilterStatus] = useState('pending');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -20,17 +21,32 @@ const AdminTerminationRequests = () => {
     fetchRequests();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchRequests = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const data = await terminationService.getAdminTerminationRequests();
       setRequests(data);
+      if (isRefresh) {
+        toast.success('Requests refreshed successfully');
+      }
     } catch (error) {
       console.error('Error fetching termination requests:', error);
       toast.error('Failed to load termination requests');
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRefresh = () => {
+    fetchRequests(true);
   };
 
   const handleApprove = async (requestId) => {
@@ -135,11 +151,21 @@ const AdminTerminationRequests = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Back to Dashboard</span>
           </Link>
-          <div className="flex items-center gap-3 mb-2">
-            <AlertTriangle className="w-8 h-8 text-red-600" />
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
-              Termination Requests
-            </h1>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
+                Termination Requests
+              </h1>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary flex items-center gap-2"
+            >
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
           </div>
           <p className="text-lg text-gray-600">
             Review and manage facilitation termination requests from hosts and students
