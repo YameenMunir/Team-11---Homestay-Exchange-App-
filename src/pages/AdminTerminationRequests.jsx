@@ -153,7 +153,7 @@ const AdminTerminationRequests = () => {
           </Link>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <AlertTriangle className="w-8 h-8 text-red-600" />
+              <AlertTriangle className="w-8 h-8 text-teal-600" />
               <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
                 Termination Requests
               </h1>
@@ -180,7 +180,7 @@ const AdminTerminationRequests = () => {
                 onClick={() => setFilterStatus('pending')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   filterStatus === 'pending'
-                    ? 'border-yellow-600 text-yellow-600'
+                    ? 'border-teal-600 text-teal-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -249,20 +249,18 @@ const AdminTerminationRequests = () => {
                 </div>
 
                 {/* Facilitation Details */}
-                <div className="bg-gray-50 rounded-lg p-4 mb-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">Student</p>
-                      <p className="text-sm font-medium text-gray-900">{request.studentName}</p>
-                      <p className="text-xs text-gray-600">{request.studentUniversity}</p>
-                      <p className="text-xs text-gray-600">{request.studentEmail}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 mb-1">Host</p>
-                      <p className="text-sm font-medium text-gray-900">{request.hostName}</p>
-                      <p className="text-xs text-gray-600">{request.hostLocation}</p>
-                      <p className="text-xs text-gray-600">{request.hostEmail}</p>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                    <p className="text-xs font-semibold text-purple-700 mb-2">Student</p>
+                    <p className="text-sm font-medium text-gray-900">{request.studentName}</p>
+                    <p className="text-xs text-gray-600">{request.studentUniversity}</p>
+                    <p className="text-xs text-gray-600">{request.studentEmail}</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                    <p className="text-xs font-semibold text-blue-700 mb-2">Host</p>
+                    <p className="text-sm font-medium text-gray-900">{request.hostName}</p>
+                    <p className="text-xs text-gray-600">{request.hostLocation}</p>
+                    <p className="text-xs text-gray-600">{request.hostEmail}</p>
                   </div>
                 </div>
 
