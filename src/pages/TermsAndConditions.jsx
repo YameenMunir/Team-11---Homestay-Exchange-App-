@@ -288,7 +288,7 @@ const TermsAndConditions = () => {
                     <p className="text-gray-700 leading-relaxed text-lg mb-4">
                       For further details on terms and conditions, please{' '}
                       <a
-                        href="/documents/Terms_and_Conditions_Detailed.pdf"
+                        href="/documents/Comprehensive_Terms_and_Conditions.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-pink-600 hover:text-pink-700 font-medium transition-colors underline"
@@ -298,8 +298,8 @@ const TermsAndConditions = () => {
                       .
                     </p>
                     <a
-                      href="/documents/Terms_and_Conditions_Detailed.pdf"
-                      download="Terms_and_Conditions_Detailed.pdf"
+                      href="/documents/Comprehensive_Terms_and_Conditions.pdf"
+                      download="Comprehensive_Terms_and_Conditions.pdf"
                       className="btn-primary inline-flex items-center space-x-2 shadow-lg hover:shadow-xl transition-shadow"
                     >
                       <span>Download Full Terms & Conditions</span>
