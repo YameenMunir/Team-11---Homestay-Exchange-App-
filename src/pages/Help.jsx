@@ -224,7 +224,7 @@ const Help = () => {
             </p>
           </button>
 
-          <a href="mailto:zm@hostfamilystay.com" className="card p-6 hover:shadow-lg transition-all text-left group">
+          <a href="mailto:admin@hostfamilystay.com" className="card p-6 hover:shadow-lg transition-all text-left group">
             <Mail className="w-12 h-12 text-teal-600 mb-4 group-hover:scale-110 transition-transform" />
             <h3 className="font-semibold text-gray-900 mb-2">Email Support</h3>
             <p className="text-sm text-gray-600">
@@ -320,8 +320,8 @@ const Help = () => {
                 Our support team is here to assist you
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="mailto:zm@hostfamilystay.com" className="btn-primary">
-                  Email: zm@hostfamilystay.com
+                <a href="mailto:admin@hostfamilystay.com" className="btn-primary">
+                  Email: admin@hostfamilystay.com
                 </a>
                 <a href="tel:+442012345678" className="btn-outline">
                   Call: +44 (0) 20 1234 5678

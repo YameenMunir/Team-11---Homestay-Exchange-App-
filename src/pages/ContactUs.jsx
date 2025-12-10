@@ -66,10 +66,10 @@ const ContactUs = () => {
                   For general inquiries and support
                 </p>
                 <a
-                  href="mailto:support@hostfamilystay.co.uk"
+                  href="mailto:admin@hostfamilystay.com"
                   className="text-teal-600 hover:text-teal-700 font-medium"
                 >
-                  support@hostfamilystay.co.uk
+                  admin@hostfamilystay.com
                 </a>
               </div>
 
