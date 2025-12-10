@@ -26,6 +26,7 @@ import {
   MessageSquare,
   TrendingUp,
   AlertTriangle,
+  XCircle,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
@@ -47,6 +48,7 @@ const StudentDashboard = () => {
   const [showTerminationModal, setShowTerminationModal] = useState(false);
   const [selectedHostForTermination, setSelectedHostForTermination] = useState(null);
   const [terminationReason, setTerminationReason] = useState('');
+  const [terminationRequests, setTerminationRequests] = useState([]);
 
   // Fetch dashboard data
   useEffect(() => {
@@ -165,6 +167,24 @@ const StudentDashboard = () => {
     }
   }, [user, userLoading]);
 
+  // Fetch termination requests
+  useEffect(() => {
+    const fetchTerminationRequests = async () => {
+      if (!user) return;
+
+      try {
+        const requests = await terminationService.getUserTerminationRequests();
+        setTerminationRequests(requests);
+      } catch (error) {
+        console.error('Error fetching termination requests:', error);
+      }
+    };
+
+    if (!userLoading && user) {
+      fetchTerminationRequests();
+    }
+  }, [user, userLoading]);
+
   // Termination handlers
   const handleEndFacilitationClick = (host) => {
     setSelectedHostForTermination(host);
@@ -189,9 +209,11 @@ const StudentDashboard = () => {
       setTerminationReason('');
       setSelectedHostForTermination(null);
 
-      // Refresh matched hosts
+      // Refresh matched hosts and termination requests
       const hosts = await facilitationService.getMatchedHosts();
       setMatchedHosts(hosts);
+      const requests = await terminationService.getUserTerminationRequests();
+      setTerminationRequests(requests);
     } catch (error) {
       console.error('Error submitting termination request:', error);
       toast.error(error.message || 'Failed to submit termination request');
@@ -370,6 +392,16 @@ const StudentDashboard = () => {
                 Overview
               </button>
               <button
+                onClick={() => setActiveTab('facilitation')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'facilitation'
+                    ? 'border-teal-600 text-teal-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                My Facilitation
+              </button>
+              <button
                 onClick={() => setActiveTab('browse')}
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === 'browse'
@@ -489,7 +521,7 @@ const StudentDashboard = () => {
                           )}
                         </div>
                       )}
-                      {matchedHosts.length > 0 && matchedHosts[0] && (
+                      {matchedHosts.length > 0 && matchedHosts[0] ? (
                         <button
                           onClick={() => handleEndFacilitationClick(matchedHosts[0])}
                           className="w-full px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-medium flex items-center justify-center space-x-2"
@@ -497,14 +529,13 @@ const StudentDashboard = () => {
                           <AlertTriangle className="w-4 h-4" />
                           <span>End Facilitation</span>
                         </button>
-                      )}
-                      {!matchedHosts[0] && studentData.currentHost && (
+                      ) : studentData.currentHost ? (
                         <div className="w-full px-4 py-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
                           <p className="text-sm text-yellow-800">
-                            Facilitation data loading... Refresh the page to enable termination request.
+                            Loading facilitation details... Please refresh if this persists.
                           </p>
                         </div>
-                      )}
+                      ) : null}
                     </div>
                   </>
                 ) : (
@@ -674,6 +705,181 @@ const StudentDashboard = () => {
                 </p>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'facilitation' && (
+          <div className="max-w-4xl mx-auto space-y-6">
+            {/* Current Facilitation Card */}
+            <div className="card p-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <Home className="w-7 h-7 text-teal-600" />
+                Current Facilitation
+              </h2>
+
+              {matchedHosts.length > 0 && matchedHosts[0] ? (
+                <div>
+                  {/* Host Details */}
+                  <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                    <div className="flex items-start gap-4 mb-4">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0">
+                        {matchedHosts[0].profilePicture ? (
+                          <img
+                            src={matchedHosts[0].profilePicture}
+                            alt={matchedHosts[0].hostName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-teal-100">
+                            <Home className="w-10 h-10 text-teal-600" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {matchedHosts[0].hostName}
+                          </h3>
+                          <CheckCircle className="w-6 h-6 text-teal-600" />
+                        </div>
+                        <p className="text-sm text-gray-600 mb-1">
+                          {matchedHosts[0].city}{matchedHosts[0].postcode && `, ${matchedHosts[0].postcode}`}
+                        </p>
+                        {matchedHosts[0].rating > 0 && (
+                          <div className="flex items-center gap-1 mt-2">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <span className="font-semibold text-gray-900 text-sm">
+                              {matchedHosts[0].rating.toFixed(1)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        Matched since {matchedHosts[0].matchedAt ? new Date(matchedHosts[0].matchedAt).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' }) : 'Recently'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="space-y-3">
+                    <div className="flex gap-3">
+                      {feedbackEligibility[matchedHosts[0].facilitationId]?.canSubmit ? (
+                        <Link
+                          to={`/monthly-feedback/${matchedHosts[0].facilitationId}`}
+                          state={{
+                            partnerName: matchedHosts[0].hostName,
+                            partnerId: matchedHosts[0].hostId,
+                            partnerRole: 'host'
+                          }}
+                          className="btn-primary flex-1 text-center flex items-center justify-center gap-2"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span>Submit Monthly Review ({getCurrentMonth()})</span>
+                        </Link>
+                      ) : (
+                        <button
+                          disabled
+                          className="btn-outline flex-1 text-center opacity-50 cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Review Submitted ({getCurrentMonth()})</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => handleEndFacilitationClick(matchedHosts[0])}
+                      className="w-full px-4 py-3 border-2 border-red-400 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-semibold flex items-center justify-center gap-2"
+                    >
+                      <AlertTriangle className="w-5 h-5" />
+                      <span>Request to End Facilitation</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Home className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No Active Facilitation
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    You don't have an active facilitation arrangement yet.
+                  </p>
+                  <Link to="/student/browse" className="btn-primary">
+                    Browse Available Hosts
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Termination Requests History */}
+            {terminationRequests.length > 0 && (
+              <div className="card p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <AlertTriangle className="w-6 h-6 text-orange-600" />
+                  Termination Requests
+                </h2>
+
+                <div className="space-y-4">
+                  {terminationRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="border border-gray-200 rounded-lg p-4"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-900">
+                            Request to end facilitation with {request.partnerName}
+                          </span>
+                        </div>
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full border ${
+                          request.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                            : request.status === 'approved'
+                            ? 'bg-green-100 text-green-800 border-green-200'
+                            : 'bg-red-100 text-red-800 border-red-200'
+                        }`}>
+                          {request.status === 'pending' && <Clock className="w-3 h-3" />}
+                          {request.status === 'approved' && <CheckCircle className="w-3 h-3" />}
+                          {request.status === 'rejected' && <XCircle className="w-3 h-3" />}
+                          {request.status === 'pending' ? 'Pending Review' : request.status === 'approved' ? 'Approved' : 'Rejected'}
+                        </span>
+                      </div>
+
+                      <div className="text-sm text-gray-600 mb-2">
+                        <span className="font-medium">Your reason:</span> {request.reason}
+                      </div>
+
+                      {request.adminNotes && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+                          <p className="text-sm font-medium text-blue-900 mb-1">Admin Response:</p>
+                          <p className="text-sm text-blue-800">{request.adminNotes}</p>
+                          {request.reviewedAt && (
+                            <p className="text-xs text-blue-600 mt-1">
+                              Reviewed on {new Date(request.reviewedAt).toLocaleDateString('en-GB')}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      <div className="text-xs text-gray-500 mt-3">
+                        Submitted on {new Date(request.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
