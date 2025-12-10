@@ -5,6 +5,16 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    // Mobile-first breakpoints (Tailwind defaults are already mobile-first)
+    screens: {
+      'xs': '475px',    // Extra small devices
+      'sm': '640px',    // Small devices (phones)
+      'md': '768px',    // Medium devices (tablets)
+      'lg': '1024px',   // Large devices (laptops)
+      'xl': '1280px',   // Extra large devices (desktops)
+      '2xl': '1536px',  // 2X large devices (large desktops)
+      '3xl': '1920px',  // 3X large devices (4K displays)
+    },
     extend: {
       colors: {
         primary: {
@@ -37,10 +47,20 @@ export default {
         display: ['Poppins', 'system-ui', 'sans-serif'],
       },
       fontSize: {
+        // Responsive font sizes for better scaling
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1' }],
         // Larger sizes for accessibility
-        'xl-accessible': '1.375rem',
-        '2xl-accessible': '1.75rem',
-        '3xl-accessible': '2.25rem',
+        'xl-accessible': ['1.375rem', { lineHeight: '1.875rem' }],
+        '2xl-accessible': ['1.75rem', { lineHeight: '2.25rem' }],
+        '3xl-accessible': ['2.25rem', { lineHeight: '2.75rem' }],
       },
       spacing: {
         '18': '4.5rem',
@@ -48,6 +68,13 @@ export default {
         '100': '25rem',
         '112': '28rem',
         '128': '32rem',
+      },
+      // Enhanced touch targets for mobile
+      minHeight: {
+        'touch': '44px',  // Apple's recommended minimum touch target
+      },
+      minWidth: {
+        'touch': '44px',
       },
     },
   },
