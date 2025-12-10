@@ -300,6 +300,45 @@ const AntiDiscriminationPolicy = () => {
                 </div>
               </div>
 
+              {/* Cultural Sensitivity */}
+              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-teal-600">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-teal-100 rounded-lg p-3 flex-shrink-0">
+                    <Heart className="w-6 h-6 text-teal-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      Cultural Sensitivity and Respect
+                    </h2>
+                    <p className="text-gray-700 leading-relaxed text-lg mb-4">
+                      We are committed to fostering an environment of cultural understanding and mutual respect:
+                    </p>
+                    <div className="grid gap-3">
+                      <div className="flex items-start space-x-3 bg-teal-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Hosts must respect each guest's cultural background and traditions</span>
+                      </div>
+                      <div className="flex items-start space-x-3 bg-teal-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Be sensitive and accommodating to guests' particular cultural or religious needs</span>
+                      </div>
+                      <div className="flex items-start space-x-3 bg-teal-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Students must show respect and understanding for host families' cultural backgrounds</span>
+                      </div>
+                      <div className="flex items-start space-x-3 bg-teal-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Create an environment that celebrates diversity and promotes cross-cultural learning</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 p-4 bg-teal-100 rounded-lg border border-teal-200">
+                      <p className="text-teal-900 font-semibold mb-1">Our Commitment:</p>
+                      <p className="text-teal-800 text-sm">Equal opportunities for all users regardless of race, ethnicity, religion, or other protected characteristics.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Training and Education */}
               <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-indigo-600">
                 <div className="flex items-start space-x-4">

@@ -109,6 +109,22 @@ const DisputeResolution = () => {
                     <h2 className="text-2xl font-bold text-gray-900 mb-6">
                       Our Resolution Process
                     </h2>
+
+                    {/* Try Direct Communication First */}
+                    <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-start space-x-3">
+                        <MessageCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+                        <div>
+                          <h4 className="font-semibold text-blue-900 mb-1">Before Formal Reporting:</h4>
+                          <p className="text-blue-800 text-sm">
+                            If you're comfortable doing so, try addressing the issue directly with the other party first.
+                            Many conflicts can be resolved through friendly, open communication. If this doesn't work
+                            or you don't feel comfortable, please proceed with the formal process below.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="space-y-4">
                       {/* Step 1 */}
                       <div className="bg-gradient-to-br from-green-50 to-white rounded-xl p-6 border border-green-100">
@@ -153,9 +169,9 @@ const DisputeResolution = () => {
                               Initial Assessment
                             </h3>
                             <p className="text-gray-700 mb-3">
-                              Our team will review your report within 24-48 hours and:
+                              Our team will review your report and respond:
                             </p>
-                            <div className="grid gap-2">
+                            <div className="grid gap-2 mb-3">
                               <div className="flex items-start space-x-2">
                                 <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">Acknowledge receipt of your report</span>
@@ -173,6 +189,14 @@ const DisputeResolution = () => {
                                 <span className="text-gray-600 text-sm">Determine the appropriate resolution pathway</span>
                               </div>
                             </div>
+                            <div className="flex items-center justify-between text-sm bg-green-100 rounded-lg p-3">
+                              <span className="font-medium text-green-900">Response Time:</span>
+                              <div className="text-right">
+                                <div className="text-green-900 font-semibold">Urgent: Within 24 hours</div>
+                                <div className="text-green-800">Non-urgent: Up to 7 business days</div>
+                                <div className="text-green-800 font-medium mt-1">Safety concerns: Immediate (24/7)</div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -185,12 +209,12 @@ const DisputeResolution = () => {
                           </div>
                           <div className="flex-1">
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                              Mediation
+                              Mediation & Platform Actions
                             </h3>
                             <p className="text-gray-700 mb-3">
-                              For most disputes, we facilitate mediation between parties:
+                              For most disputes, we facilitate impartial mediation between parties:
                             </p>
-                            <div className="grid gap-2">
+                            <div className="grid gap-2 mb-3">
                               <div className="flex items-start space-x-2">
                                 <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">A trained mediator will facilitate communication</span>
@@ -207,6 +231,12 @@ const DisputeResolution = () => {
                                 <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">All conversations remain confidential</span>
                               </div>
+                            </div>
+                            <div className="p-3 bg-green-100 rounded-lg border border-green-200">
+                              <p className="text-green-900 text-sm">
+                                <strong>Platform Authority:</strong> We act impartially to mediate between all parties and reserve
+                                the right to relocate students if necessary to ensure safety and resolve conflicts.
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -225,7 +255,7 @@ const DisputeResolution = () => {
                             <p className="text-gray-700 mb-3">
                               Once a resolution is reached:
                             </p>
-                            <div className="grid gap-2">
+                            <div className="grid gap-2 mb-3">
                               <div className="flex items-start space-x-2">
                                 <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">We document the agreed solution</span>
@@ -241,6 +271,26 @@ const DisputeResolution = () => {
                               <div className="flex items-start space-x-2">
                                 <CheckCircle2 className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
                                 <span className="text-gray-600 text-sm">Take appropriate action if agreements aren't honored</span>
+                              </div>
+                            </div>
+                            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                              <h4 className="font-semibold text-blue-900 mb-2">Relocation Option:</h4>
+                              <p className="text-blue-800 text-sm mb-2">
+                                If the conflict cannot be resolved and parties cannot continue living together, we will:
+                              </p>
+                              <div className="space-y-1 text-sm text-blue-800">
+                                <div className="flex items-start space-x-2">
+                                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                  <span>Relocate the student to similar standard accommodation</span>
+                                </div>
+                                <div className="flex items-start space-x-2">
+                                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                  <span>Provide one-week notice (except in emergency situations)</span>
+                                </div>
+                                <div className="flex items-start space-x-2">
+                                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
+                                  <span>If alternative accommodation is declined, standard cancellation policy applies</span>
+                                </div>
                               </div>
                             </div>
                           </div>

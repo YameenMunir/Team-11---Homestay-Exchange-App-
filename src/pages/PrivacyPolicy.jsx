@@ -197,6 +197,10 @@ const PrivacyPolicy = () => {
                       </div>
                       <div className="flex items-start space-x-3 bg-orange-50 rounded-lg p-4">
                         <CheckCircle2 className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Guest's parents or agents (factual host information only: name, age, address, contact, occupation, interests)</span>
+                      </div>
+                      <div className="flex items-start space-x-3 bg-orange-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                         <span className="text-gray-700">Third-party verification services (e.g., DBS check providers)</span>
                       </div>
                       <div className="flex items-start space-x-3 bg-orange-50 rounded-lg p-4">
@@ -207,6 +211,10 @@ const PrivacyPolicy = () => {
                         <CheckCircle2 className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                         <span className="text-gray-700">Service providers who help us operate our platform (under strict confidentiality agreements)</span>
                       </div>
+                    </div>
+                    <div className="mt-4 p-4 bg-orange-100 rounded-lg border border-orange-200">
+                      <p className="text-orange-900 font-semibold mb-1">Important:</p>
+                      <p className="text-orange-800 text-sm">We never share banking, financial, passport, or other identity details between parties.</p>
                     </div>
                   </div>
                 </div>
@@ -309,6 +317,70 @@ const PrivacyPolicy = () => {
                       We use cookies and similar technologies to improve your experience on our
                       platform. You can control cookie preferences through your browser settings.
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Confidentiality */}
+              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-red-600">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-red-100 rounded-lg p-3 flex-shrink-0">
+                    <Lock className="w-6 h-6 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      9. Confidentiality Requirements
+                    </h2>
+                    <div className="bg-red-50 rounded-xl p-6 border border-red-200 mb-4">
+                      <p className="text-red-900 font-semibold mb-3">
+                        Important Confidentiality Rules:
+                      </p>
+                      <div className="grid gap-3">
+                        <div className="flex items-start space-x-3">
+                          <CheckCircle2 className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                          <span className="text-red-800">Host-related personal and contact information is strictly confidential</span>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <CheckCircle2 className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                          <span className="text-red-800">Guests cannot share host address or contact details with anyone beyond immediate family without permission</span>
+                        </div>
+                        <div className="flex items-start space-x-3">
+                          <CheckCircle2 className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                          <span className="text-red-800">Breach of confidentiality may lead to legal action and financial consequences</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Disclosure Requirements */}
+              <div className="card p-8 md:p-10 hover:shadow-xl transition-shadow border-l-4 border-amber-600">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-amber-100 rounded-lg p-3 flex-shrink-0">
+                    <FileText className="w-6 h-6 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      10. Medical Information Disclosure
+                    </h2>
+                    <p className="text-gray-700 leading-relaxed text-lg mb-4">
+                      For the safety and wellbeing of all parties:
+                    </p>
+                    <div className="grid gap-3">
+                      <div className="flex items-start space-x-3 bg-amber-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Guests (and parents, if under 18) must disclose essential medical or mental health information at time of booking</span>
+                      </div>
+                      <div className="flex items-start space-x-3 bg-amber-50 rounded-lg p-4">
+                        <CheckCircle2 className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">This information is kept confidential and used only to ensure appropriate care and safety</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 p-4 bg-amber-100 rounded-lg border border-amber-200">
+                      <p className="text-amber-900 font-semibold mb-1">Non-Disclosure Consequences:</p>
+                      <p className="text-amber-800 text-sm">Failure to disclose relevant medical information may result in early termination of the arrangement and a £150 misinformation penalty charge.</p>
+                    </div>
                   </div>
                 </div>
               </div>
