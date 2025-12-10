@@ -15,6 +15,7 @@ import {
   Activity,
   Loader2,
   RefreshCw,
+  AlertTriangle,
 } from 'lucide-react';
 import { adminService } from '../services/adminService';
 import { useVerificationEvents } from '../context/VerificationEventsContext';
@@ -107,7 +108,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="card p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -137,6 +138,24 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
+
+          <Link
+            to="/admin/termination-requests"
+            className="card p-6 hover:shadow-lg transition-shadow cursor-pointer"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Pending Terminations</p>
+                <span className="text-3xl font-bold text-gray-900">
+                  {stats?.pendingTerminations || 0}
+                </span>
+                <p className="text-xs text-gray-500 mt-2">Awaiting review</p>
+              </div>
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+            </div>
+          </Link>
 
           <div className="card p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
@@ -216,6 +235,24 @@ const AdminDashboard = () => {
                   )}
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
+
+            <Link
+              to="/admin/termination-requests"
+              className="card p-6 hover:shadow-lg transition-all hover:border-red-200 group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-red-600" />
+                    Termination Requests
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Review facilitation end requests
+                  </p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 

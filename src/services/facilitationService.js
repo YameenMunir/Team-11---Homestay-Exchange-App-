@@ -329,6 +329,7 @@ export const facilitationService = {
 
   /**
    * Get matched students for a host (active arrangements)
+   * Excludes facilitations with pending or approved termination requests
    * @returns {Promise<Array>} Array of matched students
    */
   async getMatchedStudents() {
@@ -356,10 +357,14 @@ export const facilitationService = {
               profile_picture_url,
               average_rating
             )
+          ),
+          termination_requests!facilitation_id (
+            id,
+            status
           )
         `)
         .eq('target_id', user.id)
-        .in('status', ['matched', 'completed'])
+        .eq('status', 'matched')
         .order('matched_at', { ascending: false });
 
       if (error) {
@@ -367,8 +372,20 @@ export const facilitationService = {
         throw error;
       }
 
+      // Filter out facilitations with pending or approved termination requests
+      const filteredData = data.filter(req => {
+        // If there are any pending or approved termination requests, exclude this facilitation
+        if (req.termination_requests && req.termination_requests.length > 0) {
+          const hasPendingOrApproved = req.termination_requests.some(
+            tr => tr.status === 'pending' || tr.status === 'approved'
+          );
+          return !hasPendingOrApproved;
+        }
+        return true;
+      });
+
       // Transform the data
-      const students = data.map(req => ({
+      const students = filteredData.map(req => ({
         facilitationId: req.id,
         studentId: req.requester_id,
         studentName: req.requester?.full_name || 'Unknown Student',
@@ -390,6 +407,7 @@ export const facilitationService = {
 
   /**
    * Get matched hosts for a student (active arrangements)
+   * Excludes facilitations with pending or approved termination requests
    * @returns {Promise<Array>} Array of matched hosts
    */
   async getMatchedHosts() {
@@ -417,10 +435,14 @@ export const facilitationService = {
               profile_picture_url,
               average_rating
             )
+          ),
+          termination_requests!facilitation_id (
+            id,
+            status
           )
         `)
         .eq('requester_id', user.id)
-        .in('status', ['matched', 'completed'])
+        .eq('status', 'matched')
         .order('matched_at', { ascending: false });
 
       if (error) {
@@ -428,8 +450,20 @@ export const facilitationService = {
         throw error;
       }
 
+      // Filter out facilitations with pending or approved termination requests
+      const filteredData = data.filter(req => {
+        // If there are any pending or approved termination requests, exclude this facilitation
+        if (req.termination_requests && req.termination_requests.length > 0) {
+          const hasPendingOrApproved = req.termination_requests.some(
+            tr => tr.status === 'pending' || tr.status === 'approved'
+          );
+          return !hasPendingOrApproved;
+        }
+        return true;
+      });
+
       // Transform the data
-      const hosts = data.map(req => ({
+      const hosts = filteredData.map(req => ({
         facilitationId: req.id,
         hostId: req.target_id,
         hostName: req.target?.full_name || 'Unknown Host',

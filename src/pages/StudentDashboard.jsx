@@ -4,10 +4,12 @@ import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
 import { savedHostsService } from '../services/savedHostsService';
 import { facilitationService } from '../services/facilitationService';
+import { terminationService } from '../services/terminationService';
 import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import { getRecognitionDetails } from '../services/recognitionService';
 import { supabase } from '../lib/supabaseClient';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
+import toast from 'react-hot-toast';
 import {
   Search,
   Home,
@@ -23,6 +25,7 @@ import {
   Link2,
   MessageSquare,
   TrendingUp,
+  AlertTriangle,
 } from 'lucide-react';
 
 const StudentDashboard = () => {
@@ -41,6 +44,9 @@ const StudentDashboard = () => {
   const [matchedHosts, setMatchedHosts] = useState([]);
   const [feedbackEligibility, setFeedbackEligibility] = useState({});
   const [recognitionData, setRecognitionData] = useState(null);
+  const [showTerminationModal, setShowTerminationModal] = useState(false);
+  const [selectedHostForTermination, setSelectedHostForTermination] = useState(null);
+  const [terminationReason, setTerminationReason] = useState('');
 
   // Fetch dashboard data
   useEffect(() => {
@@ -158,6 +164,39 @@ const StudentDashboard = () => {
       fetchRecognitionData();
     }
   }, [user, userLoading]);
+
+  // Termination handlers
+  const handleEndFacilitationClick = (host) => {
+    setSelectedHostForTermination(host);
+    setShowTerminationModal(true);
+  };
+
+  const handleSubmitTermination = async () => {
+    if (!terminationReason.trim()) {
+      toast.error('Please provide a reason for ending the facilitation');
+      return;
+    }
+
+    try {
+      await terminationService.createTerminationRequest(
+        selectedHostForTermination.facilitationId,
+        'guest',
+        terminationReason
+      );
+
+      toast.success('Termination request submitted. Admin will review it shortly.');
+      setShowTerminationModal(false);
+      setTerminationReason('');
+      setSelectedHostForTermination(null);
+
+      // Refresh matched hosts
+      const hosts = await facilitationService.getMatchedHosts();
+      setMatchedHosts(hosts);
+    } catch (error) {
+      console.error('Error submitting termination request:', error);
+      toast.error(error.message || 'Failed to submit termination request');
+    }
+  };
 
   // Prepare student data - use recognitionData for recognition fields
   const studentData = user && dashboardData ? {
@@ -450,6 +489,22 @@ const StudentDashboard = () => {
                           )}
                         </div>
                       )}
+                      {matchedHosts.length > 0 && matchedHosts[0] && (
+                        <button
+                          onClick={() => handleEndFacilitationClick(matchedHosts[0])}
+                          className="w-full px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-medium flex items-center justify-center space-x-2"
+                        >
+                          <AlertTriangle className="w-4 h-4" />
+                          <span>End Facilitation</span>
+                        </button>
+                      )}
+                      {!matchedHosts[0] && studentData.currentHost && (
+                        <div className="w-full px-4 py-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+                          <p className="text-sm text-yellow-800">
+                            Facilitation data loading... Refresh the page to enable termination request.
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </>
                 ) : (
@@ -637,6 +692,59 @@ const StudentDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Termination Request Modal */}
+      {showTerminationModal && selectedHostForTermination && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+            </div>
+
+            <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+              End Facilitation with {selectedHostForTermination.hostName}?
+            </h3>
+
+            <p className="text-sm text-gray-600 mb-6 text-center">
+              Your request will be reviewed by an admin before the facilitation is officially ended.
+            </p>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Please provide a reason for ending this facilitation:
+              </label>
+              <textarea
+                value={terminationReason}
+                onChange={(e) => setTerminationReason(e.target.value)}
+                placeholder="Enter your reason here..."
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+              />
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  setShowTerminationModal(false);
+                  setTerminationReason('');
+                  setSelectedHostForTermination(null);
+                }}
+                className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmitTermination}
+                className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+              >
+                Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

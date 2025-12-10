@@ -24,45 +24,30 @@ const AdminFacilitationRequests = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState('in_review'); // all, pending, reviewing, approved, rejected
+  const [filterStatus, setFilterStatus] = useState('in_review');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
-  const [refreshing, setRefreshing] = useState(false);
+  const [processingId, setProcessingId] = useState(null);
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  const fetchRequests = async (isRefresh = false) => {
+  const fetchRequests = async () => {
     try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
+      setLoading(true);
       const data = await facilitationService.getAdminRequests();
       setRequests(data);
-      if (isRefresh) {
-        toast.success('Requests refreshed successfully');
-      }
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast.error('Failed to load facilitation requests');
     } finally {
-      if (isRefresh) {
-        setRefreshing(false);
-      } else {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-  };
-
-  const handleRefresh = () => {
-    fetchRequests(true);
   };
 
   const handleApprove = async (requestId) => {
@@ -119,10 +104,10 @@ const AdminFacilitationRequests = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      in_review: 'bg-teal-100 text-teal-800',
-      matched: 'bg-green-100 text-green-800',
-      cancelled: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      in_review: 'bg-teal-100 text-teal-800 border-teal-200',
+      matched: 'bg-green-100 text-green-800 border-green-200',
+      cancelled: 'bg-red-100 text-red-800 border-red-200',
     };
     const icons = {
       pending: <Clock className="w-3 h-3" />,
@@ -137,12 +122,14 @@ const AdminFacilitationRequests = () => {
       cancelled: 'Rejected',
     };
     return (
-      <span className={`badge ${styles[status]} flex items-center space-x-1`}>
+      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full border ${styles[status]}`}>
         {icons[status]}
-        <span>{labels[status]}</span>
+        {labels[status]}
       </span>
     );
   };
+
+  const filteredRequests = requests.filter(req => req.status === filterStatus);
 
   // Show loading state
   if (loading) {
@@ -161,94 +148,79 @@ const AdminFacilitationRequests = () => {
       <div className="container-custom">
         {/* Header */}
         <div className="mb-8">
-          <button
-            onClick={() => navigate('/admin/dashboard')}
-            className="btn-secondary flex items-center space-x-2 mb-4"
+          <Link
+            to="/admin/dashboard"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-teal-600 mb-4 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Dashboard</span>
-          </button>
-          <div className="flex items-center justify-between mb-3">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Dashboard</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-2">
+            <Link2 className="w-8 h-8 text-teal-600" />
             <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
               Facilitation Requests
             </h1>
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="btn-primary flex items-center space-x-2"
-            >
-              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
-              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
-            </button>
           </div>
           <p className="text-lg text-gray-600">
             Review and approve host-student matching requests
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Total Requests</p>
-            <span className="text-3xl font-bold text-gray-900">
-              {requests.length}
-            </span>
-          </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Under Review</p>
-            <span className="text-3xl font-bold text-teal-600">
-              {requests.filter(r => r.status === 'in_review').length}
-            </span>
-          </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Approved</p>
-            <span className="text-3xl font-bold text-green-600">
-              {requests.filter(r => r.status === 'matched').length}
-            </span>
-          </div>
-          <div className="card p-6">
-            <p className="text-sm text-gray-600 mb-1">Rejected</p>
-            <span className="text-3xl font-bold text-red-600">
-              {requests.filter(r => r.status === 'cancelled').length}
-            </span>
-          </div>
-        </div>
-
-        {/* Filter */}
-        <div className="card p-6 mb-6">
-          <div className="flex items-center space-x-4">
-            <label className="text-sm font-medium text-gray-700">Filter by status:</label>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="input-field"
-            >
-              <option value="all">All Statuses</option>
-              <option value="pending">Pending (Host Review)</option>
-              <option value="in_review">Under Review (Admin)</option>
-              <option value="matched">Approved</option>
-              <option value="cancelled">Rejected</option>
-            </select>
+        {/* Status Filter Tabs */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="flex space-x-8">
+              <button
+                onClick={() => setFilterStatus('in_review')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  filterStatus === 'in_review'
+                    ? 'border-teal-600 text-teal-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Under Review ({requests.filter(r => r.status === 'in_review').length})
+              </button>
+              <button
+                onClick={() => setFilterStatus('matched')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  filterStatus === 'matched'
+                    ? 'border-green-600 text-green-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Approved ({requests.filter(r => r.status === 'matched').length})
+              </button>
+              <button
+                onClick={() => setFilterStatus('cancelled')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  filterStatus === 'cancelled'
+                    ? 'border-red-600 text-red-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Rejected ({requests.filter(r => r.status === 'cancelled').length})
+              </button>
+            </nav>
           </div>
         </div>
 
         {/* Requests List */}
-        {(filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus)).length === 0 ? (
+        {filteredRequests.length === 0 ? (
           <div className="card p-12 text-center">
             <Link2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No facilitation requests found
+              No {filterStatus === 'in_review' ? 'under review' : filterStatus === 'matched' ? 'approved' : 'rejected'} facilitation requests
             </h3>
             <p className="text-gray-600">
-              {filterStatus === 'all'
-                ? 'There are no facilitation requests at this time.'
-                : `There are no ${filterStatus === 'in_review' ? 'under review' : filterStatus} requests.`}
+              {filterStatus === 'in_review' && 'Facilitation requests needing admin review will appear here.'}
+              {filterStatus === 'matched' && 'Approved facilitation requests will appear here.'}
+              {filterStatus === 'cancelled' && 'Rejected facilitation requests will appear here.'}
             </p>
           </div>
         ) : (
-          <div className="space-y-6">
-            {(filterStatus === 'all' ? requests : requests.filter(r => r.status === filterStatus)).map((request) => (
-              <div key={request.id} className="card p-6">
+          <div className="space-y-4">
+            {filteredRequests.map((request) => (
+              <div key={request.id} className="card p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-start space-x-4 flex-1">
                     <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center flex-shrink-0">

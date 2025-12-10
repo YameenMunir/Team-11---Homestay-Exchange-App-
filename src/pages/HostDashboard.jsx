@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { dashboardService } from '../services/dashboardService';
 import { facilitationService } from '../services/facilitationService';
+import { terminationService } from '../services/terminationService';
 import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
+import toast from 'react-hot-toast';
 import {
   Home,
   Users,
@@ -24,6 +26,7 @@ import {
   Phone,
   GraduationCap,
   XCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 const HostDashboard = () => {
@@ -36,6 +39,9 @@ const HostDashboard = () => {
   const [requestsLoading, setRequestsLoading] = useState(false);
   const [matchedStudents, setMatchedStudents] = useState([]);
   const [feedbackEligibility, setFeedbackEligibility] = useState({});
+  const [showTerminationModal, setShowTerminationModal] = useState(false);
+  const [selectedStudentForTermination, setSelectedStudentForTermination] = useState(null);
+  const [terminationReason, setTerminationReason] = useState('');
 
   // Fetch dashboard data
   useEffect(() => {
@@ -186,6 +192,39 @@ const HostDashboard = () => {
     } catch (error) {
       console.error('Error declining request:', error);
       alert('Failed to decline request. Please try again.');
+    }
+  };
+
+  // Handle end facilitation request
+  const handleEndFacilitationClick = (student) => {
+    setSelectedStudentForTermination(student);
+    setShowTerminationModal(true);
+  };
+
+  const handleSubmitTermination = async () => {
+    if (!terminationReason.trim()) {
+      toast.error('Please provide a reason for ending the facilitation');
+      return;
+    }
+
+    try {
+      await terminationService.createTerminationRequest(
+        selectedStudentForTermination.facilitationId,
+        'host',
+        terminationReason
+      );
+
+      toast.success('Termination request submitted. Admin will review it shortly.');
+      setShowTerminationModal(false);
+      setTerminationReason('');
+      setSelectedStudentForTermination(null);
+
+      // Refresh matched students
+      const students = await facilitationService.getMatchedStudents();
+      setMatchedStudents(students);
+    } catch (error) {
+      console.error('Error submitting termination request:', error);
+      toast.error(error.message || 'Failed to submit termination request');
     }
   };
 
@@ -425,36 +464,45 @@ const HostDashboard = () => {
                             </div>
                           </div>
 
-                          <div className="flex gap-3">
-                            {canSubmit ? (
+                          <div className="space-y-3">
+                            <div className="flex gap-3">
+                              {canSubmit ? (
+                                <Link
+                                  to={`/monthly-feedback/${student.facilitationId}`}
+                                  state={{
+                                    partnerName: student.studentName,
+                                    partnerId: student.studentId,
+                                    partnerRole: 'guest'
+                                  }}
+                                  className="btn-primary flex-1 text-center flex items-center justify-center space-x-2"
+                                >
+                                  <MessageSquare className="w-4 h-4" />
+                                  <span>Submit Feedback ({currentMonth})</span>
+                                </Link>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="btn-outline flex-1 text-center opacity-50 cursor-not-allowed flex items-center justify-center space-x-2"
+                                >
+                                  <CheckCircle className="w-4 h-4" />
+                                  <span>Feedback Submitted ({currentMonth})</span>
+                                </button>
+                              )}
                               <Link
-                                to={`/monthly-feedback/${student.facilitationId}`}
-                                state={{
-                                  partnerName: student.studentName,
-                                  partnerId: student.studentId,
-                                  partnerRole: 'guest'
-                                }}
-                                className="btn-primary flex-1 text-center flex items-center justify-center space-x-2"
+                                to="/feedback-history"
+                                className="btn-outline flex-1 text-center flex items-center justify-center space-x-2"
                               >
-                                <MessageSquare className="w-4 h-4" />
-                                <span>Submit Feedback ({currentMonth})</span>
+                                <MessageCircle className="w-4 h-4" />
+                                <span>View History</span>
                               </Link>
-                            ) : (
-                              <button
-                                disabled
-                                className="btn-outline flex-1 text-center opacity-50 cursor-not-allowed flex items-center justify-center space-x-2"
-                              >
-                                <CheckCircle className="w-4 h-4" />
-                                <span>Feedback Submitted ({currentMonth})</span>
-                              </button>
-                            )}
-                            <Link
-                              to="/feedback-history"
-                              className="btn-outline flex-1 text-center flex items-center justify-center space-x-2"
+                            </div>
+                            <button
+                              onClick={() => handleEndFacilitationClick(student)}
+                              className="w-full px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors font-medium flex items-center justify-center space-x-2"
                             >
-                              <MessageCircle className="w-4 h-4" />
-                              <span>View History</span>
-                            </Link>
+                              <AlertTriangle className="w-4 h-4" />
+                              <span>End Facilitation</span>
+                            </button>
                           </div>
                         </div>
                       );
@@ -955,6 +1003,67 @@ const HostDashboard = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Termination Request Modal */}
+        {showTerminationModal && selectedStudentForTermination && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-8">
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <AlertTriangle className="w-6 h-6 text-red-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 text-center">
+                  End Facilitation
+                </h3>
+                <p className="text-sm text-gray-600 text-center">
+                  Request to end your arrangement with {selectedStudentForTermination.studentName}
+                </p>
+              </div>
+
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-yellow-900">
+                  <strong>Important:</strong> This will send a request to the admin team for review. The facilitation will only end after admin approval.
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Reason for Ending Facilitation *
+                </label>
+                <textarea
+                  value={terminationReason}
+                  onChange={(e) => setTerminationReason(e.target.value)}
+                  placeholder="Please provide a detailed reason for ending this facilitation..."
+                  className="input-field min-h-[120px]"
+                  rows={5}
+                />
+                <p className="text-xs text-gray-500 mt-2">
+                  This reason will be reviewed by the admin team and shared with the student.
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowTerminationModal(false);
+                    setTerminationReason('');
+                    setSelectedStudentForTermination(null);
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitTermination}
+                  disabled={!terminationReason.trim()}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Submit Request
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
