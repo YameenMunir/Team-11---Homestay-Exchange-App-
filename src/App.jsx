@@ -16,6 +16,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import AdminUserManagement from './pages/AdminUserManagement';
 import AdminFacilitationRequests from './pages/AdminFacilitationRequests';
+import AdminTerminationRequests from './pages/AdminTerminationRequests';
 import AdminDisputes from './pages/AdminDisputes';
 import AdminCreateProfile from './pages/AdminCreateProfile';
 import AdminReportsManagement from './pages/AdminReportsManagement';
@@ -272,6 +273,14 @@ function AppContent() {
               element={
                 <ProtectedAdminRoute requiredPermission="manage_users">
                   <AdminFacilitationRequests />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/termination-requests"
+              element={
+                <ProtectedAdminRoute requiredPermission="manage_users">
+                  <AdminTerminationRequests />
                 </ProtectedAdminRoute>
               }
             />

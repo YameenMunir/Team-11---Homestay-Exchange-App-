@@ -599,6 +599,12 @@ export const adminService = {
         .select('*', { count: 'exact', head: true })
         .eq('role', 'guest');
 
+      // Get pending termination requests count
+      const { count: pendingTerminations } = await supabase
+        .from('termination_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+
       return {
         pendingVerifications: pendingVerifications || 0,
         pendingFacilitations: pendingFacilitations || 0,
@@ -606,6 +612,7 @@ export const adminService = {
         totalUsers: totalUsers || 0,
         totalHosts: totalHosts || 0,
         totalStudents: totalStudents || 0,
+        pendingTerminations: pendingTerminations || 0,
       };
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
