@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { reviewsService } from '../services/reviewsService';
-import ConfirmationModal from './ConfirmationModal';
 import toast from 'react-hot-toast';
 import {
   Star,
@@ -25,10 +24,6 @@ const MyReviews = () => {
   });
   const [hoveredRating, setHoveredRating] = useState(0);
   const [saving, setSaving] = useState(false);
-
-  // Delete confirmation modal state
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [reviewToDelete, setReviewToDelete] = useState(null);
 
   useEffect(() => {
     loadUserReviews();
@@ -99,19 +94,15 @@ const MyReviews = () => {
     }
   };
 
-  const handleDeleteClick = (reviewId) => {
-    setReviewToDelete(reviewId);
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!reviewToDelete) return;
+  const handleDelete = async (reviewId) => {
+    if (!window.confirm('Are you sure you want to delete this review?')) {
+      return;
+    }
 
     try {
-      await reviewsService.deleteReview(reviewToDelete);
+      await reviewsService.deleteReview(reviewId);
       toast.success('Review deleted successfully');
       await loadUserReviews();
-      setReviewToDelete(null);
     } catch (error) {
       console.error('Error deleting review:', error);
       toast.error(error.message || 'Failed to delete review');
@@ -313,7 +304,7 @@ const MyReviews = () => {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={() => handleDeleteClick(review.id)}
+                          onClick={() => handleDelete(review.id)}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                           title="Delete review"
                         >
@@ -355,21 +346,6 @@ const MyReviews = () => {
           </Link>
         </div>
       )}
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={showDeleteModal}
-        onClose={() => {
-          setShowDeleteModal(false);
-          setReviewToDelete(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        title="Delete Review"
-        message="Are you sure you want to delete this review? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
-        confirmButtonClass="bg-red-600 hover:bg-red-700"
-      />
     </div>
   );
 };
