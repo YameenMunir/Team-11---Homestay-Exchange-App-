@@ -75,6 +75,51 @@ export const reviewsService = {
   },
 
   /**
+   * Get current user's reviews
+   * @returns {Promise} Array of user's reviews
+   */
+  async getUserReviews() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { data, error } = await supabase
+      .from('platform_reviews')
+      .select(`
+        id,
+        user_id,
+        rating,
+        review_text,
+        is_anonymous,
+        created_at,
+        updated_at,
+        user_profiles!user_id (
+          full_name,
+          role
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Format the response
+    return data.map(review => ({
+      id: review.id,
+      userId: review.user_id,
+      rating: review.rating,
+      reviewText: review.review_text,
+      isAnonymous: review.is_anonymous,
+      createdAt: review.created_at,
+      updatedAt: review.updated_at,
+      author: review.is_anonymous ? 'Anonymous User' : review.user_profiles?.full_name || 'Unknown User',
+      authorRole: review.user_profiles?.role || null,
+    }));
+  },
+
+  /**
    * Get a single review by ID
    * @param {string} reviewId - Review ID
    * @returns {Promise} Review data

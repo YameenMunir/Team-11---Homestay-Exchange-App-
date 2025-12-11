@@ -9,6 +9,7 @@ import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/f
 import { getRecognitionDetails } from '../services/recognitionService';
 import { supabase } from '../lib/supabaseClient';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
+import MyReviews from '../components/MyReviews';
 import toast from 'react-hot-toast';
 import {
   Search,
@@ -657,6 +658,9 @@ const StudentDashboard = () => {
                   <span>View Full Recognition Status</span>
                 </Link>
               </div>
+
+              {/* My Platform Reviews */}
+              <MyReviews />
             </div>
 
             {/* Sidebar */}

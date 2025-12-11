@@ -6,6 +6,7 @@ import { facilitationService } from '../services/facilitationService';
 import { terminationService } from '../services/terminationService';
 import { checkMultipleFeedbackEligibility, getCurrentMonth } from '../services/feedbackService';
 import VerificationStatusBanner from '../components/VerificationStatusBanner';
+import MyReviews from '../components/MyReviews';
 import toast from 'react-hot-toast';
 import {
   Home,
@@ -584,6 +585,9 @@ const HostDashboard = () => {
                   </div>
                 )}
               </div>
+
+              {/* My Platform Reviews */}
+              <MyReviews />
             </div>
 
             {/* Sidebar */}
