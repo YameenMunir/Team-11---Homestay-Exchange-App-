@@ -14,6 +14,8 @@ import {
   Award,
   CheckCircle,
   XCircle,
+  ArrowLeft,
+  Home as HomeIcon,
 } from 'lucide-react';
 
 const Reviews = () => {
@@ -203,6 +205,17 @@ const Reviews = () => {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-500 rounded-full filter blur-3xl opacity-10"></div>
 
         <div className="container mx-auto px-4 relative z-10">
+          {/* Back to Homepage Button */}
+          <div className="mb-8">
+            <Link
+              to="/"
+              className="inline-flex items-center space-x-2 text-white hover:text-teal-100 transition-colors group"
+            >
+              <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-semibold">Back to Homepage</span>
+            </Link>
+          </div>
+
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full font-medium mb-4">
               <MessageCircle className="w-4 h-4" />
