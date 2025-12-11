@@ -43,6 +43,7 @@ import FeedbackHistory from './pages/FeedbackHistory';
 import RecognitionStatus from './pages/RecognitionStatus';
 import KnowledgeHub from './pages/KnowledgeHub';
 import LandingPage from './pages/LandingPage';
+import Reviews from './pages/Reviews';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -355,6 +356,9 @@ function AppContent() {
             {/* Knowledge Hub & Landing */}
             <Route path="/knowledge-hub" element={<KnowledgeHub />} />
             <Route path="/landing" element={<LandingPage />} />
+
+            {/* Reviews */}
+            <Route path="/reviews" element={<Reviews />} />
 
             {/* Information Pages */}
             <Route path="/about" element={<AboutUs />} />

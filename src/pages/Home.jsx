@@ -450,6 +450,18 @@ const Home = () => {
               </div>
             ))}
           </div>
+
+          {/* View All Reviews Button */}
+          <div className="text-center mt-12">
+            <Link
+              to="/reviews"
+              className="inline-flex items-center space-x-2 bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span>View All Reviews</span>
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </section>
 
