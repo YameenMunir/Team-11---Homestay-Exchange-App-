@@ -835,8 +835,6 @@ const StudentSignup = () => {
                       <option value="10">10 hours</option>
                       <option value="15">15 hours</option>
                       <option value="20">20 hours</option>
-                      <option value="25">25 hours</option>
-                      <option value="30">30 hours</option>
                     </select>
                   </div>
 
