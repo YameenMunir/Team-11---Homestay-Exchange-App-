@@ -14,6 +14,8 @@ import {
   Phone,
   Calendar,
   Shield,
+  RefreshCw,
+  Archive,
 } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { reviewsService } from '../services/reviewsService';
@@ -24,32 +26,71 @@ const AdminReviewManagement = () => {
   const { hasPermission } = useAdmin();
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
+  const [deletedReviews, setDeletedReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [activeTab, setActiveTab] = useState('active'); // 'active' or 'deleted'
 
   // Fetch all reviews on mount
   useEffect(() => {
     fetchReviews();
+    fetchDeletedReviews();
   }, []);
 
-  const fetchReviews = async () => {
+  const fetchReviews = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       const data = await reviewsService.getAllReviewsWithUserDetails();
       setReviews(data);
+      if (isRefresh) {
+        toast.success('Reviews refreshed successfully');
+      }
     } catch (error) {
       console.error('Error fetching reviews:', error);
       toast.error('Failed to load reviews');
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshing(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
-  // Filter reviews based on search term
+  const fetchDeletedReviews = async () => {
+    try {
+      const data = await reviewsService.getDeletedReviews();
+      setDeletedReviews(data);
+    } catch (error) {
+      console.error('Error fetching deleted reviews:', error);
+    }
+  };
+
+  const handleRefresh = () => {
+    fetchReviews(true);
+    fetchDeletedReviews();
+  };
+
+  // Filter reviews based on search term and active tab
   const filteredReviews = reviews.filter((review) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      review.fullName?.toLowerCase().includes(searchLower) ||
+      review.email?.toLowerCase().includes(searchLower) ||
+      review.reviewText?.toLowerCase().includes(searchLower) ||
+      review.phoneNumber?.toLowerCase().includes(searchLower)
+    );
+  });
+
+  const filteredDeletedReviews = deletedReviews.filter((review) => {
     const searchLower = searchTerm.toLowerCase();
     return (
       review.fullName?.toLowerCase().includes(searchLower) ||
@@ -70,12 +111,14 @@ const AdminReviewManagement = () => {
 
     try {
       setDeleting(true);
-      await reviewsService.adminDeleteReview(selectedReview.id);
+      // Track the deletion with user info before deleting
+      await reviewsService.adminDeleteReviewWithTracking(selectedReview);
       toast.success('Review deleted successfully');
       setDeleteModalOpen(false);
       setSelectedReview(null);
-      // Refresh the reviews list
+      // Refresh both lists
       fetchReviews();
+      fetchDeletedReviews();
     } catch (error) {
       console.error('Error deleting review:', error);
       toast.error('Failed to delete review');
@@ -134,12 +177,53 @@ const AdminReviewManagement = () => {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back to Dashboard
           </button>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
-            Review Management
-          </h1>
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
+              Review Management
+            </h1>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary flex items-center space-x-2"
+            >
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
+          </div>
           <p className="text-lg text-gray-600">
             View and manage all platform reviews
           </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab('active')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'active'
+                    ? 'border-teal-600 text-teal-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                Active Reviews ({reviews.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('deleted')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === 'deleted'
+                    ? 'border-red-600 text-red-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <Archive className="w-4 h-4" />
+                  <span>Deleted Reviews ({deletedReviews.length})</span>
+                </div>
+              </button>
+            </nav>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -207,21 +291,22 @@ const AdminReviewManagement = () => {
         </div>
 
         {/* Reviews List */}
-        <div className="card p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">
-            All Reviews ({filteredReviews.length})
-          </h2>
+        {activeTab === 'active' ? (
+          <div className="card p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
+              Active Reviews ({filteredReviews.length})
+            </h2>
 
-          {filteredReviews.length === 0 ? (
-            <div className="text-center py-12">
-              <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">
-                {searchTerm ? 'No reviews match your search' : 'No reviews found'}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredReviews.map((review) => (
+            {filteredReviews.length === 0 ? (
+              <div className="text-center py-12">
+                <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">
+                  {searchTerm ? 'No reviews match your search' : 'No active reviews found'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredReviews.map((review) => (
                 <div
                   key={review.id}
                   className="border border-gray-200 rounded-lg p-6 hover:border-teal-200 transition-colors"
@@ -312,7 +397,113 @@ const AdminReviewManagement = () => {
               ))}
             </div>
           )}
-        </div>
+          </div>
+        ) : (
+          <div className="card p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">
+              Deleted Reviews ({filteredDeletedReviews.length})
+            </h2>
+
+            {filteredDeletedReviews.length === 0 ? (
+              <div className="text-center py-12">
+                <Archive className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">
+                  {searchTerm ? 'No deleted reviews match your search' : 'No deleted reviews found'}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredDeletedReviews.map((review) => (
+                  <div
+                    key={review.id}
+                    className="border border-red-200 rounded-lg p-6 bg-red-50/30"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        {/* User Info */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                          <div className="flex items-start space-x-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-600">Full Name</p>
+                              <p className="font-medium text-gray-900">
+                                {review.isAnonymous ? (
+                                  <span className="flex items-center space-x-2">
+                                    <span>Anonymous User</span>
+                                    <Shield className="w-4 h-4 text-gray-500" />
+                                  </span>
+                                ) : (
+                                  review.fullName || 'N/A'
+                                )}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start space-x-3">
+                            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-600">Email</p>
+                              <p className="font-medium text-gray-900">
+                                {review.email || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start space-x-3">
+                            <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-600">Phone Number</p>
+                              <p className="font-medium text-gray-900">
+                                {review.phoneNumber || 'N/A'}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start space-x-3">
+                            <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-600">Deleted At</p>
+                              <p className="font-medium text-gray-900">
+                                {new Date(review.deletedAt).toLocaleDateString('en-GB', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Rating */}
+                        <div className="mb-4">
+                          <p className="text-sm text-gray-600 mb-2">Rating</p>
+                          {renderStars(review.rating)}
+                        </div>
+
+                        {/* Review Text */}
+                        <div>
+                          <p className="text-sm text-gray-600 mb-2">Review</p>
+                          <p className="text-gray-900 whitespace-pre-wrap">
+                            {review.reviewText}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Deleted Badge */}
+                      <div className="ml-4">
+                        <span className="badge bg-red-100 text-red-800">
+                          Deleted
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}

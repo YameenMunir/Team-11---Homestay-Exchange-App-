@@ -339,4 +339,75 @@ export const reviewsService = {
     if (error) throw error;
     return { success: true };
   },
+
+  /**
+   * Delete a review and track it in deleted_reviews table (Admin only)
+   * @param {Object} review - Full review object with user details
+   * @returns {Promise} Success status
+   */
+  async adminDeleteReviewWithTracking(review) {
+    try {
+      // First, insert into deleted_reviews table to track the deletion
+      const { error: insertError } = await supabase
+        .from('deleted_reviews')
+        .insert([{
+          review_id: review.id,
+          user_id: review.userId,
+          user_full_name: review.fullName,
+          user_email: review.email,
+          user_phone: review.phoneNumber,
+          rating: review.rating,
+          review_text: review.reviewText,
+          is_anonymous: review.isAnonymous,
+          original_created_at: review.createdAt,
+          deleted_at: new Date().toISOString(),
+        }]);
+
+      if (insertError) {
+        console.error('Error tracking deleted review:', insertError);
+        // Continue with deletion even if tracking fails
+      }
+
+      // Then delete the review from platform_reviews
+      const { error: deleteError } = await supabase
+        .from('platform_reviews')
+        .delete()
+        .eq('id', review.id);
+
+      if (deleteError) throw deleteError;
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error in adminDeleteReviewWithTracking:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get all deleted reviews (Admin only)
+   * @returns {Promise} Array of deleted reviews
+   */
+  async getDeletedReviews() {
+    const { data, error } = await supabase
+      .from('deleted_reviews')
+      .select('*')
+      .order('deleted_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Format the response
+    return data.map(review => ({
+      id: review.id,
+      reviewId: review.review_id,
+      userId: review.user_id,
+      fullName: review.user_full_name,
+      email: review.user_email,
+      phoneNumber: review.user_phone,
+      rating: review.rating,
+      reviewText: review.review_text,
+      isAnonymous: review.is_anonymous,
+      createdAt: review.original_created_at,
+      deletedAt: review.deleted_at,
+    }));
+  },
 };
