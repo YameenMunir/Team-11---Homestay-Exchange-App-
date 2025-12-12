@@ -18,7 +18,6 @@ A full-stack platform connecting **international students** with **host families
 - [Testing](#testing)
 - [Deployment](#deployment)
 - [Accessibility](#accessibility)
-- [Contributing](#contributing)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 
@@ -568,63 +567,6 @@ Interactive help overlay explaining UI elements:
 ```jsx
 // Toggle help mode
 <HelpOverlay enabled={helpMode} />
-```
-
----
-
-## Contributing
-
-### Development Workflow
-
-1. **Fork the repository**
-
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **Make your changes**
-   - Follow existing code style
-   - Add tests for new features
-   - Update documentation
-
-4. **Run linting and tests**
-   ```bash
-   npm run lint
-   npm test
-   ```
-
-5. **Commit your changes**
-   ```bash
-   git commit -m "feat: add your feature description"
-   ```
-
-6. **Push and create PR**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-### Code Style
-
-- Use functional components with hooks
-- Follow ESLint configuration
-- Use Tailwind CSS for styling
-- Keep components small and focused
-- Add JSDoc comments for complex functions
-
-### Commit Message Format
-
-```
-type: description
-
-Types:
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation
-- style: Formatting
-- refactor: Code restructuring
-- test: Tests
-- chore: Maintenance
 ```
 
 ---
