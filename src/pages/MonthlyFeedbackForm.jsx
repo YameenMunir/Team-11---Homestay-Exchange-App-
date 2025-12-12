@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { Star, Calendar, Clock, Send, CheckCircle, AlertCircle, Award, ArrowLeft, MessageSquare } from 'lucide-react';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
+import { Star, Calendar, Clock, Send, CheckCircle, AlertCircle, Award, ArrowLeft, MessageSquare, User, FileText, Target, HelpCircle, Users } from 'lucide-react';
 import { submitMonthlyFeedback, canSubmitFeedback, getCurrentMonth } from '../services/feedbackService';
 import { useUser } from '../context/UserContext';
 import HelpOverlay from '../components/HelpOverlay';
@@ -17,7 +17,6 @@ export default function MonthlyFeedbackForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [canSubmit, setCanSubmit] = useState(true);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [currentMonth] = useState(getCurrentMonth());
 
   const [formData, setFormData] = useState({
@@ -99,7 +98,6 @@ export default function MonthlyFeedbackForm() {
       const result = await submitMonthlyFeedback(feedbackData);
 
       if (result.success) {
-        // Redirect to Feedback History after successful submission
         navigate('/feedback-history', {
           state: {
             successMessage: `Monthly feedback for ${partnerName} has been submitted successfully for ${currentMonth}!`,
@@ -117,121 +115,117 @@ export default function MonthlyFeedbackForm() {
     }
   };
 
-  const StarRating = () => (
-    <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Overall Rating
-        <span className="text-red-500">*</span>
-        <HelpOverlay position="right">
-          Rate your partner's performance this month from 1 (poor) to 5 (excellent).
-          Achieving 4-5 stars consistently helps students earn recognition badges!
-        </HelpOverlay>
-      </label>
-      <div className="flex items-center gap-2">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            onClick={() => handleStarClick(star)}
-            onMouseEnter={() => setHoveredStar(star)}
-            onMouseLeave={() => setHoveredStar(0)}
-            className="transition-transform hover:scale-110"
-          >
-            <Star
-              className={`w-10 h-10 ${
-                star <= (hoveredStar || formData.rating)
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : 'text-gray-300'
-              }`}
-            />
-          </button>
-        ))}
-        <span className="ml-3 text-lg font-medium text-gray-700">
-          {formData.rating > 0 ? `${formData.rating} / 5` : 'Not rated'}
-        </span>
-      </div>
-      <div className="mt-2 text-sm text-gray-600">
-        {formData.rating === 1 && '⭐ Poor - Significant issues'}
-        {formData.rating === 2 && '⭐⭐ Below expectations - Needs improvement'}
-        {formData.rating === 3 && '⭐⭐⭐ Satisfactory - Meets basic expectations'}
-        {formData.rating === 4 && '⭐⭐⭐⭐ Good - Exceeds expectations'}
-        {formData.rating === 5 && '⭐⭐⭐⭐⭐ Excellent - Outstanding performance'}
-      </div>
-    </div>
-  );
+  // Format month for display
+  const formatMonth = (monthStr) => {
+    const [year, month] = monthStr.split('-');
+    const date = new Date(year, parseInt(month) - 1);
+    return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  };
 
-  if (showSuccess) {
+  // Get rating label
+  const getRatingLabel = (rating) => {
+    const labels = {
+      1: { text: 'Poor', desc: 'Significant issues need addressing', color: 'text-red-600' },
+      2: { text: 'Below Expectations', desc: 'Needs improvement in several areas', color: 'text-orange-600' },
+      3: { text: 'Satisfactory', desc: 'Meets basic expectations', color: 'text-yellow-600' },
+      4: { text: 'Good', desc: 'Exceeds expectations', color: 'text-teal-600' },
+      5: { text: 'Excellent', desc: 'Outstanding performance', color: 'text-green-600' },
+    };
+    return labels[rating] || null;
+  };
+
+  // Determine if user is a student or host
+  const isStudent = user?.userType === 'guest';
+  const isHost = user?.userType === 'host';
+
+  // If no facilitation ID provided, show selection screen
+  if (!facilitationId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full card text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Feedback Submitted Successfully!
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Thank you for submitting your monthly feedback for {currentMonth}.
-          </p>
-
-          {user?.userType === 'host' && formData.rating >= 4 && (
-            <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-6">
-              <Award className="w-6 h-6 text-teal-600 mx-auto mb-2" />
-              <p className="text-sm text-teal-900">
-                <strong>Great rating!</strong> Your student is building towards their recognition badge.
-                Consecutive months of 4-5 star ratings earn Bronze, Silver, and Gold status!
-              </p>
-            </div>
-          )}
-
-          {formData.support_needed && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-blue-900">
-                Our support team will contact you within 24 hours regarding your request.
-              </p>
-            </div>
-          )}
-
+      <div className="min-h-screen bg-gray-50 py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto">
           <button
-            onClick={() => navigate(`/${user?.userType}/dashboard`)}
-            className="btn-primary w-full"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 font-medium transition-all hover:gap-3 group"
           >
-            Return to Dashboard
+            <ArrowLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
+            <span>Back</span>
           </button>
+
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 lg:p-10 text-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <MessageSquare className="w-8 h-8 sm:w-10 sm:h-10 text-teal-600" />
+            </div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
+              Monthly Feedback
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">
+              To submit monthly feedback, please select an active arrangement from your dashboard or feedback history.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Link
+                to={isStudent ? '/guest/dashboard' : '/host/dashboard'}
+                className="btn-primary px-6 py-3 font-semibold"
+              >
+                Go to Dashboard
+              </Link>
+              <Link
+                to="/feedback-history"
+                className="btn-secondary px-6 py-3 font-semibold"
+              >
+                View Feedback History
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-6 font-medium transition-colors"
+          className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 sm:mb-6 font-medium transition-all hover:gap-3 group"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
           <span>Back</span>
         </button>
 
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-display font-bold text-gray-900 mb-3">
-            Monthly Feedback Submission
-          </h1>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Calendar className="w-5 h-5 text-teal-600" />
-              <span className="font-medium">
-                Feedback for: <strong className="text-gray-900">{currentMonth}</strong>
+        <div className="mb-5 sm:mb-6 lg:mb-8">
+          <div className="flex items-start gap-3 sm:gap-4 mb-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-teal-600 to-blue-600 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
+              <MessageSquare className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                Monthly Feedback
+              </h1>
+              <p className="text-sm sm:text-base text-gray-600">
+                {isStudent ? 'Rate your experience with your host' : 'Review your student\'s performance'}
+              </p>
+            </div>
+          </div>
+
+          {/* Month & Partner Info */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 flex-shrink-0" />
+              <span className="text-sm sm:text-base text-gray-700">
+                <span className="text-gray-500">Period:</span>{' '}
+                <strong className="text-gray-900">{formatMonth(currentMonth)}</strong>
               </span>
             </div>
             {partnerName && (
-              <div className="flex items-center gap-2 px-4 py-2 bg-teal-50 rounded-lg border border-teal-100">
-                <span className="text-sm text-gray-600">Rating:</span>
-                <span className="font-semibold text-gray-900">{partnerName}</span>
-                <span className="px-2 py-0.5 text-xs font-medium bg-teal-100 text-teal-700 rounded-full">
+              <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-teal-50 rounded-lg border border-teal-200 shadow-sm">
+                <User className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 flex-shrink-0" />
+                <span className="text-sm sm:text-base text-gray-700">
+                  <span className="text-gray-500">{isStudent ? 'Host:' : 'Student:'}</span>{' '}
+                  <strong className="text-gray-900">{partnerName}</strong>
+                </span>
+                <span className="px-2 py-0.5 text-xs font-semibold bg-teal-100 text-teal-700 rounded-full">
                   {partnerRole === 'host' ? 'Host' : 'Student'}
                 </span>
               </div>
@@ -240,108 +234,152 @@ export default function MonthlyFeedbackForm() {
         </div>
 
         {/* Info Banner */}
-        <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-5 mb-6 flex gap-4 shadow-sm">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
-              <AlertCircle className="w-5 h-5 text-teal-600" />
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 sm:p-5 mb-5 sm:mb-6 shadow-sm">
+          <div className="flex gap-3 sm:gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+              </div>
             </div>
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-teal-900 mb-2">Monthly Feedback System</p>
-            <p className="text-sm text-teal-800 mb-3 leading-relaxed">
-              You can submit <strong>one feedback entry per month</strong> for each arrangement.
-              Your feedback helps maintain quality and trust in our community.
-            </p>
-            <div className="flex items-start gap-2 p-3 bg-white/60 rounded-lg">
-              <Award className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-teal-900 leading-relaxed">
-                <strong>For students:</strong> Earning 4-5 stars for consecutive months unlocks recognition badges:
-                Bronze (2 months), Silver (4 months), Gold (6 months)
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-blue-900 text-sm sm:text-base mb-1.5">
+                {isStudent ? 'Share Your Experience' : 'Provide Valuable Feedback'}
               </p>
+              <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
+                {isStudent
+                  ? 'Your feedback helps hosts improve and maintains quality in our community. Be honest and constructive!'
+                  : 'Your rating helps students earn recognition badges. Consecutive months of 4-5 stars unlock Bronze, Silver, and Gold status.'}
+              </p>
+              {isHost && (
+                <div className="flex items-center gap-2 mt-3 p-2 sm:p-2.5 bg-white/60 rounded-lg">
+                  <Award className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                  <p className="text-xs text-blue-900">
+                    <strong>Recognition:</strong> 2 months → Bronze 🥉 | 4 months → Silver 🥈 | 6 months → Gold 🥇
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6 flex gap-3 shadow-sm">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-            <p className="text-sm text-red-900 font-medium">{error}</p>
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-5 sm:mb-6 flex gap-3 shadow-sm animate-shake">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm sm:text-base text-red-900 font-medium">{error}</p>
+            </div>
           </div>
         )}
 
         {/* Form */}
         {canSubmit ? (
-          <form onSubmit={handleSubmit} className="card space-y-6 shadow-sm border border-gray-200">
+          <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
             {/* Rating Section */}
-            <div className="pb-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <Star className="w-5 h-5 text-teal-600" />
-                Performance Rating
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">Rate your partner's overall performance this month</p>
-              <StarRating />
-            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6">
+              <div className="flex items-center gap-2 mb-4 sm:mb-5">
+                <Star className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Overall Rating</h2>
+                <span className="text-red-500">*</span>
+              </div>
 
-            {/* Overall Feedback */}
-            <div className="pb-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-teal-600" />
-                Overall Feedback
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">Share your thoughts about this month's arrangement</p>
-              <div className="mb-6">
-                <label htmlFor="feedback_text" className="block text-sm font-medium text-gray-700 mb-2">
-                  Your Feedback
-                  <span className="text-red-500">*</span>
-                  <HelpOverlay position="right">
-                    Provide constructive feedback about this month's arrangement
-                  </HelpOverlay>
-                </label>
-                <textarea
-                  id="feedback_text"
-                  name="feedback_text"
-                  value={formData.feedback_text}
-                  onChange={handleChange}
-                  required
-                  rows="5"
-                  className="input-field resize-none"
-                  placeholder="Share your thoughts about this month's performance, what went well, and any areas for improvement..."
-                />
+              {/* Star Rating */}
+              <div className="flex flex-col items-center py-4 sm:py-6">
+                <div className="flex items-center gap-1 sm:gap-2 mb-3 sm:mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => handleStarClick(star)}
+                      onMouseEnter={() => setHoveredStar(star)}
+                      onMouseLeave={() => setHoveredStar(0)}
+                      className="transition-all duration-150 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 rounded-full p-1"
+                    >
+                      <Star
+                        className={`w-10 h-10 sm:w-12 sm:h-12 transition-colors ${
+                          star <= (hoveredStar || formData.rating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300 hover:text-gray-400'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Rating Display */}
+                <div className="text-center">
+                  {formData.rating > 0 ? (
+                    <div>
+                      <p className={`text-lg sm:text-xl font-bold ${getRatingLabel(formData.rating)?.color}`}>
+                        {formData.rating}/5 - {getRatingLabel(formData.rating)?.text}
+                      </p>
+                      <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                        {getRatingLabel(formData.rating)?.desc}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm sm:text-base text-gray-500">Click a star to rate</p>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Activity Details (Optional for Hosts) */}
-            {user?.userType === 'host' && (
-              <div className="pb-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-teal-600" />
-                  Student Activity Summary
-                </h2>
-                <p className="text-sm text-gray-600 mb-6">Optional: Track hours and tasks completed</p>
-                <div className="grid md:grid-cols-2 gap-6">
+            {/* Feedback Text Section */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FileText className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Your Feedback</h2>
+                <span className="text-red-500">*</span>
+              </div>
+
+              <textarea
+                id="feedback_text"
+                name="feedback_text"
+                value={formData.feedback_text}
+                onChange={handleChange}
+                required
+                rows="4"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-sm sm:text-base transition-colors"
+                placeholder={isStudent
+                  ? "Share your experience with your host this month. What went well? Any suggestions for improvement?"
+                  : "Share your thoughts about your student's performance this month. What did they do well? Any areas for improvement?"
+                }
+              />
+              <p className="text-xs text-gray-500 mt-2">Minimum 10 characters required</p>
+            </div>
+
+            {/* Activity Summary - For Hosts Rating Students */}
+            {isHost && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Activity Summary</h2>
+                  <span className="text-xs text-gray-500 font-normal">(Optional)</span>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="hours_contributed" className="block text-sm font-medium text-gray-700 mb-2">
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-teal-600" />
-                        Hours Contributed This Month
-                      </div>
+                      Hours Contributed
                     </label>
-                    <input
-                      type="number"
-                      id="hours_contributed"
-                      name="hours_contributed"
-                      value={formData.hours_contributed}
-                      onChange={handleChange}
-                      min="0"
-                      className="input-field"
-                      placeholder="e.g., 40"
-                    />
+                    <div className="relative">
+                      <input
+                        type="number"
+                        id="hours_contributed"
+                        name="hours_contributed"
+                        value={formData.hours_contributed}
+                        onChange={handleChange}
+                        min="0"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base pr-16"
+                        placeholder="e.g., 20"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">hours</span>
+                    </div>
                   </div>
 
                   <div>
                     <label htmlFor="tasks_completed" className="block text-sm font-medium text-gray-700 mb-2">
-                      Tasks Completed Description
+                      Tasks Completed
                     </label>
                     <input
                       type="text"
@@ -349,8 +387,8 @@ export default function MonthlyFeedbackForm() {
                       name="tasks_completed"
                       value={formData.tasks_completed}
                       onChange={handleChange}
-                      className="input-field"
-                      placeholder="e.g., Gardening, errands, companionship"
+                      className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                      placeholder="e.g., Gardening, shopping, companionship"
                     />
                   </div>
                 </div>
@@ -358,84 +396,94 @@ export default function MonthlyFeedbackForm() {
             )}
 
             {/* Monthly Reflection */}
-            <div className="pb-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-teal-600" />
-                Monthly Reflection
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">Optional: Reflect on highlights, challenges, and goals</p>
-
-              <div className="mb-6">
-                <label htmlFor="highlights" className="block text-sm font-medium text-gray-700 mb-2">
-                  Highlights & Positive Moments
-                </label>
-                <textarea
-                  id="highlights"
-                  name="highlights"
-                  value={formData.highlights}
-                  onChange={handleChange}
-                  rows="3"
-                  className="input-field resize-none"
-                  placeholder="What went particularly well this month?"
-                />
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 lg:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Target className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Monthly Reflection</h2>
+                <span className="text-xs text-gray-500 font-normal">(Optional)</span>
               </div>
 
-              <div className="mb-6">
-                <label htmlFor="challenges" className="block text-sm font-medium text-gray-700 mb-2">
-                  Challenges or Issues
-                </label>
-                <textarea
-                  id="challenges"
-                  name="challenges"
-                  value={formData.challenges}
-                  onChange={handleChange}
-                  rows="3"
-                  className="input-field resize-none"
-                  placeholder="Were there any challenges or concerns this month?"
-                />
-              </div>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="highlights" className="block text-sm font-medium text-gray-700 mb-2">
+                    <span className="flex items-center gap-2">
+                      <span className="text-lg">✨</span>
+                      Highlights & Positive Moments
+                    </span>
+                  </label>
+                  <textarea
+                    id="highlights"
+                    name="highlights"
+                    value={formData.highlights}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-sm sm:text-base"
+                    placeholder="What went particularly well this month?"
+                  />
+                </div>
 
-              <div className="mb-6">
-                <label htmlFor="goals_next_month" className="block text-sm font-medium text-gray-700 mb-2">
-                  Goals or Expectations for Next Month
-                </label>
-                <textarea
-                  id="goals_next_month"
-                  name="goals_next_month"
-                  value={formData.goals_next_month}
-                  onChange={handleChange}
-                  rows="3"
-                  className="input-field resize-none"
-                  placeholder="What would you like to see next month?"
-                />
+                <div>
+                  <label htmlFor="challenges" className="block text-sm font-medium text-gray-700 mb-2">
+                    <span className="flex items-center gap-2">
+                      <span className="text-lg">⚠️</span>
+                      Challenges or Concerns
+                    </span>
+                  </label>
+                  <textarea
+                    id="challenges"
+                    name="challenges"
+                    value={formData.challenges}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-sm sm:text-base"
+                    placeholder="Were there any difficulties or concerns?"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="goals_next_month" className="block text-sm font-medium text-gray-700 mb-2">
+                    <span className="flex items-center gap-2">
+                      <span className="text-lg">🎯</span>
+                      Goals for Next Month
+                    </span>
+                  </label>
+                  <textarea
+                    id="goals_next_month"
+                    name="goals_next_month"
+                    value={formData.goals_next_month}
+                    onChange={handleChange}
+                    rows="2"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-sm sm:text-base"
+                    placeholder="What would you like to focus on next month?"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Support Request */}
-            <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-teal-600" />
-                Need Support?
-              </h2>
-              <p className="text-sm text-gray-600 mb-4">Request assistance from the Homestay Exchange team</p>
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 sm:p-5 lg:p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <h2 className="text-lg font-bold text-gray-900">Need Support?</h2>
+              </div>
 
-              <label className="flex items-start gap-3 cursor-pointer mb-4">
+              <label className="flex items-start gap-3 cursor-pointer p-3 bg-white/60 rounded-lg hover:bg-white/80 transition-colors">
                 <input
                   type="checkbox"
                   name="support_needed"
                   checked={formData.support_needed}
                   onChange={handleChange}
-                  className="mt-1 w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                  className="mt-0.5 w-4 h-4 sm:w-5 sm:h-5 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
                 />
-                <span className="text-sm text-gray-700">
-                  I would like the Homestay Exchange team to contact me
+                <span className="text-sm sm:text-base text-gray-700">
+                  I would like the Homestay Exchange team to contact me about a concern
                 </span>
               </label>
 
               {formData.support_needed && (
-                <div>
+                <div className="mt-4">
                   <label htmlFor="support_details" className="block text-sm font-medium text-gray-700 mb-2">
-                    What do you need help with?
+                    Please describe your concern
                   </label>
                   <textarea
                     id="support_details"
@@ -443,33 +491,34 @@ export default function MonthlyFeedbackForm() {
                     value={formData.support_details}
                     onChange={handleChange}
                     rows="3"
-                    className="input-field resize-none"
-                    placeholder="Please describe your concern or support request..."
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none text-sm sm:text-base bg-white"
+                    placeholder="Tell us how we can help..."
                   />
                 </div>
               )}
             </div>
 
             {/* Privacy Notice */}
-            <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600">
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-xs sm:text-sm text-gray-600 border border-gray-200">
               <p>
-                <strong>Confidential:</strong> Your monthly feedback is used to monitor arrangement quality and calculate recognition tiers. Detailed feedback is kept confidential and reviewed by the Homestay Exchange team.
+                <strong>Privacy:</strong> Your feedback is confidential and used to maintain quality standards.
+                {isHost && ' Ratings contribute to your student\'s recognition tier progress.'}
               </p>
             </div>
 
             {/* Submit Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-2">
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="btn-secondary flex-1 py-3 font-semibold"
+                className="w-full sm:w-auto sm:flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                 disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="btn-primary flex-1 flex items-center justify-center gap-2 py-3 font-semibold shadow-md hover:shadow-lg transition-shadow"
+                className="w-full sm:w-auto sm:flex-1 px-6 py-3 bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 disabled={loading}
               >
                 {loading ? (
@@ -487,22 +536,32 @@ export default function MonthlyFeedbackForm() {
             </div>
           </form>
         ) : (
-          <div className="card text-center py-16 shadow-sm border border-gray-200">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-10 h-10 text-gray-400" />
+          /* Already Submitted State */
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8 lg:p-10 text-center">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+              <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-3">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
               Feedback Already Submitted
             </h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
-              You have already submitted feedback for this month. Please check back next month to submit another review!
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md mx-auto">
+              You have already submitted feedback for <strong>{formatMonth(currentMonth)}</strong>.
+              Please check back next month to submit your next review.
             </p>
-            <button
-              onClick={() => navigate(`/${user?.userType}/dashboard`)}
-              className="btn-primary px-8 py-3 font-semibold shadow-md hover:shadow-lg transition-shadow"
-            >
-              Return to Dashboard
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Link
+                to="/feedback-history"
+                className="btn-primary px-6 py-3 font-semibold"
+              >
+                View Feedback History
+              </Link>
+              <button
+                onClick={() => navigate(-1)}
+                className="btn-secondary px-6 py-3 font-semibold"
+              >
+                Go Back
+              </button>
+            </div>
           </div>
         )}
       </div>
