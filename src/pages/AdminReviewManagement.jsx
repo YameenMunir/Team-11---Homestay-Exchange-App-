@@ -113,15 +113,21 @@ const AdminReviewManagement = () => {
       setDeleting(true);
       // Track the deletion with user info before deleting
       await reviewsService.adminDeleteReviewWithTracking(selectedReview);
+
+      // Immediately update the UI by removing from active reviews
+      setReviews(prevReviews => prevReviews.filter(r => r.id !== selectedReview.id));
+
       toast.success('Review deleted successfully');
       setDeleteModalOpen(false);
       setSelectedReview(null);
-      // Refresh both lists
-      fetchReviews();
-      fetchDeletedReviews();
+
+      // Refresh deleted reviews list to show the newly deleted review
+      await fetchDeletedReviews();
     } catch (error) {
       console.error('Error deleting review:', error);
       toast.error('Failed to delete review');
+      // On error, refresh to get accurate state
+      fetchReviews();
     } finally {
       setDeleting(false);
     }
