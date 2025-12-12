@@ -21,6 +21,7 @@ import AdminDisputes from './pages/AdminDisputes';
 import AdminCreateProfile from './pages/AdminCreateProfile';
 import AdminReportsManagement from './pages/AdminReportsManagement';
 import AdminFeedbackReview from './pages/AdminFeedbackReview';
+import AdminReviewManagement from './pages/AdminReviewManagement';
 import Help from './pages/Help';
 import FAQ from './pages/FAQ';
 import AboutUs from './pages/AboutUs';
@@ -314,6 +315,14 @@ function AppContent() {
               element={
                 <ProtectedAdminRoute requiredPermission="view_reports">
                   <AdminFeedbackReview />
+                </ProtectedAdminRoute>
+              }
+            />
+            <Route
+              path="/admin/reviews"
+              element={
+                <ProtectedAdminRoute requiredPermission="manage_users">
+                  <AdminReviewManagement />
                 </ProtectedAdminRoute>
               }
             />

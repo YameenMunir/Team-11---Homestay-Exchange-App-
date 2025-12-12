@@ -280,4 +280,63 @@ export const reviewsService = {
 
     return data.user_id === user.id;
   },
+
+  /**
+   * Get all platform reviews with full user details (Admin only)
+   * Includes user's full name, email, and phone number
+   * @returns {Promise} Array of reviews with complete user information
+   */
+  async getAllReviewsWithUserDetails() {
+    const { data, error } = await supabase
+      .from('platform_reviews')
+      .select(`
+        id,
+        user_id,
+        rating,
+        review_text,
+        is_anonymous,
+        created_at,
+        updated_at,
+        user_profiles!user_id (
+          full_name,
+          email,
+          phone_number,
+          role
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Format the response with full user details
+    return data.map(review => ({
+      id: review.id,
+      userId: review.user_id,
+      rating: review.rating,
+      reviewText: review.review_text,
+      isAnonymous: review.is_anonymous,
+      createdAt: review.created_at,
+      updatedAt: review.updated_at,
+      fullName: review.user_profiles?.full_name || 'Unknown User',
+      email: review.user_profiles?.email || 'N/A',
+      phoneNumber: review.user_profiles?.phone_number || 'N/A',
+      authorRole: review.user_profiles?.role || null,
+    }));
+  },
+
+  /**
+   * Delete any review (Admin only)
+   * Does not check ownership - admins can delete any review
+   * @param {string} reviewId - Review ID
+   * @returns {Promise} Success status
+   */
+  async adminDeleteReview(reviewId) {
+    const { error } = await supabase
+      .from('platform_reviews')
+      .delete()
+      .eq('id', reviewId);
+
+    if (error) throw error;
+    return { success: true };
+  },
 };

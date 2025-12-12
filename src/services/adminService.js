@@ -605,6 +605,11 @@ export const adminService = {
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending');
 
+      // Get total platform reviews count
+      const { count: totalReviews } = await supabase
+        .from('platform_reviews')
+        .select('*', { count: 'exact', head: true });
+
       return {
         pendingVerifications: pendingVerifications || 0,
         pendingFacilitations: pendingFacilitations || 0,
@@ -613,6 +618,7 @@ export const adminService = {
         totalHosts: totalHosts || 0,
         totalStudents: totalStudents || 0,
         pendingTerminations: pendingTerminations || 0,
+        totalReviews: totalReviews || 0,
       };
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);

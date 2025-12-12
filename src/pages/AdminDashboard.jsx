@@ -16,6 +16,7 @@ import {
   Loader2,
   RefreshCw,
   AlertTriangle,
+  MessageSquare,
 } from 'lucide-react';
 import { adminService } from '../services/adminService';
 import { useVerificationEvents } from '../context/VerificationEventsContext';
@@ -108,7 +109,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="card p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
@@ -185,6 +186,21 @@ const AdminDashboard = () => {
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Users className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="card p-6 hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Total Reviews</p>
+                <span className="text-3xl font-bold text-gray-900">
+                  {stats?.totalReviews || 0}
+                </span>
+                <p className="text-xs text-gray-500 mt-2">Platform reviews</p>
+              </div>
+              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-amber-600" />
               </div>
             </div>
           </div>
@@ -304,6 +320,28 @@ const AdminDashboard = () => {
                   </p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-teal-600 group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
+
+            <Link
+              to="/admin/reviews"
+              className="card p-6 hover:shadow-lg transition-all hover:border-amber-200 group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Review Management
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Manage platform reviews
+                  </p>
+                  {stats?.totalReviews > 0 && (
+                    <span className="badge bg-amber-100 text-amber-800">
+                      {stats.totalReviews} reviews
+                    </span>
+                  )}
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
               </div>
             </Link>
 
