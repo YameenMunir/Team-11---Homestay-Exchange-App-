@@ -235,6 +235,45 @@ export const reviewsService = {
   },
 
   /**
+   * Get top reviews for homepage display
+   * @param {number} limit - Number of reviews to fetch (default 3)
+   * @returns {Promise} Array of top reviews
+   */
+  async getTopReviews(limit = 3) {
+    const { data, error } = await supabase
+      .from('platform_reviews')
+      .select(`
+        id,
+        user_id,
+        rating,
+        review_text,
+        is_anonymous,
+        created_at,
+        user_profiles!user_id (
+          full_name,
+          role
+        )
+      `)
+      .gte('rating', 4)
+      .order('rating', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+
+    return data.map(review => ({
+      id: review.id,
+      userId: review.user_id,
+      rating: review.rating,
+      reviewText: review.review_text,
+      isAnonymous: review.is_anonymous,
+      createdAt: review.created_at,
+      author: review.is_anonymous ? 'Anonymous User' : review.user_profiles?.full_name || 'Unknown User',
+      authorRole: review.user_profiles?.role || null,
+    }));
+  },
+
+  /**
    * Get average rating for the platform
    * @returns {Promise} Average rating and count
    */

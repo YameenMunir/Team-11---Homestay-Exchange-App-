@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   Home as HomeIcon,
   Users,
@@ -16,9 +17,28 @@ import {
   Globe,
   Clock,
   Zap,
+  User,
 } from 'lucide-react';
+import { reviewsService } from '../services/reviewsService';
 
 const Home = () => {
+  const [topReviews, setTopReviews] = useState([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
+
+  useEffect(() => {
+    const fetchTopReviews = async () => {
+      try {
+        const reviews = await reviewsService.getTopReviews(3);
+        setTopReviews(reviews);
+      } catch (error) {
+        console.error('Error fetching top reviews:', error);
+      } finally {
+        setIsLoadingReviews(false);
+      }
+    };
+
+    fetchTopReviews();
+  }, []);
   const statistics = [
     {
       icon: <Users className="w-8 h-8" />,
@@ -85,7 +105,8 @@ const Home = () => {
     },
   ];
 
-  const testimonials = [
+  // Fallback testimonials if no reviews are available
+  const fallbackTestimonials = [
     {
       name: 'Sarah Johnson',
       role: 'International Student',
@@ -108,6 +129,27 @@ const Home = () => {
       rating: 5,
     },
   ];
+
+  // Helper function to get role display name
+  const getRoleDisplayName = (role) => {
+    if (!role) return 'User';
+    switch (role.toLowerCase()) {
+      case 'host':
+        return 'Host';
+      case 'guest':
+        return 'Student';
+      default:
+        return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+  };
+
+  // Helper function to get initials from name
+  const getInitials = (name) => {
+    if (!name || name === 'Anonymous User') return '?';
+    const names = name.trim().split(' ');
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+  };
 
   const howItWorks = [
     {
@@ -421,34 +463,107 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in"
-                style={{ animationDelay: `${index * 150}ms` }}
-              >
-                {/* Rating Stars */}
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-
-                {/* Quote */}
-                <p className="text-gray-700 leading-relaxed mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-
-                {/* Author */}
-                <div className="flex items-center space-x-4">
-                  <div className="text-4xl">{testimonial.image}</div>
-                  <div>
-                    <div className="font-bold text-gray-900">{testimonial.name}</div>
-                    <div className="text-sm text-teal-600">{testimonial.role}</div>
+            {isLoadingReviews ? (
+              // Loading skeleton
+              [...Array(3)].map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 animate-pulse"
+                >
+                  <div className="flex items-center mb-4 space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="w-5 h-5 bg-gray-200 rounded" />
+                    ))}
+                  </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="h-4 bg-gray-200 rounded w-full" />
+                    <div className="h-4 bg-gray-200 rounded w-5/6" />
+                    <div className="h-4 bg-gray-200 rounded w-4/6" />
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gray-200 rounded-full" />
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-24" />
+                      <div className="h-3 bg-gray-200 rounded w-16" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : topReviews.length > 0 ? (
+              // Display real reviews from database
+              topReviews.map((review, index) => (
+                <div
+                  key={review.id}
+                  className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in"
+                  style={{ animationDelay: `${index * 150}ms` }}
+                >
+                  {/* Rating Stars */}
+                  <div className="flex items-center mb-4">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <p className="text-gray-700 leading-relaxed mb-6 italic line-clamp-4">
+                    "{review.reviewText}"
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                      review.authorRole === 'host'
+                        ? 'bg-gradient-to-br from-orange-500 to-orange-600'
+                        : 'bg-gradient-to-br from-teal-500 to-teal-600'
+                    }`}>
+                      {review.isAnonymous ? (
+                        <User className="w-6 h-6" />
+                      ) : (
+                        getInitials(review.author)
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900">{review.author}</div>
+                      <div className={`text-sm ${
+                        review.authorRole === 'host' ? 'text-orange-600' : 'text-teal-600'
+                      }`}>
+                        {getRoleDisplayName(review.authorRole)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              // Fallback to static testimonials if no reviews
+              fallbackTestimonials.map((testimonial, index) => (
+                <div
+                  key={index}
+                  className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 animate-fade-in"
+                  style={{ animationDelay: `${index * 150}ms` }}
+                >
+                  {/* Rating Stars */}
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-amber-400 fill-amber-400" />
+                    ))}
+                  </div>
+
+                  {/* Quote */}
+                  <p className="text-gray-700 leading-relaxed mb-6 italic">
+                    "{testimonial.quote}"
+                  </p>
+
+                  {/* Author */}
+                  <div className="flex items-center space-x-4">
+                    <div className="text-4xl">{testimonial.image}</div>
+                    <div>
+                      <div className="font-bold text-gray-900">{testimonial.name}</div>
+                      <div className="text-sm text-teal-600">{testimonial.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           {/* View All Reviews Button */}
