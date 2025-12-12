@@ -3,12 +3,23 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import { validateEmail } from "../utils/validation";
+
+// Import validation.js to register the custom Yup method
+import "../utils/validation";
 
 const validationSchema = yup.object({
   email: yup
     .string("Enter your email")
-    .email("Enter a valid email")
-    .required("Email is required"),
+    .required("Email is required")
+    .test('email-strict', 'Please enter a valid email address', function(value) {
+      if (!value) return true; // Let required() handle empty values
+      const result = validateEmail(value);
+      if (!result.isValid) {
+        return this.createError({ message: result.error });
+      }
+      return true;
+    }),
   password: yup
     .string("Enter your password")
     .min(8, "Password should be of minimum 8 characters length")

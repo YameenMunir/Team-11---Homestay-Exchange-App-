@@ -16,8 +16,10 @@ import {
   AlertCircle,
   XCircle,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import supabase from '../utils/supabase';
 import PhoneInput from '../components/PhoneInput';
+import { validateEmail } from '../utils/validation';
 
 const HostSignup = () => {
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ const HostSignup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -111,21 +114,42 @@ const HostSignup = () => {
 
     // Validation for Step 1
     if (currentStep === 1) {
+      // Validate email format using RFC 5322 compliant validation
+      const emailValidation = validateEmail(formData.email);
+      if (!emailValidation.isValid) {
+        toast.error(emailValidation.error, {
+          duration: 4000,
+          icon: '📧',
+        });
+        setEmailError(emailValidation.error);
+        return;
+      }
+      setEmailError('');
+
       // Check if emails match
       if (formData.email !== formData.confirmEmail) {
-        alert('Email addresses do not match');
+        toast.error('Email addresses do not match', {
+          duration: 4000,
+          icon: '📧',
+        });
         return;
       }
 
       // Check if passwords match
       if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
+        toast.error('Passwords do not match', {
+          duration: 4000,
+          icon: '🔒',
+        });
         return;
       }
 
       // Check password length
       if (formData.password.length < 6) {
-        alert('Password must be at least 6 characters');
+        toast.error('Password must be at least 6 characters', {
+          duration: 4000,
+          icon: '🔒',
+        });
         return;
       }
     }
@@ -260,6 +284,16 @@ const HostSignup = () => {
         countryCode: eventCountryCode,
       });
       return;
+    }
+
+    // Real-time email validation
+    if (name === 'email' && value) {
+      const emailValidation = validateEmail(value);
+      if (!emailValidation.isValid) {
+        setEmailError(emailValidation.error);
+      } else {
+        setEmailError('');
+      }
     }
 
     setFormData({
@@ -418,19 +452,37 @@ const HostSignup = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Mail className="w-6 h-6 text-gray-400" />
+                        <Mail className={`w-6 h-6 ${emailError ? 'text-red-500' : 'text-gray-400'}`} />
                       </div>
                       <input
-                        type="email"
+                        type="text"
                         id="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="input-accessible pl-14"
+                        className={`input-accessible pl-14 ${
+                          emailError
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                            : formData.email && !emailError
+                            ? 'border-green-500 focus:border-green-500 focus:ring-green-500'
+                            : ''
+                        }`}
                         placeholder="your.email@example.com"
                       />
                     </div>
+                    {emailError && (
+                      <p className="mt-1 text-sm text-red-600 flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-1" />
+                        <span>{emailError}</span>
+                      </p>
+                    )}
+                    {formData.email && !emailError && (
+                      <p className="mt-1 text-sm text-green-600 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        <span>Valid email format</span>
+                      </p>
+                    )}
                   </div>
 
                   <div>
