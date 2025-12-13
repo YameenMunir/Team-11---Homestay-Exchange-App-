@@ -52,6 +52,7 @@ import RequiresVerification from './components/RequiresVerification';
 import { UserProvider, useUser } from './context/UserContext';
 import { AdminProvider } from './context/AdminContext';
 import { VerificationEventsProvider } from './context/VerificationEventsContext';
+import { VoiceGuidanceProvider } from './context/VoiceGuidanceContext';
 import AuthProvider from './context/AuthContext';
 
 function AppContent() {
@@ -388,11 +389,13 @@ function App() {
   return (
     <AuthProvider>
       <UserProvider>
-        <AdminProvider>
-          <VerificationEventsProvider>
-            <AppContent />
-          </VerificationEventsProvider>
-        </AdminProvider>
+        <VoiceGuidanceProvider>
+          <AdminProvider>
+            <VerificationEventsProvider>
+              <AppContent />
+            </VerificationEventsProvider>
+          </AdminProvider>
+        </VoiceGuidanceProvider>
       </UserProvider>
     </AuthProvider>
   );

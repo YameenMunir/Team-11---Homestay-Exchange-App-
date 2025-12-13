@@ -84,6 +84,7 @@ const Navbar = () => {
             <Link
               to="/"
               className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
+              aria-label="Home - Go to homepage"
             >
               <Home className="w-5 h-5" />
               <span>Home</span>
@@ -93,6 +94,7 @@ const Navbar = () => {
                 <Link
                   to="/student/browse"
                   className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
+                  aria-label="Browse - Find hosts and accommodation"
                 >
                   <Users className="w-5 h-5" />
                   <span>Browse</span>
@@ -100,6 +102,7 @@ const Navbar = () => {
                 <Link
                   to="/connection-requests"
                   className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
+                  aria-label="Requests - View your connection requests"
                 >
                   <Link2 className="w-5 h-5" />
                   <span>Requests</span>
@@ -109,6 +112,7 @@ const Navbar = () => {
             <Link
               to="/knowledge-hub"
               className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
+              aria-label="Resources - Access the knowledge hub"
             >
               <BookOpen className="w-5 h-5" />
               <span>Resources</span>
@@ -116,6 +120,7 @@ const Navbar = () => {
             <Link
               to="/help"
               className="text-gray-700 hover:text-teal-600 font-medium transition-colors flex items-center space-x-2"
+              aria-label="Help - Get support and assistance"
             >
               <HelpCircle className="w-5 h-5" />
               <span>Help</span>
@@ -151,6 +156,7 @@ const Navbar = () => {
                         to={profileRoute}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setIsProfileDropdownOpen(false)}
+                        aria-label="My Profile - View your dashboard"
                       >
                         <User className="w-4 h-4" />
                         <span>My Profile</span>
@@ -160,6 +166,7 @@ const Navbar = () => {
                         to={settingsRoute}
                         className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setIsProfileDropdownOpen(false)}
+                        aria-label="Settings - Manage your account and preferences"
                       >
                         <Settings className="w-4 h-4" />
                         <span>Settings</span>
@@ -169,6 +176,7 @@ const Navbar = () => {
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
+                          aria-label="Logout - Sign out of your account"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Logout</span>
@@ -179,10 +187,10 @@ const Navbar = () => {
                 </div>
               ) : (
                 <>
-                  <Link to="/host/login" className="btn-outline text-sm">
+                  <Link to="/host/login" className="btn-outline text-sm" aria-label="I'm a Host - Login or register as a host">
                     I'm a Host
                   </Link>
-                  <Link to="/student/login" className="btn-primary text-sm">
+                  <Link to="/student/login" className="btn-primary text-sm" aria-label="I'm a Student - Login or register as a student">
                     I'm a Student
                   </Link>
                 </>
@@ -212,6 +220,7 @@ const Navbar = () => {
                 to="/"
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
+                aria-label="Home - Go to homepage"
               >
                 <Home className="w-5 h-5" />
                 <span className="font-medium">Home</span>
@@ -222,6 +231,7 @@ const Navbar = () => {
                     to="/student/browse"
                     className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     onClick={toggleMenu}
+                    aria-label="Browse - Find hosts and accommodation"
                   >
                     <Users className="w-5 h-5" />
                     <span className="font-medium">Browse</span>
@@ -230,6 +240,7 @@ const Navbar = () => {
                     to="/connection-requests"
                     className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                     onClick={toggleMenu}
+                    aria-label="Connection Requests - View your connection requests"
                   >
                     <Link2 className="w-5 h-5" />
                     <span className="font-medium">Connection Requests</span>
@@ -240,6 +251,7 @@ const Navbar = () => {
                 to="/knowledge-hub"
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
+                aria-label="Resources - Access the knowledge hub"
               >
                 <BookOpen className="w-5 h-5" />
                 <span className="font-medium">Resources</span>
@@ -248,6 +260,7 @@ const Navbar = () => {
                 to="/help"
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={toggleMenu}
+                aria-label="Help - Get support and assistance"
               >
                 <HelpCircle className="w-5 h-5" />
                 <span className="font-medium">Help</span>
@@ -276,6 +289,7 @@ const Navbar = () => {
                       to={profileRoute}
                       className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={toggleMenu}
+                      aria-label="My Profile - View your dashboard"
                     >
                       <User className="w-5 h-5" />
                       <span className="font-medium">My Profile</span>
@@ -285,6 +299,7 @@ const Navbar = () => {
                       to={settingsRoute}
                       className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
                       onClick={toggleMenu}
+                      aria-label="Settings - Manage your account and preferences"
                     >
                       <Settings className="w-5 h-5" />
                       <span className="font-medium">Settings</span>
@@ -296,6 +311,7 @@ const Navbar = () => {
                         toggleMenu();
                       }}
                       className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full"
+                      aria-label="Logout - Sign out of your account"
                     >
                       <LogOut className="w-5 h-5" />
                       <span className="font-medium">Logout</span>
@@ -307,6 +323,7 @@ const Navbar = () => {
                       to="/host/login"
                       className="block w-full btn-outline text-center"
                       onClick={toggleMenu}
+                      aria-label="I'm a Host - Login or register as a host"
                     >
                       I'm a Host
                     </Link>
@@ -314,6 +331,7 @@ const Navbar = () => {
                       to="/student/login"
                       className="block w-full btn-primary text-center"
                       onClick={toggleMenu}
+                      aria-label="I'm a Student - Login or register as a student"
                     >
                       I'm a Student
                     </Link>
