@@ -187,7 +187,7 @@ const Navbar = () => {
                 </div>
               ) : (
                 <>
-                  <Link to="/host/login" className="btn-outline text-sm" aria-label="I'm a Host - Login or register as a host">
+                  <Link to="/host/login" className="px-6 py-3 bg-transparent border-2 border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 active:bg-orange-100 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-orange-300 text-sm" aria-label="I'm a Host - Login or register as a host">
                     I'm a Host
                   </Link>
                   <Link to="/student/login" className="btn-primary text-sm" aria-label="I'm a Student - Login or register as a student">
@@ -321,7 +321,7 @@ const Navbar = () => {
                   <>
                     <Link
                       to="/host/login"
-                      className="block w-full btn-outline text-center"
+                      className="block w-full px-6 py-3 bg-transparent border-2 border-orange-500 text-orange-500 font-medium rounded-lg hover:bg-orange-50 active:bg-orange-100 transition-colors duration-200 focus:outline-none focus:ring-4 focus:ring-orange-300 text-center"
                       onClick={toggleMenu}
                       aria-label="I'm a Host - Login or register as a host"
                     >
