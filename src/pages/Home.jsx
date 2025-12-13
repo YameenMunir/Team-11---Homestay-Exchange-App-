@@ -276,17 +276,17 @@ const Home = () => {
 
                 {/* Trust Indicators */}
                 <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 px-4 pb-4">
-                  <div className="flex items-center gap-2 bg-white px-5 md:px-6 py-3 rounded-full shadow-xl border border-gray-100">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span className="text-base md:text-lg font-bold text-gray-900">Fully Verified</span>
+                  <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-5 md:px-6 py-3 rounded-full border border-green-400/40">
+                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0" />
+                    <span className="text-sm md:text-base font-semibold text-white">Fully Verified</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white px-5 md:px-6 py-3 rounded-full shadow-xl border border-gray-100">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span className="text-base md:text-lg font-bold text-gray-900">DBS Checked</span>
+                  <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-5 md:px-6 py-3 rounded-full border border-green-400/40">
+                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0" />
+                    <span className="text-sm md:text-base font-semibold text-white">DBS Checked</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white px-5 md:px-6 py-3 rounded-full shadow-xl border border-gray-100">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
-                    <span className="text-base md:text-lg font-bold text-gray-900">Safe & Secure</span>
+                  <div className="flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-5 md:px-6 py-3 rounded-full border border-green-400/40">
+                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0" />
+                    <span className="text-sm md:text-base font-semibold text-white">Safe & Secure</span>
                   </div>
                 </div>
               </div>
