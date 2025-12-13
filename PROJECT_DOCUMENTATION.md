@@ -1,6 +1,6 @@
 # Homestay Exchange App - Comprehensive Project Documentation
 
-**Document Version:** 1.0
+**Document Version:** 2.0
 **Last Updated:** December 2024
 **Project Status:** Active Development
 
@@ -21,8 +21,9 @@
 11. [Services Layer](#11-services-layer)
 12. [Component Library](#12-component-library)
 13. [Accessibility Features](#13-accessibility-features)
-14. [Environment Setup](#14-environment-setup)
-15. [Known Issues & Technical Debt](#15-known-issues--technical-debt)
+14. [Recent Feature Additions](#14-recent-feature-additions)
+15. [Environment Setup](#15-environment-setup)
+16. [Known Issues & Technical Debt](#16-known-issues--technical-debt)
 
 ---
 
@@ -91,6 +92,14 @@ The **Homestay Exchange App** is a web-based platform designed to connect intern
 |------------|---------|---------|
 | **React Hot Toast** | 2.5.2 | Toast notifications |
 
+### Web APIs Used
+
+| API | Purpose |
+|-----|---------|
+| **Web Speech Synthesis API** | Voice guidance for accessibility |
+| **SVG Filters** | Color blind mode simulations |
+| **File API** | Document uploads |
+
 ---
 
 ## 3. Project Architecture
@@ -106,18 +115,20 @@ src/
 │   ├── layout/          # Layout components (Navbar, Footer)
 │   └── shared/          # Shared/common components
 ├── containers/          # Container components
-├── context/             # React Context providers
-├── hooks/               # Custom React hooks
+├── context/             # React Context providers (7 contexts)
+├── hooks/               # Custom React hooks (4 hooks)
 ├── lib/                 # Library configurations
-├── pages/               # Page components (routes)
+├── pages/               # Page components (49 pages)
 │   └── auth/            # Auth page variants
-├── services/            # API service layer
+├── services/            # API service layer (12 services)
 └── utils/               # Utility functions
 
 database/
 └── migrations/          # SQL migration files
 
-public/                  # Static assets
+public/
+├── documents/           # PDF documents (Terms & Conditions)
+└── homestay-logo.jpg    # Logo and assets
 ```
 
 ### State Management Architecture
@@ -125,11 +136,24 @@ public/                  # Static assets
 ```
 App
 ├── AuthProvider (Authentication state)
-│   └── UserProvider (User profile & accessibility)
-│       └── AdminProvider (Admin sessions & permissions)
-│           └── VerificationEventsProvider (Verification tracking)
-│               └── AppContent (Main application)
+│   └── UserProvider (User profile & accessibility settings)
+│       └── VoiceGuidanceProvider (Global voice guidance)
+│           └── AdminProvider (Admin sessions & permissions)
+│               └── VerificationEventsProvider (Verification tracking)
+│                   └── AppContent (Main application with Router)
 ```
+
+### Context Providers (7 Total)
+
+| Context | File | Purpose |
+|---------|------|---------|
+| `AuthContext` | `AuthContext.jsx` | Authentication state management |
+| `AuthContextNew` | `AuthContextNew.jsx` | Alternative auth context |
+| `UserContext` | `UserContext.jsx` | User profile & accessibility settings |
+| `VoiceGuidanceContext` | `VoiceGuidanceContext.jsx` | Global voice guidance with Web Speech API |
+| `AdminContext` | `AdminContext.jsx` | Admin permissions & sessions |
+| `NotificationContext` | `NotificationContext.jsx` | Global notifications |
+| `VerificationEventsContext` | `VerificationEventsContext.jsx` | Verification status tracking |
 
 ---
 
@@ -141,18 +165,19 @@ App
 |----------|-----------------|---------------------|---------------|
 | Authentication | 8 | 0 | 1 |
 | User Management | 6 | 1 | 2 |
-| Host Features | 5 | 1 | 2 |
+| Host Features | 6 | 1 | 1 |
 | Student Features | 7 | 2 | 3 |
 | Admin Features | 9 | 2 | 3 |
 | Feedback & Recognition | 4 | 1 | 1 |
-| Content & Info | 9 | 1 | 2 |
-| Accessibility | 4 | 0 | 1 |
-| **Total** | **52** | **8** | **15** |
+| Content & Info | 10 | 1 | 1 |
+| Accessibility | 5 | 0 | 0 |
+| UI/UX Features | 4 | 0 | 0 |
+| **Total** | **59** | **8** | **12** |
 
 ### Development Progress
 
 ```
-[██████████████████░░░░░░] 69% Complete
+[████████████████████░░░░] 75% Complete
 ```
 
 ---
@@ -180,7 +205,7 @@ App
 | **Document Upload** | Upload verification documents | `documentService.js`, `FileUpload.jsx` |
 | **Admin Verification** | Admin workflow to verify users | `AdminUserManagement.jsx` |
 | **Verification Status Banner** | Visual indicator of verification state | `VerificationStatusBanner.jsx` |
-| **User Settings** | Profile and account settings | `UserSettings.jsx` |
+| **User Settings** | Profile, account, and accessibility settings | `UserSettings.jsx` |
 | **Profile Display** | View user profiles with details | Various dashboard pages |
 
 ### 5.3 Host Features
@@ -192,6 +217,7 @@ App
 | **Manage Tasks** | Edit, activate, close tasks | `ManageTasks.jsx` |
 | **View Applications** | See student applications | `HostDashboard.jsx` |
 | **Connection Management** | Accept/decline connection requests | `ConnectionRequests.jsx` |
+| **Role-Based Navbar Theming** | Orange profile icon/badge for hosts | `Navbar.jsx` |
 
 ### 5.4 Student Features
 
@@ -243,21 +269,25 @@ App
 | Feature | Description | Files |
 |---------|-------------|-------|
 | **Platform Reviews** | Leave reviews for the platform | `Reviews.jsx` |
-| **Review Display** | Show reviews on homepage (top 3) | `Home.jsx` |
+| **Homepage Top Reviews** | Display top 3 reviews on homepage | `Home.jsx`, `reviewsService.js` |
 | **My Reviews** | Manage personal reviews | `MyReviews.jsx` |
 | **Admin Review Moderation** | Delete inappropriate reviews | `AdminReviewManagement.jsx` |
 | **Deleted Reviews Audit** | Track deleted reviews | `deleted_reviews` table |
+| **Review Loading States** | Skeleton loading for reviews | `Home.jsx` |
+| **Fallback Testimonials** | Static testimonials if no reviews | `Home.jsx` |
 
 ### 5.9 Information Pages
 
 | Feature | Description | Files |
 |---------|-------------|-------|
-| **Home Page** | Landing page with features, testimonials | `Home.jsx` |
+| **Home Page** | Landing page with features, top reviews | `Home.jsx` |
 | **About Us** | Company/platform information | `AboutUs.jsx` |
 | **Contact Us** | Contact form and support info | `ContactUs.jsx` |
 | **Help Center** | Help resources and guides | `Help.jsx` |
 | **FAQ** | Frequently asked questions | `FAQ.jsx` |
-| **Terms & Conditions** | Legal terms | `TermsAndConditions.jsx` |
+| **Terms & Conditions** | Legal terms with PDF modals | `TermsAndConditions.jsx` |
+| **Host Terms PDF** | Dedicated host T&C document | `/documents/HFS Hosting Terms Curr v.10.pdf` |
+| **Student Terms PDF** | Dedicated student T&C document | `/documents/Host Family Stay Terms and Conditions v.10.2024 (1).pdf` |
 | **Privacy Policy** | Privacy information | `PrivacyPolicy.jsx` |
 | **Anti-Discrimination Policy** | Non-discrimination guidelines | `AntiDiscriminationPolicy.jsx` |
 | **Dispute Resolution** | Dispute handling procedures | `DisputeResolution.jsx` |
@@ -266,10 +296,24 @@ App
 
 | Feature | Description | Files |
 |---------|-------------|-------|
-| **Senior Mode** | Larger fonts, simplified UI | `UserContext.jsx`, CSS |
+| **Senior Mode** | Larger fonts, increased spacing, simplified UI | `UserContext.jsx`, `index.css` |
 | **Color Blind Modes** | Protanopia, Deuteranopia, Tritanopia filters | `App.jsx` (SVG filters) |
-| **Voice Guidance** | Audio prompts hook | `useVoiceGuidance.js` |
+| **Voice Guidance (Global)** | Automatic text-to-speech for interactive elements | `VoiceGuidanceContext.jsx` |
+| **Voice Guidance (Hook)** | Manual voice control hook | `useVoiceGuidance.js` |
+| **Help Overlay** | Contextual help tooltips on hover | `HelpOverlay.jsx` |
 | **Accessible Touch Targets** | Minimum 44px touch targets | `tailwind.config.js` |
+| **ARIA Labels** | Screen reader support throughout app | `Navbar.jsx`, `Footer.jsx` |
+
+### 5.11 UI/UX Features
+
+| Feature | Description | Files |
+|---------|-------------|-------|
+| **Role-Based Color Theming** | Orange for hosts, teal for students | `Navbar.jsx` |
+| **Responsive Navigation** | Mobile-first responsive navbar | `Navbar.jsx` |
+| **PDF Modal Viewer** | In-app PDF viewing with toolbar | `TermsAndConditions.jsx` |
+| **Loading Skeletons** | Skeleton loading states | Various pages |
+| **Scroll to Top** | Automatic scroll on navigation | `ScrollToTop.jsx` |
+| **Toast Notifications** | Success/error notifications | React Hot Toast |
 
 ---
 
@@ -286,8 +330,6 @@ App
 | Navigation | Content management system |
 | Basic content display | Search functionality |
 
-**Recommendation:** Add CMS integration or markdown-based content management.
-
 ### 6.2 Rate Experience
 
 **Status:** Basic functionality exists
@@ -298,8 +340,6 @@ App
 | Rating form | Integration with facilitation |
 | Star selection | Two-way rating flow |
 | Basic submission | Rating aggregation display |
-
-**Recommendation:** Complete integration with facilitation lifecycle.
 
 ### 6.3 Monthly Report
 
@@ -312,8 +352,6 @@ App
 | Basic layout | PDF export |
 | | Email delivery |
 
-**Recommendation:** Implement automated report generation.
-
 ### 6.4 Admin Analytics
 
 **Status:** Basic stats exist, advanced analytics pending
@@ -324,9 +362,6 @@ App
 | User counts | Trend charts |
 | Basic statistics | Export functionality |
 | | Date range filtering |
-| | Custom reports |
-
-**Recommendation:** Add charting library (Chart.js/Recharts) for visualizations.
 
 ### 6.5 Task Application Flow
 
@@ -339,22 +374,7 @@ App
 | Status tracking | Host response notifications |
 | Basic listing | Application editing |
 
-**Recommendation:** Add real-time notifications for status changes.
-
-### 6.6 Help Overlay System
-
-**Status:** Component exists, coverage incomplete
-**File:** `HelpOverlay.jsx`
-
-| Implemented | Not Implemented |
-|-------------|-----------------|
-| Overlay component | Per-page help content |
-| Toggle functionality | Interactive tutorials |
-| | Contextual tips |
-
-**Recommendation:** Add step-by-step onboarding tours.
-
-### 6.7 Notification System
+### 6.6 Notification System
 
 **Status:** Context exists, display needs work
 **File:** `NotificationContext.jsx`
@@ -364,11 +384,8 @@ App
 | Context provider | Bell icon dropdown |
 | Basic state | Mark as read |
 | | Push notifications |
-| | Email notifications |
 
-**Recommendation:** Build notification dropdown in Navbar.
-
-### 6.8 Landing Page Variants
+### 6.7 Landing Page Variants
 
 **Status:** Multiple landing pages exist
 **Files:** `LandingPage.jsx`, `HomePage.jsx`, `Home.jsx`
@@ -377,9 +394,6 @@ App
 |-------------|-----------------|
 | Multiple designs | A/B testing |
 | Basic content | Unified design |
-| | Analytics tracking |
-
-**Recommendation:** Consolidate to single landing page or implement proper A/B testing.
 
 ---
 
@@ -396,9 +410,6 @@ App
 | Supabase real-time subscriptions |
 | Message notifications |
 | Read receipts |
-| File attachments |
-
-**Estimated Effort:** 2-3 weeks
 
 ### 7.2 Push Notifications
 
@@ -410,9 +421,6 @@ App
 | Service worker setup |
 | Notification permission handling |
 | Push subscription management |
-| Notification preferences UI |
-
-**Estimated Effort:** 1-2 weeks
 
 ### 7.3 Email Notifications
 
@@ -424,23 +432,17 @@ App
 | Email service integration (SendGrid/Postmark) |
 | Email templates |
 | Preference management |
-| Unsubscribe handling |
-
-**Estimated Effort:** 1-2 weeks
 
 ### 7.4 Payment Integration
 
 **Priority:** Medium
-**Description:** Optional payment processing for premium features or deposits
+**Description:** Optional payment processing for premium features
 
 | Required Components |
 |---------------------|
 | Payment gateway (Stripe) |
 | Secure checkout flow |
 | Payment history |
-| Refund handling |
-
-**Estimated Effort:** 2-3 weeks
 
 ### 7.5 Advanced Search & Filters
 
@@ -452,9 +454,6 @@ App
 | Location-based search (maps integration) |
 | Advanced filters (amenities, availability) |
 | Saved searches |
-| Search history |
-
-**Estimated Effort:** 1-2 weeks
 
 ### 7.6 Calendar Integration
 
@@ -465,10 +464,7 @@ App
 |---------------------|
 | Availability calendar UI |
 | Host availability settings |
-| Student scheduling |
 | Calendar sync (Google/Outlook) |
-
-**Estimated Effort:** 2-3 weeks
 
 ### 7.7 Mobile App (Native)
 
@@ -480,9 +476,6 @@ App
 | React Native setup |
 | Platform-specific features |
 | App store deployment |
-| Push notification integration |
-
-**Estimated Effort:** 8-12 weeks
 
 ### 7.8 Document OCR/Verification
 
@@ -493,10 +486,7 @@ App
 |---------------------|
 | OCR service integration |
 | Document validation rules |
-| Fraud detection |
 | Auto-approval workflow |
-
-**Estimated Effort:** 3-4 weeks
 
 ### 7.9 Multi-Language Support
 
@@ -508,9 +498,6 @@ App
 | i18n library setup |
 | Translation files |
 | Language selector |
-| RTL support |
-
-**Estimated Effort:** 2-3 weeks
 
 ### 7.10 Two-Factor Authentication
 
@@ -522,9 +509,6 @@ App
 | TOTP implementation |
 | SMS verification |
 | Backup codes |
-| Recovery flow |
-
-**Estimated Effort:** 1-2 weeks
 
 ### 7.11 Social Login
 
@@ -536,25 +520,8 @@ App
 | Google OAuth |
 | Facebook OAuth |
 | Account linking |
-| Profile data mapping |
 
-**Estimated Effort:** 1 week
-
-### 7.12 Leaderboards
-
-**Priority:** Low
-**Description:** Public leaderboards for recognition
-
-| Required Components |
-|---------------------|
-| Leaderboard UI |
-| Ranking algorithm |
-| Privacy controls |
-| Time-based filters |
-
-**Estimated Effort:** 1 week
-
-### 7.13 Referral System
+### 7.12 Referral System
 
 **Priority:** Low
 **Description:** User referral program
@@ -564,37 +531,6 @@ App
 | Referral code generation |
 | Tracking & attribution |
 | Reward system |
-| Referral dashboard |
-
-**Estimated Effort:** 1-2 weeks
-
-### 7.14 Reporting & Analytics Dashboard
-
-**Priority:** Medium
-**Description:** Comprehensive analytics for admins
-
-| Required Components |
-|---------------------|
-| Data visualization library |
-| Custom report builder |
-| Export functionality |
-| Scheduled reports |
-
-**Estimated Effort:** 2-3 weeks
-
-### 7.15 API Documentation
-
-**Priority:** Low
-**Description:** Public API documentation
-
-| Required Components |
-|---------------------|
-| OpenAPI/Swagger spec |
-| API documentation site |
-| Rate limiting |
-| API keys management |
-
-**Estimated Effort:** 1 week
 
 ---
 
@@ -616,6 +552,10 @@ Primary user account table.
 | `is_active` | BOOLEAN | Account active status |
 | `is_banned` | BOOLEAN | Ban status |
 | `is_suspended` | BOOLEAN | Suspension status |
+| `senior_mode` | BOOLEAN | Accessibility: senior mode |
+| `voice_guidance` | BOOLEAN | Accessibility: voice guidance |
+| `help_overlay` | BOOLEAN | Accessibility: help overlay |
+| `color_blind_mode` | TEXT | Accessibility: color blind mode |
 | `created_at` | TIMESTAMPTZ | Account creation date |
 | `updated_at` | TIMESTAMPTZ | Last update date |
 
@@ -788,20 +728,23 @@ const ADMIN_PERMISSIONS = {
 
 | Path | Component | Description |
 |------|-----------|-------------|
-| `/` | `Home` | Landing page |
-| `/host/login` | `HostLogin` | Host login |
+| `/` | `Home` | Landing page with top reviews |
+| `/host/login` | `HostLogin` | Host login (orange theme) |
 | `/host/signup` | `HostSignup` | Host registration |
-| `/student/login` | `StudentLogin` | Student login |
+| `/student/login` | `StudentLogin` | Student login (teal theme) |
 | `/student/signup` | `StudentSignup` | Student registration |
 | `/admin/login` | `AdminLogin` | Admin login |
 | `/help` | `Help` | Help center |
 | `/faq` | `FAQ` | FAQ page |
 | `/about` | `AboutUs` | About page |
 | `/contact` | `ContactUs` | Contact form |
-| `/terms` | `TermsAndConditions` | Terms |
+| `/terms` | `TermsAndConditions` | Terms with PDF modals |
 | `/privacy` | `PrivacyPolicy` | Privacy policy |
+| `/anti-discrimination` | `AntiDiscriminationPolicy` | Anti-discrimination |
+| `/dispute-resolution` | `DisputeResolution` | Dispute handling |
 | `/reviews` | `Reviews` | Platform reviews |
 | `/knowledge-hub` | `KnowledgeHub` | Resources |
+| `/landing` | `LandingPage` | Alternative landing |
 
 ### Protected Host Routes
 
@@ -840,14 +783,26 @@ const ADMIN_PERMISSIONS = {
 | `/admin/feedback` | `AdminFeedbackReview` | `view_reports` |
 | `/admin/reviews` | `AdminReviewManagement` | `manage_users` |
 
+### Other Protected Routes
+
+| Path | Component | Required Role |
+|------|-----------|---------------|
+| `/connection-requests` | `ConnectionRequests` | any authenticated |
+| `/rate-experience` | `RateExperience` | any authenticated |
+| `/monthly-report` | `MonthlyReport` | any authenticated |
+| `/monthly-feedback/:facilitationId` | `MonthlyFeedbackForm` | any authenticated |
+| `/feedback-history` | `FeedbackHistory` | any authenticated |
+| `/recognition-status` | `RecognitionStatus` | `guest` |
+
 ---
 
 ## 11. Services Layer
 
-### Service Files Overview
+### Service Files Overview (12 Services)
 
 | Service | File | Purpose |
 |---------|------|---------|
+| **Admin Service** | `adminService.js` | Admin operations |
 | **Auth Service** | `authService.js` | Authentication operations |
 | **Profile Service** | `profileService.js` | User profile CRUD |
 | **Document Service** | `documentService.js` | Document upload/verification |
@@ -862,33 +817,32 @@ const ADMIN_PERMISSIONS = {
 
 ### Key Service Methods
 
-#### `authService.js`
-- `signUp(email, password, metadata)` - Create account
-- `signIn(email, password)` - Login
-- `signOut()` - Logout
-- `resetPassword(email)` - Password reset
-- `updateUserMetadata(updates)` - Update auth metadata
-
-#### `profileService.js`
-- `getProfile(userId)` - Get user profile
-- `createProfile(profileData)` - Create profile
-- `updateProfile(userId, updates)` - Update profile
-- `getGuestProfile(userId)` - Get student details
-- `getHostProfile(userId)` - Get host details
+#### `reviewsService.js`
+```javascript
+- createReview(reviewData)      // Create review
+- getAllReviews()               // Get all reviews
+- getTopReviews(limit)          // Get top-rated reviews for homepage
+- updateReview(reviewId, updates) // Edit review
+- deleteReview(reviewId)        // Delete own review
+- getAverageRating()            // Platform average rating
+```
 
 #### `facilitationService.js`
-- `createRequest(targetId, message)` - Send connection request
-- `getRequestsForUser(userId)` - Get user's requests
-- `getPendingRequests()` - Get pending for admin
-- `updateRequestStatus(requestId, status)` - Approve/reject
+```javascript
+- createRequest(targetId, message)   // Send connection request
+- getRequestsForUser(userId)         // Get user's requests
+- getPendingRequests()               // Get pending for admin
+- updateRequestStatus(requestId, status) // Approve/reject
+```
 
-#### `reviewsService.js`
-- `createReview(reviewData)` - Create review
-- `getAllReviews()` - Get all reviews
-- `getTopReviews(limit)` - Get top-rated reviews
-- `updateReview(reviewId, updates)` - Edit review
-- `deleteReview(reviewId)` - Delete own review
-- `getAverageRating()` - Platform average
+#### `profileService.js`
+```javascript
+- getProfile(userId)             // Get user profile
+- createProfile(profileData)     // Create profile
+- updateProfile(userId, updates) // Update profile
+- getGuestProfile(userId)        // Get student details
+- getHostProfile(userId)         // Get host details
+```
 
 ---
 
@@ -898,9 +852,9 @@ const ADMIN_PERMISSIONS = {
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| `Navbar` | `components/layout/Navbar.jsx` | Main navigation (role-aware, responsive) |
-| `Footer` | `components/layout/Footer.jsx` | Site footer |
-| `AppBar` | `containers/AppBar.jsx` | Alternative header |
+| `Navbar` | `components/layout/Navbar.jsx` | Role-aware navigation with dynamic theming |
+| `Footer` | `components/layout/Footer.jsx` | Site footer with aria-labels |
+| `PhoneInput` | `components/layout/PhoneInput.jsx` | Phone input with validation |
 
 ### Route Protection
 
@@ -917,11 +871,27 @@ const ADMIN_PERMISSIONS = {
 | `ConfirmationModal` | `components/ConfirmationModal.jsx` | Confirm dialogs |
 | `RecognitionBadge` | `components/RecognitionBadge.jsx` | Tier badges |
 | `VerificationStatusBanner` | `components/VerificationStatusBanner.jsx` | Status banner |
-| `PhoneInput` | `components/PhoneInput.jsx` | Phone input with validation |
 | `FileUpload` | `components/shared/FileUpload.jsx` | Document upload |
-| `HelpOverlay` | `components/HelpOverlay.jsx` | Help overlay |
+| `HelpOverlay` | `components/HelpOverlay.jsx` | Contextual help tooltips |
 | `ErrorBoundary` | `components/ErrorBoundary.jsx` | Error handling |
 | `ScrollToTop` | `components/ScrollToTop.jsx` | Route scroll reset |
+| `MyReviews` | `components/MyReviews.jsx` | User's reviews display |
+
+### Admin Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `AdminDashboard` | `components/admin/AdminDashboard.jsx` | Admin dashboard |
+| `ManageRequests` | `components/admin/ManageRequests.jsx` | Request management |
+| `VerifyDocuments` | `components/admin/VerifyDocuments.jsx` | Document verification |
+
+### Guest Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `BrowseHosts` | `components/guest/BrowseHosts.jsx` | Host browsing |
+| `GuestDashboard` | `components/guest/GuestDashboard.jsx` | Guest dashboard |
+| `GuestProfile` | `components/guest/GuestProfile.jsx` | Guest profile display |
 
 ---
 
@@ -929,42 +899,146 @@ const ADMIN_PERMISSIONS = {
 
 ### Implemented Features
 
-#### Senior Mode
-- Larger font sizes (1.2x-1.5x normal)
-- Increased spacing and padding
-- Simplified visual hierarchy
-- Higher contrast elements
+#### Senior-Friendly Mode
+- **Activation:** Toggle in User Settings
+- **Effects:**
+  - Larger font sizes (1.125x base)
+  - Increased line height (1.7)
+  - Larger buttons (min-height 3.5rem)
+  - Larger form inputs
+  - Enhanced link visibility with underlines
+  - Prominent card shadows
+  - 3px focus indicators
+- **Implementation:** CSS class `.senior-mode` applied to `<html>` element
+- **File:** `src/index.css` (lines 250-328)
 
 #### Color Blind Support
-| Mode | Filter | Description |
-|------|--------|-------------|
-| Protanopia | SVG color matrix | Red-blind simulation |
-| Deuteranopia | SVG color matrix | Green-blind simulation |
-| Tritanopia | SVG color matrix | Blue-blind simulation |
 
-#### Voice Guidance (Hook Available)
-- `useVoiceGuidance()` hook for audio prompts
-- Text-to-speech integration ready
+| Mode | Filter Type | Description |
+|------|-------------|-------------|
+| None | - | Normal vision |
+| Protanopia | SVG feColorMatrix | Red-blind simulation |
+| Deuteranopia | SVG feColorMatrix | Green-blind simulation |
+| Tritanopia | SVG feColorMatrix | Blue-blind simulation |
+
+- **Implementation:** SVG filters defined in `App.jsx`, applied via CSS filter property
+- **Storage:** `color_blind_mode` column in `user_profiles` table
+
+#### Voice Guidance (Global)
+- **Provider:** `VoiceGuidanceContext.jsx`
+- **Features:**
+  - Automatic text-to-speech on element focus
+  - Reads buttons, links, inputs on focus
+  - Announces page navigation
+  - Reads checkbox/radio states
+  - Reads input field labels and values
+  - Supports aria-labels, titles, data-voice attributes
+  - Duplicate speech prevention (500ms debounce)
+  - English voice preference
+- **API:** Web Speech Synthesis API
+
+#### Voice Guidance (Hook)
+- **Hook:** `useVoiceGuidance.js`
+- **Methods:**
+  - `speak(text)` - Speak text if enabled
+  - `speakOnClick(text)` - Return click handler
+  - `speakOnFocus(text)` - Return focus handler
+- **Usage:** Manual voice control in components
+
+#### Help Overlay
+- **Component:** `HelpOverlay.jsx`
+- **Features:**
+  - Blue info icon (top-right corner)
+  - Tooltip appears on icon hover only
+  - Configurable positions: `top-right`, `top-left`, `top`, `bottom`, `left`, `right`
+  - No layout impact when disabled
+  - Smooth opacity transitions
+  - Arrow pointer indicators
 
 #### Touch Accessibility
-- Minimum 44px touch targets
-- Enhanced button padding
-- Mobile-optimized interactions
+- **Minimum touch targets:** 44px (Apple's recommendation)
+- **Implementation:** `tailwind.config.js` with `minHeight.touch` and `minWidth.touch`
 
-### Configuration
+#### ARIA Labels
+- All navigation links in Navbar have descriptive aria-labels
+- Footer links have aria-labels for screen readers
+- Interactive elements have proper labeling
 
-Settings stored in `user_profiles.accessibility_settings`:
-```json
-{
-  "seniorMode": false,
-  "voiceGuidance": false,
-  "colorBlindMode": "none"
-}
+### Accessibility Settings Storage
+
+Settings stored in `user_profiles` table:
+```sql
+senior_mode       BOOLEAN DEFAULT false
+voice_guidance    BOOLEAN DEFAULT false
+help_overlay      BOOLEAN DEFAULT false
+color_blind_mode  TEXT DEFAULT 'none'
 ```
 
 ---
 
-## 14. Environment Setup
+## 14. Recent Feature Additions
+
+### 14.1 Global Voice Guidance System
+**Added:** December 2024
+**Files:** `VoiceGuidanceContext.jsx`
+
+A comprehensive voice guidance system that:
+- Automatically reads interactive elements on focus
+- Announces page changes
+- Provides context-aware descriptions for form elements
+- Works globally across all pages without requiring per-component implementation
+
+### 14.2 Updated Help Overlay Component
+**Updated:** December 2024
+**Files:** `HelpOverlay.jsx`
+
+Improvements:
+- Tooltip now appears only when hovering the info icon (not the entire card)
+- Positioned at top-right of the icon by default
+- Uses Tailwind's `group/help` for scoped hover behavior
+- Better arrow positioning for all tooltip positions
+
+### 14.3 Terms & Conditions with PDF Modals
+**Added:** December 2024
+**Files:** `TermsAndConditions.jsx`
+
+Features:
+- Two dedicated sections for Host and Student T&C
+- Modal-based PDF viewer with iframe
+- Toolbar with: Open in New Tab, Download, Print, Close
+- PDF files stored in `/public/documents/`
+- Orange theme for host section, teal for student section
+
+### 14.4 Homepage Top Reviews
+**Added:** December 2024
+**Files:** `Home.jsx`, `reviewsService.js`
+
+Features:
+- Fetches top 3 reviews from database
+- `getTopReviews(limit)` service method
+- Role-based styling (orange for hosts, teal for students)
+- Loading skeleton during fetch
+- Fallback to static testimonials if no reviews
+
+### 14.5 Role-Based Navbar Theming
+**Added:** December 2024
+**Files:** `Navbar.jsx`
+
+Features:
+- Host users see orange profile icon gradient
+- Student users see teal profile icon gradient
+- Badge colors match user role
+- Mobile menu styling matches role
+
+### 14.6 Enhanced ARIA Labels
+**Added:** December 2024
+**Files:** `Navbar.jsx`, `Footer.jsx`
+
+All navigation links now have descriptive aria-labels for better screen reader support.
+
+---
+
+## 15. Environment Setup
 
 ### Required Environment Variables
 
@@ -1005,10 +1079,17 @@ npm run lint
 3. Configure authentication providers
 4. Set up Row Level Security (RLS) policies
 5. Configure storage buckets for documents
+6. Add accessibility columns to user_profiles table:
+```sql
+ALTER TABLE user_profiles ADD COLUMN senior_mode BOOLEAN DEFAULT false;
+ALTER TABLE user_profiles ADD COLUMN voice_guidance BOOLEAN DEFAULT false;
+ALTER TABLE user_profiles ADD COLUMN help_overlay BOOLEAN DEFAULT false;
+ALTER TABLE user_profiles ADD COLUMN color_blind_mode TEXT DEFAULT 'none';
+```
 
 ---
 
-## 15. Known Issues & Technical Debt
+## 16. Known Issues & Technical Debt
 
 ### Code Duplication
 
@@ -1056,12 +1137,12 @@ npm run lint
 
 ## Appendix A: File Index
 
-### Pages (39 files)
+### Pages (49 files)
 ```
 src/pages/
 ├── AboutUs.jsx
 ├── AdminCreateProfile.jsx
-├── AdminDashboard.jsx (alias)
+├── AdminDashboard.jsx
 ├── AdminDashboardPage.jsx
 ├── AdminDisputes.jsx
 ├── AdminFacilitationRequests.jsx
@@ -1087,7 +1168,7 @@ src/pages/
 ├── HostDashboard.jsx
 ├── HostDashboardPage.jsx
 ├── HostLogin.jsx
-├── HostSignup.jsx (missing - referenced)
+├── HostSignup.jsx
 ├── KnowledgeHub.jsx
 ├── LandingPage.jsx
 ├── Login.jsx
@@ -1104,7 +1185,7 @@ src/pages/
 ├── Signup.jsx
 ├── StudentDashboard.jsx
 ├── StudentLogin.jsx
-├── StudentSignup.jsx (missing - referenced)
+├── StudentSignup.jsx
 ├── TaskApplication.jsx
 ├── TermsAndConditions.jsx
 ├── UserSettings.jsx
@@ -1113,9 +1194,10 @@ src/pages/
     └── SignUp.jsx
 ```
 
-### Services (11 files)
+### Services (12 files)
 ```
 src/services/
+├── adminService.js
 ├── authService.js
 ├── dashboardService.js
 ├── documentService.js
@@ -1129,7 +1211,28 @@ src/services/
 └── terminationService.js
 ```
 
-### Components (25+ files)
+### Contexts (7 files)
+```
+src/context/
+├── AdminContext.jsx
+├── AuthContext.jsx
+├── AuthContextNew.jsx
+├── NotificationContext.jsx
+├── UserContext.jsx
+├── VerificationEventsContext.jsx
+└── VoiceGuidanceContext.jsx
+```
+
+### Hooks (4 files)
+```
+src/hooks/
+├── useAuth.js
+├── useMonthlyFeedback.js
+├── useProfile.js
+└── useVoiceGuidance.js
+```
+
+### Components (30+ files)
 ```
 src/components/
 ├── AddTodo.jsx
@@ -1180,15 +1283,6 @@ src/components/
 | `add_deleted_reviews_table.sql` | Versioned migration |
 | `create_monthly_feedback_system.sql` | Monthly feedback tables |
 
-### Migration Execution
-
-```sql
--- Run in Supabase SQL Editor in order
--- 1. Core tables (created via Supabase dashboard or initial setup)
--- 2. Monthly feedback system
--- 3. Deleted reviews audit table
-```
-
 ---
 
 ## Appendix C: Color Scheme
@@ -1215,4 +1309,27 @@ src/components/
 
 ---
 
-*Document generated for Team 11 - Homestay Exchange App*
+## Appendix D: Accessibility Quick Reference
+
+### Enable Accessibility Features
+
+1. Log in to your account
+2. Navigate to Settings (click profile icon → Settings)
+3. Scroll to "Make the website easier to use" section
+4. Toggle desired features:
+   - **Senior-Friendly Mode**: Larger text and buttons
+   - **Voice Guidance**: Audio feedback on interactions
+   - **Help Overlay**: Info icons with helpful tooltips
+   - **Color Blind Mode**: Select your vision type
+
+### Keyboard Navigation
+
+- `Tab` - Navigate between interactive elements
+- `Enter/Space` - Activate buttons and links
+- `Escape` - Close modals and dropdowns
+- `Arrow keys` - Navigate within dropdowns
+
+---
+
+*Document Version 2.0 - Updated December 2024*
+*Generated for Team 11 - Homestay Exchange App*
