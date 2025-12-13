@@ -198,13 +198,13 @@ const Home = () => {
   return (
     <div className="bg-white overflow-hidden">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white overflow-hidden min-h-[90vh] flex items-center">
+      <section className="relative bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Gradient Orbs */}
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-teal-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 -right-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute -bottom-20 left-1/3 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-20 -left-20 w-72 h-72 md:w-96 md:h-96 bg-teal-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
+          <div className="absolute top-40 -right-20 w-72 h-72 md:w-96 md:h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute -bottom-20 left-1/3 w-72 h-72 md:w-96 md:h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
@@ -215,78 +215,78 @@ const Home = () => {
         </div>
 
         <div className="container-custom relative z-10">
-          <div className="py-12 md:py-16">
-            <div className="max-w-5xl mx-auto">
+          <div className="py-16 md:py-20 lg:py-24">
+            <div className="max-w-4xl mx-auto">
               {/* Badge */}
-              <div className="flex justify-center mb-8 animate-fade-in">
-                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
-                  <Sparkles className="w-5 h-5 text-teal-200" />
-                  <span className="text-white font-medium">Trusted by 500+ Students & Hosts</span>
-                  <Sparkles className="w-5 h-5 text-teal-200" />
+              <div className="flex justify-center mb-6 md:mb-8 animate-fade-in">
+                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-full border border-white/20">
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-teal-200" />
+                  <span className="text-sm md:text-base text-white font-medium">Trusted by 500+ Students & Hosts</span>
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-teal-200" />
                 </div>
               </div>
 
               {/* Main Heading */}
               <div className="text-center animate-fade-in">
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold mb-6 leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4 md:mb-6 leading-tight px-2">
                   Making UK Education{' '}
                   <span className="relative inline-block">
-                    <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-blue-200 to-teal-200">
+                    <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-cyan-200 to-teal-200">
                       Accessible
                     </span>
-                    <span className="absolute bottom-2 left-0 w-full h-3 bg-teal-400 opacity-30 rounded"></span>
+                    <span className="absolute bottom-1 md:bottom-2 left-0 w-full h-2 md:h-3 bg-teal-400/40 rounded"></span>
                   </span>
                   {' '}Through Community
                 </h1>
-                <p className="text-lg sm:text-xl md:text-2xl text-teal-50 mb-10 leading-relaxed max-w-3xl mx-auto">
+                <p className="text-base sm:text-lg md:text-xl text-teal-50/90 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto px-4">
                   Connect students seeking affordable accommodation with hosts who need support.
                   <span className="font-semibold text-white"> Exchange help for housing</span> in a safe, verified community.
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4 mb-8 md:mb-10 px-4">
                   <Link
                     to="/host/signup"
-                    className="group w-full sm:w-auto px-8 py-4 bg-white text-teal-700 font-semibold rounded-xl
+                    className="group w-full sm:w-auto min-w-[180px] px-6 md:px-8 py-3 md:py-4 bg-white text-teal-700 font-semibold rounded-xl
                              hover:bg-teal-50 active:bg-teal-100
-                             shadow-2xl hover:shadow-teal-500/50
-                             transform hover:-translate-y-1 hover:scale-105
+                             shadow-xl hover:shadow-2xl hover:shadow-teal-500/30
+                             transform hover:-translate-y-1
                              transition-all duration-300
                              focus:outline-none focus:ring-4 focus:ring-white/50
-                             text-lg flex items-center justify-center"
+                             text-base md:text-lg flex items-center justify-center"
                   >
                     I'm a Host
-                    <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="inline-block ml-2 w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   <Link
                     to="/student/signup"
-                    className="group w-full sm:w-auto px-8 py-4 bg-teal-500 text-white font-semibold rounded-xl
+                    className="group w-full sm:w-auto min-w-[180px] px-6 md:px-8 py-3 md:py-4 bg-teal-500/80 text-white font-semibold rounded-xl
                              border-2 border-white/30
                              hover:bg-teal-400 active:bg-teal-600
-                             shadow-2xl hover:shadow-teal-300/50
-                             transform hover:-translate-y-1 hover:scale-105
+                             shadow-xl hover:shadow-2xl hover:shadow-teal-300/30
+                             transform hover:-translate-y-1
                              transition-all duration-300
                              focus:outline-none focus:ring-4 focus:ring-white/50
-                             text-lg flex items-center justify-center"
+                             text-base md:text-lg flex items-center justify-center"
                   >
                     I'm a Student
-                    <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="inline-block ml-2 w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </div>
 
                 {/* Trust Indicators */}
-                <div className="flex flex-wrap items-center justify-center gap-6 md:gap-8 text-teal-50">
-                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-teal-200" />
-                    <span className="text-sm md:text-base font-medium">Fully Verified</span>
+                <div className="flex flex-wrap items-center justify-center gap-3 md:gap-4 text-teal-50 px-4">
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 md:px-4 py-2 rounded-lg">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-teal-200" />
+                    <span className="text-xs md:text-sm font-medium">Fully Verified</span>
                   </div>
-                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-teal-200" />
-                    <span className="text-sm md:text-base font-medium">DBS Checked</span>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 md:px-4 py-2 rounded-lg">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-teal-200" />
+                    <span className="text-xs md:text-sm font-medium">DBS Checked</span>
                   </div>
-                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                    <CheckCircle className="w-5 h-5 text-teal-200" />
-                    <span className="text-sm md:text-base font-medium">Safe & Secure</span>
+                  <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-3 md:px-4 py-2 rounded-lg">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-teal-200" />
+                    <span className="text-xs md:text-sm font-medium">Safe & Secure</span>
                   </div>
                 </div>
               </div>
@@ -295,12 +295,13 @@ const Home = () => {
         </div>
 
         {/* Wave Divider */}
-        <div className="absolute bottom-0 left-0 right-0">
+        <div className="relative -mb-1">
           <svg
             viewBox="0 0 1440 120"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className="w-full h-auto"
+            preserveAspectRatio="none"
           >
             <path
               d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
