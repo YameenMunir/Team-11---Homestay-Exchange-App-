@@ -4,9 +4,9 @@ import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'luc
 const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
-      <div className="container-custom">
+      <div className="container-custom px-4 sm:px-6">
         {/* Main Footer Content */}
-        <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="py-8 sm:py-10 md:py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* About Section */}
           <div>
             <div className="mb-4">
@@ -147,12 +147,12 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
-            <p className="text-sm text-center md:text-left">
+        <div className="border-t border-gray-800 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <p className="text-xs sm:text-sm text-center sm:text-left">
               &copy; {new Date().getFullYear()} Homestay Exchange. All rights reserved.
             </p>
-            <p className="text-sm text-center md:text-right">
+            <p className="text-xs sm:text-sm text-center sm:text-right">
               Making UK education accessible for everyone
             </p>
           </div>

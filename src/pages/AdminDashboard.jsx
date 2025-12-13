@@ -86,31 +86,31 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container-custom">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+      <div className="container-custom px-4 sm:px-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900">
               Admin Dashboard
             </h1>
             <button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto"
             >
               <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
               <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
             </button>
           </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             Manage verifications, facilitation requests, and platform operations
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div className="card p-6 hover:shadow-lg transition-shadow">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="card p-4 sm:p-6 hover:shadow-lg transition-shadow">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Pending Verifications</p>
@@ -207,9 +207,9 @@ const AdminDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <Link
               to="/admin/users"
               className="card p-6 hover:shadow-lg transition-all hover:border-teal-200 group"
@@ -365,11 +365,11 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="card p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="card p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
             <div className="flex items-center space-x-3">
-              <Activity className="w-6 h-6 text-teal-600" />
-              <h2 className="text-2xl font-bold text-gray-900">Recent Activity</h2>
+              <Activity className="w-5 sm:w-6 h-5 sm:h-6 text-teal-600" />
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Recent Activity</h2>
             </div>
             <button
               onClick={handleRefresh}

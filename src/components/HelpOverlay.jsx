@@ -54,7 +54,7 @@ const HelpOverlay = ({ children, helpText, position = 'top-right' }) => {
                         bg-gray-900 text-white text-sm rounded-lg px-3 py-2
                         shadow-xl pointer-events-none opacity-0 group-hover/help:opacity-100
                         transition-opacity duration-200`}
-            style={{ whiteSpace: 'normal', width: 'max-content', maxWidth: '300px' }}
+            style={{ whiteSpace: 'normal', width: 'max-content', maxWidth: 'min(300px, 80vw)' }}
           >
             {helpText}
             {/* Tooltip arrow */}
