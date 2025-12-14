@@ -776,6 +776,7 @@ const HostSignup = () => {
                         </h4>
                         <p className="text-base text-orange-800 leading-relaxed">
                           For safety and verification, we need the following documents.
+                          <strong> Both documents are required</strong> before you can create your account.
                           All information is kept secure and confidential.
                         </p>
                       </div>
@@ -784,18 +785,26 @@ const HostSignup = () => {
 
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
-                      ID Document (Passport or Driving License)
+                      ID Document (Passport or Driving License) <span className="text-red-500">*</span>
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                      formData.idDocument
+                        ? 'border-green-400 bg-green-50'
+                        : 'border-gray-300 hover:border-orange-400'
+                    }`}>
+                      {formData.idDocument ? (
+                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                      ) : (
+                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      )}
                       <label
                         htmlFor="idDocument"
                         className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-orange-600 font-semibold hover:text-orange-700">
-                          Click to upload
+                          {formData.idDocument ? 'Change file' : 'Click to upload'}
                         </span>{' '}
-                        or drag and drop
+                        {!formData.idDocument && 'or drag and drop'}
                         <input
                           type="file"
                           id="idDocument"
@@ -810,23 +819,37 @@ const HostSignup = () => {
                           ✓ {formData.idDocument.name}
                         </p>
                       )}
+                      {!formData.idDocument && (
+                        <p className="text-sm text-amber-600 mt-2 font-medium flex items-center justify-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          Required document
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
-                      Utility Bill (Proof of Address)
+                      Utility Bill (Proof of Address) <span className="text-red-500">*</span>
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                      formData.utilityBill
+                        ? 'border-green-400 bg-green-50'
+                        : 'border-gray-300 hover:border-orange-400'
+                    }`}>
+                      {formData.utilityBill ? (
+                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                      ) : (
+                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      )}
                       <label
                         htmlFor="utilityBill"
                         className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-orange-600 font-semibold hover:text-orange-700">
-                          Click to upload
+                          {formData.utilityBill ? 'Change file' : 'Click to upload'}
                         </span>{' '}
-                        or drag and drop
+                        {!formData.utilityBill && 'or drag and drop'}
                         <input
                           type="file"
                           id="utilityBill"
@@ -841,6 +864,93 @@ const HostSignup = () => {
                           ✓ {formData.utilityBill.name}
                         </p>
                       )}
+                      {!formData.utilityBill && (
+                        <p className="text-sm text-amber-600 mt-2 font-medium flex items-center justify-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          Required document
+                        </p>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Recent utility bill, bank statement, or council tax bill showing your address
+                    </p>
+                  </div>
+
+                  {/* Document Upload Progress */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
+                    <h4 className="font-semibold text-gray-900 text-sm mb-3">Upload Progress</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">ID Document</span>
+                        {formData.idDocument ? (
+                          <span className="text-sm text-green-600 font-medium flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-sm text-amber-600 font-medium flex items-center">
+                            <AlertCircle className="w-4 h-4 mr-1" /> Required
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Utility Bill</span>
+                        {formData.utilityBill ? (
+                          <span className="text-sm text-green-600 font-medium flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-sm text-amber-600 font-medium flex items-center">
+                            <AlertCircle className="w-4 h-4 mr-1" /> Required
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-orange-600 h-full transition-all duration-300"
+                        style={{
+                          width: `${((formData.idDocument ? 1 : 0) + (formData.utilityBill ? 1 : 0)) * 50}%`
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      {formData.idDocument && formData.utilityBill
+                        ? 'All documents uploaded! You can now create your account.'
+                        : `${(formData.idDocument ? 1 : 0) + (formData.utilityBill ? 1 : 0)} of 2 documents uploaded`}
+                    </p>
+                  </div>
+
+                  <div className={`border rounded-xl p-6 ${
+                    formData.idDocument && formData.utilityBill
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-amber-50 border-amber-200'
+                  }`}>
+                    <div className="flex items-start space-x-3">
+                      {formData.idDocument && formData.utilityBill ? (
+                        <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                      ) : (
+                        <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
+                      )}
+                      <div>
+                        <h4 className={`font-semibold text-lg mb-2 ${
+                          formData.idDocument && formData.utilityBill
+                            ? 'text-green-900'
+                            : 'text-amber-900'
+                        }`}>
+                          {formData.idDocument && formData.utilityBill
+                            ? 'Ready to Submit!'
+                            : 'Documents Required'}
+                        </h4>
+                        <p className={`text-base ${
+                          formData.idDocument && formData.utilityBill
+                            ? 'text-green-800'
+                            : 'text-amber-800'
+                        }`}>
+                          {formData.idDocument && formData.utilityBill
+                            ? 'Once submitted, our team will review your documents within 24-48 hours. You\'ll receive an email notification when approved.'
+                            : 'Please upload both required documents above to enable account creation.'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -860,8 +970,8 @@ const HostSignup = () => {
                 )}
                 <button
                   type="submit"
-                  className="btn-accessible flex-1 bg-orange-600 hover:bg-orange-700 text-white"
-                  disabled={loading || success}
+                  className="btn-accessible flex-1 bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled={loading || success || (currentStep === 3 && (!formData.idDocument || !formData.utilityBill))}
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">
@@ -874,6 +984,14 @@ const HostSignup = () => {
                   ) : currentStep === 3 ? 'Complete Registration' : 'Continue'}
                 </button>
               </div>
+
+              {/* Document requirement message on Step 3 */}
+              {currentStep === 3 && (!formData.idDocument || !formData.utilityBill) && (
+                <p className="text-center text-amber-600 text-sm mt-3 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  Please upload both required documents to create your account
+                </p>
+              )}
             </form>
 
             {/* Already have account */}
