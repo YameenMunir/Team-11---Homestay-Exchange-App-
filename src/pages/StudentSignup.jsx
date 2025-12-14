@@ -925,7 +925,7 @@ const StudentSignup = () => {
                         </h4>
                         <p className="text-base text-teal-800 leading-relaxed">
                           To ensure safety for all users, we need to verify your identity
-                          and student status. All documents are kept secure.
+                          and student status. <strong>Both documents are required</strong> before you can create your account.
                         </p>
                       </div>
                     </div>
@@ -933,18 +933,26 @@ const StudentSignup = () => {
 
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
-                      ID Document (Passport or Driving License)
+                      ID Document (Passport or Driving License) <span className="text-red-500">*</span>
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                      formData.idDocument
+                        ? 'border-green-400 bg-green-50'
+                        : 'border-gray-300 hover:border-teal-400'
+                    }`}>
+                      {formData.idDocument ? (
+                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                      ) : (
+                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      )}
                       <label
                         htmlFor="idDocument"
                         className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-teal-600 font-semibold hover:text-teal-700">
-                          Click to upload
+                          {formData.idDocument ? 'Change file' : 'Click to upload'}
                         </span>{' '}
-                        or drag and drop
+                        {!formData.idDocument && 'or drag and drop'}
                         <input
                           type="file"
                           id="idDocument"
@@ -959,23 +967,37 @@ const StudentSignup = () => {
                           ✓ {formData.idDocument.name}
                         </p>
                       )}
+                      {!formData.idDocument && (
+                        <p className="text-sm text-amber-600 mt-2 font-medium flex items-center justify-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          Required document
+                        </p>
+                      )}
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-2">
-                      University Admission Letter
+                      University Admission Letter <span className="text-red-500">*</span>
                     </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-teal-400 transition-colors">
-                      <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-colors ${
+                      formData.admissionLetter
+                        ? 'border-green-400 bg-green-50'
+                        : 'border-gray-300 hover:border-teal-400'
+                    }`}>
+                      {formData.admissionLetter ? (
+                        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+                      ) : (
+                        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                      )}
                       <label
                         htmlFor="admissionLetter"
                         className="cursor-pointer text-base text-gray-600"
                       >
                         <span className="text-teal-600 font-semibold hover:text-teal-700">
-                          Click to upload
+                          {formData.admissionLetter ? 'Change file' : 'Click to upload'}
                         </span>{' '}
-                        or drag and drop
+                        {!formData.admissionLetter && 'or drag and drop'}
                         <input
                           type="file"
                           id="admissionLetter"
@@ -990,22 +1012,91 @@ const StudentSignup = () => {
                           ✓ {formData.admissionLetter.name}
                         </p>
                       )}
+                      {!formData.admissionLetter && (
+                        <p className="text-sm text-amber-600 mt-2 font-medium flex items-center justify-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          Required document
+                        </p>
+                      )}
                     </div>
                     <p className="text-sm text-gray-600 mt-2">
                       Your offer letter or student ID card showing current enrollment
                     </p>
                   </div>
 
-                  <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                  {/* Document Upload Progress */}
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6">
+                    <h4 className="font-semibold text-gray-900 text-sm mb-3">Upload Progress</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">ID Document</span>
+                        {formData.idDocument ? (
+                          <span className="text-sm text-green-600 font-medium flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-sm text-amber-600 font-medium flex items-center">
+                            <AlertCircle className="w-4 h-4 mr-1" /> Required
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">Admission Letter</span>
+                        {formData.admissionLetter ? (
+                          <span className="text-sm text-green-600 font-medium flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-1" /> Uploaded
+                          </span>
+                        ) : (
+                          <span className="text-sm text-amber-600 font-medium flex items-center">
+                            <AlertCircle className="w-4 h-4 mr-1" /> Required
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-3 bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-teal-600 h-full transition-all duration-300"
+                        style={{
+                          width: `${((formData.idDocument ? 1 : 0) + (formData.admissionLetter ? 1 : 0)) * 50}%`
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      {formData.idDocument && formData.admissionLetter
+                        ? 'All documents uploaded! You can now create your account.'
+                        : `${(formData.idDocument ? 1 : 0) + (formData.admissionLetter ? 1 : 0)} of 2 documents uploaded`}
+                    </p>
+                  </div>
+
+                  <div className={`border rounded-xl p-6 ${
+                    formData.idDocument && formData.admissionLetter
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-amber-50 border-amber-200'
+                  }`}>
                     <div className="flex items-start space-x-3">
-                      <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                      {formData.idDocument && formData.admissionLetter ? (
+                        <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+                      ) : (
+                        <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
+                      )}
                       <div>
-                        <h4 className="font-semibold text-green-900 text-lg mb-2">
-                          Almost There!
+                        <h4 className={`font-semibold text-lg mb-2 ${
+                          formData.idDocument && formData.admissionLetter
+                            ? 'text-green-900'
+                            : 'text-amber-900'
+                        }`}>
+                          {formData.idDocument && formData.admissionLetter
+                            ? 'Ready to Submit!'
+                            : 'Documents Required'}
                         </h4>
-                        <p className="text-base text-green-800">
-                          Once submitted, our team will review your documents within 24-48
-                          hours. You'll receive an email notification when approved.
+                        <p className={`text-base ${
+                          formData.idDocument && formData.admissionLetter
+                            ? 'text-green-800'
+                            : 'text-amber-800'
+                        }`}>
+                          {formData.idDocument && formData.admissionLetter
+                            ? 'Once submitted, our team will review your documents within 24-48 hours. You\'ll receive an email notification when approved.'
+                            : 'Please upload both required documents above to enable account creation.'}
                         </p>
                       </div>
                     </div>
@@ -1028,7 +1119,7 @@ const StudentSignup = () => {
                 <button
                   type="submit"
                   className="btn-primary flex-1"
-                  disabled={loading || success}
+                  disabled={loading || success || (currentStep === 3 && (!formData.idDocument || !formData.admissionLetter))}
                 >
                   {loading ? (
                     <span className="flex items-center justify-center">
@@ -1041,6 +1132,14 @@ const StudentSignup = () => {
                   ) : currentStep === 3 ? 'Complete Registration' : 'Continue'}
                 </button>
               </div>
+
+              {/* Document requirement message on Step 3 */}
+              {currentStep === 3 && (!formData.idDocument || !formData.admissionLetter) && (
+                <p className="text-center text-amber-600 text-sm mt-3 flex items-center justify-center">
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  Please upload both required documents to create your account
+                </p>
+              )}
             </form>
 
             {/* Already have account */}
