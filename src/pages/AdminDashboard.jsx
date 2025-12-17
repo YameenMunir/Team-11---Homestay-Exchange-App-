@@ -267,6 +267,11 @@ const AdminDashboard = () => {
                   <p className="text-sm text-gray-600 mb-3">
                     Review facilitation end requests
                   </p>
+                  {stats?.pendingTerminations > 0 && (
+                    <span className="badge bg-red-100 text-red-800">
+                      {stats.pendingTerminations} pending
+                    </span>
+                  )}
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all" />
               </div>
