@@ -24,6 +24,7 @@ const AdminFacilitationRequests = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [filterStatus, setFilterStatus] = useState('in_review');
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -47,6 +48,20 @@ const AdminFacilitationRequests = () => {
       toast.error('Failed to load facilitation requests');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      const data = await facilitationService.getAdminRequests();
+      setRequests(data);
+      toast.success('Facilitation requests refreshed');
+    } catch (error) {
+      console.error('Error refreshing requests:', error);
+      toast.error('Failed to refresh facilitation requests');
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -155,13 +170,23 @@ const AdminFacilitationRequests = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Back to Dashboard</span>
           </Link>
-          <div className="flex items-center gap-3 mb-2">
-            <Link2 className="w-8 h-8 text-teal-600" />
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900">
-              Facilitation Requests
-            </h1>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-2">
+            <div className="flex items-center gap-3">
+              <Link2 className="w-8 h-8 text-teal-600" />
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-gray-900">
+                Facilitation Requests
+              </h1>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="btn-primary flex items-center justify-center space-x-2 w-full sm:w-auto"
+            >
+              <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+              <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
           </div>
-          <p className="text-lg text-gray-600">
+          <p className="text-base sm:text-lg text-gray-600">
             Review and approve host-student matching requests
           </p>
         </div>
